@@ -1,5 +1,5 @@
 Welcome to FinTrack!
 Type 'help' for available commands.
 
-> You entered: James Gosling
+> Error: Unknown command.
 > Bye. Hope to see you again soon!
