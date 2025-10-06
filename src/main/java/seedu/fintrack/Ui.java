@@ -1,3 +1,4 @@
+// src/main/java/seedu/fintrack/Ui.java
 package seedu.fintrack;
 
 import java.util.Scanner;
@@ -5,14 +6,15 @@ import seedu.fintrack.model.Income;
 
 /**
  * Handles all user interaction for FinTrack.
- * <p>
- * Provides methods for displaying messages, reading input, and formatting output
- * for features such as adding income and viewing the overall balance.
  */
 public class Ui {
-    // Commands
+    // Commands (keep full set for compatibility)
+    private static final String HELP_COMMAND = "help";
+    private static final String ADD_EXPENSE_COMMAND = "add-expense";
     private static final String ADD_INCOME_COMMAND = "add-income";
+    private static final String DELETE_COMMAND = "delete";
     private static final String BALANCE_COMMAND = "balance";
+    private static final String LIST_COMMAND = "list";
     private static final String EXIT_COMMAND = "bye";
 
     // Parameter prefixes
@@ -25,7 +27,7 @@ public class Ui {
 
     public static void printWelcome() {
         System.out.println("Welcome to FinTrack!");
-        System.out.println("Type 'help' for available commands.");
+        System.out.println("Type '" + HELP_COMMAND + "' for available commands.");
         System.out.println();
     }
 
@@ -37,11 +39,15 @@ public class Ui {
 
     /** Prints the exit message. */
     public static void printExit() {
-        System.out.print("Bye. Hope to see you again soon!");
+        System.out.print("Bye. Hope to see you again soon!"); // NOTE: println restores trailing newline
     }
 
+    static String getHelpCommand() { return HELP_COMMAND; }
+    static String getAddExpenseCommand() { return ADD_EXPENSE_COMMAND; }
     static String getAddIncomeCommand() { return ADD_INCOME_COMMAND; }
+    static String getDeleteCommand() { return DELETE_COMMAND; }
     static String getBalanceCommand() { return BALANCE_COMMAND; }
+    static String getListCommand() { return LIST_COMMAND; }
     static String getExitCommand() { return EXIT_COMMAND; }
 
     static String getAmountPrefix() { return AMOUNT_PREFIX; }
@@ -49,7 +55,6 @@ public class Ui {
     static String getDatePrefix() { return DATE_PREFIX; }
     static String getDescriptionPrefix() { return DESCRIPTION_PREFIX; }
 
-    // Output formatting
     static void printIncomeAdded(Income income) {
         System.out.println("Income added:");
         System.out.println("  Amount: " + String.format("%.2f", income.getAmount()));
