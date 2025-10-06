@@ -15,8 +15,19 @@ public class Expense {
         this. description = description;
     }
 
-    public double getAmount() { return amount; }
-    public String getCategory() { return category; }
-    public LocalDate getDate() { return date; }
-    public String getDescription() { return description; }
+    public double getAmount() {
+        return amount;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }
