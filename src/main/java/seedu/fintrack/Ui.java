@@ -6,9 +6,10 @@ import seedu.fintrack.model.Income;
 
 /**
  * Handles all user interaction for FinTrack.
+ * <p>Provides methods for displaying messages, reading input, and formatting output.
  */
 public class Ui {
-    // Commands (keep full set for compatibility)
+    // Commands
     private static final String HELP_COMMAND = "help";
     private static final String ADD_EXPENSE_COMMAND = "add-expense";
     private static final String ADD_INCOME_COMMAND = "add-income";
@@ -39,7 +40,7 @@ public class Ui {
 
     /** Prints the exit message. */
     public static void printExit() {
-        System.out.print("Bye. Hope to see you again soon!"); // NOTE: println restores trailing newline
+        System.out.print("Bye. Hope to see you again soon!");
     }
 
     static String getHelpCommand() { return HELP_COMMAND; }
