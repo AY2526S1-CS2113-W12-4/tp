@@ -1,5 +1,5 @@
 Welcome to FinTrack!
 Type 'help' for available commands.
 
-> Error: Unknown command.
+> Error: Invalid command. Type 'help' for a list of available commands.
 > Bye. Hope to see you again soon!
