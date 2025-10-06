@@ -1,13 +1,14 @@
 package seedu.fintrack;
+
+import java.util.Scanner;
+import seedu.fintrack.model.Income;
+
 /**
  * Handles all user interaction for FinTrack.
  * <p>
  * Provides methods for displaying messages, reading input, and formatting output
  * for features such as adding income and viewing the overall balance.
  */
-import java.util.Scanner;
-import seedu.fintrack.model.Income;
-
 public class Ui {
     // Commands
     private static final String ADD_INCOME_COMMAND = "add-income";
