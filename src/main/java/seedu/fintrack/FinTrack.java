@@ -1,7 +1,5 @@
 package seedu.fintrack;
 
-import java.util.Scanner;
-
 public class FinTrack {
     /**
      * Main entry-point for the java.finTrack.FinTrack application.
