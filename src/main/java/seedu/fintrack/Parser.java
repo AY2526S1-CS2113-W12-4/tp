@@ -9,7 +9,7 @@ final class Parser {
 
     /**
      * Expected format:
-     * add-income a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<text>]
+     * {@code add-income a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<text>]}
      */
     static Income parseAddIncome(String input) {
         String cmd = Ui.getAddIncomeCommand();
@@ -52,7 +52,9 @@ final class Parser {
 
     private static String getValue(String args, String prefix) {
         int start = args.indexOf(prefix);
-        if (start < 0) return null;
+        if (start < 0) {
+            return null;
+        }
         start += prefix.length();
 
         // Find the next prefix or end-of-string
