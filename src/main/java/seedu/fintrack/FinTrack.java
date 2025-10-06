@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class FinTrack {
     /**
-     * Main entry-point for the java.duke.Duke application.
+     * Main entry-point for the java.finTrack.FinTrack application.
      */
     public static void main(String[] args) {
         Ui.printWelcome();
