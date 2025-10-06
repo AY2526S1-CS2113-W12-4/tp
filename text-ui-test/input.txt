@@ -1,2 +1,13 @@
 James Gosling
+add-income a/5000 c/Salary d/2024-01-01 desc/Monthly salary
+add-income a/200 c/Freelance d/2024-01-15
+add-expense a/1200 c/Rent d/2024-01-01 desc/Monthly rent payment
+add-expense a/50 c/Food d/2024-01-02
+add-expense a/30 c/Transport d/2024-01-03 desc/Bus fare
+balance
+list
+delete-expense 2
+delete-income 1
+balance
+help
 bye

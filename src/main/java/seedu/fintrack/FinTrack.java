@@ -50,17 +50,19 @@ public class FinTrack {
                 break;
             case Ui.DELETE_EXPENSE_COMMAND:
                 try {
-                    Parser.parseDeleteExpense(input); // Checking for errors
-                    // Need to delete expense here
-                } catch (IllegalArgumentException e) {
+                    int expenseIndex = Parser.parseDeleteExpense(input);
+                    var deletedExpense = fm.deleteExpense(expenseIndex);
+                    Ui.printExpenseDeleted(deletedExpense, expenseIndex);
+                } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
                     Ui.printError(e.getMessage());
                 }
                 break;
             case Ui.DELETE_INCOME_COMMAND:
                 try {
-                    Parser.parseDeleteIncome(input); // Checking for errors
-                    // Need to delete income here
-                } catch (IllegalArgumentException e) {
+                    int incomeIndex = Parser.parseDeleteIncome(input);
+                    var deletedIncome = fm.deleteIncome(incomeIndex);
+                    Ui.printIncomeDeleted(deletedIncome, incomeIndex);
+                } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
                     Ui.printError(e.getMessage());
                 }
                 break;

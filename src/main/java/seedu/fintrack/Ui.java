@@ -75,4 +75,24 @@ public class Ui {
     static void printError(String message) {
         System.out.println("Error: " + message);
     }
+
+    static void printExpenseDeleted(Expense expense, int index) {
+        System.out.println("Expense deleted (index " + index + "):");
+        System.out.println("  Amount: " + String.format("%.2f", expense.getAmount()));
+        System.out.println("  Category: " + expense.getCategory());
+        System.out.println("  Date: " + expense.getDate());
+        if (expense.getDescription() != null && !expense.getDescription().isBlank()) {
+            System.out.println("  Description: " + expense.getDescription());
+        }
+    }
+
+    static void printIncomeDeleted(Income income, int index) {
+        System.out.println("Income deleted (index " + index + "):");
+        System.out.println("  Amount: " + String.format("%.2f", income.getAmount()));
+        System.out.println("  Category: " + income.getCategory());
+        System.out.println("  Date: " + income.getDate());
+        if (income.getDescription() != null && !income.getDescription().isBlank()) {
+            System.out.println("  Description: " + income.getDescription());
+        }
+    }
 }

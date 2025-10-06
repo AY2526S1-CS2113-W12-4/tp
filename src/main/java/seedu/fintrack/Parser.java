@@ -135,27 +135,51 @@ final class Parser {
         return new Income(amount, category, date, description);
     }
 
-    public static void parseDeleteExpense(String input) {
+    /**
+     * Parses delete-expense command and returns the index.
+     * Expected format: {@code delete-expense <index>}
+     * @param input The full command string
+     * @return The 1-based index of the expense to delete
+     * @throws IllegalArgumentException if the format is invalid or index is not positive
+     */
+    public static int parseDeleteExpense(String input) {
         String args = input.substring(Ui.DELETE_EXPENSE_COMMAND.length()).trim();
         if (args.isEmpty()) {
-            throw new IllegalArgumentException("Missing parameters. See 'help'.");
+            throw new IllegalArgumentException("Missing expense index. Usage: delete-expense <index>");
         }
 
-        int id = Integer.parseInt(args);
-        if (id <= 0) {
-            throw new IllegalArgumentException("ID must be a positive number.");
+        try {
+            int id = Integer.parseInt(args);
+            if (id <= 0) {
+                throw new IllegalArgumentException("Expense index must be a positive number.");
+            }
+            return id;
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Expense index must be a valid number.");
         }
     }
 
-    public static void parseDeleteIncome(String input) {
+    /**
+     * Parses delete-income command and returns the index.
+     * Expected format: {@code delete-income <index>}
+     * @param input The full command string
+     * @return The 1-based index of the income to delete
+     * @throws IllegalArgumentException if the format is invalid or index is not positive
+     */
+    public static int parseDeleteIncome(String input) {
         String args = input.substring(Ui.DELETE_INCOME_COMMAND.length()).trim();
         if (args.isEmpty()) {
-            throw new IllegalArgumentException("Missing parameters. See 'help'.");
+            throw new IllegalArgumentException("Missing income index. Usage: delete-income <index>");
         }
 
-        int id = Integer.parseInt(args);
-        if (id <= 0) {
-            throw new IllegalArgumentException("ID must be a positive number.");
+        try {
+            int id = Integer.parseInt(args);
+            if (id <= 0) {
+                throw new IllegalArgumentException("Income index must be a positive number.");
+            }
+            return id;
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Income index must be a valid number.");
         }
     }
 }
