@@ -1,5 +1,15 @@
 package seedu.fintrack;
-
+/**
+ * Entry point of the FinTrack application.
+ * <p>
+ * Handles the main CLI loop for receiving and processing user commands.
+ * Supports:
+ * <ul>
+ *   <li><code>add-income</code>: Adds a new income entry.</li>
+ *   <li><code>balance</code>: Displays overall balance (total income minus total expense).</li>
+ *   <li><code>bye</code>: Exits the program.</li>
+ * </ul>
+ */
 public class FinTrack {
     /**
      * Main entry-point for the FinTrack application.
