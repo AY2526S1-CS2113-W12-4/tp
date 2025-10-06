@@ -43,7 +43,10 @@ final class Parser {
     private static int findNextPrefixIndex(String args, int fromIndex) {
         int next = -1;
         String[] prefixes = {
-                Ui.AMOUNT_PREFIX, Ui.CATEGORY_PREFIX, Ui.DATE_PREFIX, Ui.DESCRIPTION_PREFIX
+            Ui.AMOUNT_PREFIX,
+            Ui.CATEGORY_PREFIX,
+            Ui.DATE_PREFIX,
+            Ui.DESCRIPTION_PREFIX
         };
         for (String p : prefixes) {
             int idx = args.indexOf(p, fromIndex);

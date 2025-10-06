@@ -1,7 +1,5 @@
 package seedu.fintrack;
 
-import seedu.fintrack.model.Expense;
-
 /**
  * Entry point of the FinTrack application.
  * <p>
