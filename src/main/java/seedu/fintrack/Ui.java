@@ -25,6 +25,7 @@ public class Ui {
 
     public static void printWelcome() {
         System.out.println("Welcome to FinTrack!");
+        System.out.println("Type 'help' for available commands.");
         System.out.println();
     }
 
