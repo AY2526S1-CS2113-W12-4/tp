@@ -12,20 +12,20 @@ import seedu.fintrack.model.Income;
  */
 public class Ui {
     // Commands
-    private static final String HELP_COMMAND = "help";
-    private static final String ADD_EXPENSE_COMMAND = "add-expense";
-    private static final String ADD_INCOME_COMMAND = "add-income";
-    private static final String DELETE_EXPENSE_COMMAND = "delete-expense";
-    private static final String DELETE_INCOME_COMMAND = "delete-income";
-    private static final String BALANCE_COMMAND = "balance";
-    private static final String LIST_COMMAND = "list";
-    private static final String EXIT_COMMAND = "bye";
+    public static final String HELP_COMMAND = "help";
+    public static final String ADD_EXPENSE_COMMAND = "add-expense";
+    public static final String ADD_INCOME_COMMAND = "add-income";
+    public static final String DELETE_EXPENSE_COMMAND = "delete-expense";
+    public static final String DELETE_INCOME_COMMAND = "delete-income";
+    public static final String BALANCE_COMMAND = "balance";
+    public static final String LIST_COMMAND = "list";
+    public static final String EXIT_COMMAND = "bye";
 
     // Parameter prefixes
-    private static final String AMOUNT_PREFIX = "a/";
-    private static final String CATEGORY_PREFIX = "c/";
-    private static final String DATE_PREFIX = "d/";
-    private static final String DESCRIPTION_PREFIX = "desc/"; // optional
+    public static final String AMOUNT_PREFIX = "a/";
+    public static final String CATEGORY_PREFIX = "c/";
+    public static final String DATE_PREFIX = "d/";
+    public static final String DESCRIPTION_PREFIX = "desc/"; // optional
 
     private static final Scanner SCANNER = new Scanner(System.in);
 
