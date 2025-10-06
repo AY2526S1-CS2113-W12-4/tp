@@ -37,7 +37,7 @@ public class Ui {
 
     /** Prints the exit message. */
     public static void printExit() {
-        System.out.println("Bye. Hope to see you again soon!");
+        System.out.print("Bye. Hope to see you again soon!");
     }
 
     static String getAddIncomeCommand() { return ADD_INCOME_COMMAND; }
