@@ -1,4 +1,7 @@
 package seedu.fintrack;
+
+import seedu.fintrack.model.Expense;
+
 /**
  * Entry point of the FinTrack application.
  * <p>
@@ -20,11 +23,21 @@ public class FinTrack {
 
         while (true) {
             String input = Ui.waitForInput();
-            if (input.equals(Ui.getExitCommand())) {
+            String firstWord = Parser.returnFirstWord(input);
+            if (firstWord.equals(Ui.EXIT_COMMAND)) {
                 break;
             }
-
-            if (input.startsWith(Ui.getAddIncomeCommand())) {
+            switch (firstWord) {
+            case Ui.ADD_EXPENSE_COMMAND:
+                try {
+                    var expense = Parser.parseAddExpense(input);
+                    fm.addExpense(expense);
+                    Ui.printExpenseAdded(expense);
+                } catch (IllegalArgumentException e) {
+                    Ui.printError(e.getMessage());
+                }
+                break;
+            case Ui.ADD_INCOME_COMMAND:
                 try {
                     var income = Parser.parseAddIncome(input);
                     fm.addIncome(income);
@@ -32,16 +45,34 @@ public class FinTrack {
                 } catch (IllegalArgumentException e) {
                     Ui.printError(e.getMessage());
                 }
-                continue;
-            }
-
-            if (input.equals(Ui.getBalanceCommand())) {
+                break;
+            case Ui.BALANCE_COMMAND:
                 double balance = fm.getBalance();
                 Ui.printBalance(balance, fm.getTotalIncome(), fm.getTotalExpense());
-                continue;
+                break;
+            case Ui.DELETE_EXPENSE_COMMAND:
+                try {
+                    Parser.parseDeleteExpense(input); // Checking for errors
+                    // Need to delete expense here
+                } catch (IllegalArgumentException e) {
+                    Ui.printError(e.getMessage());
+                }
+                break;
+            case Ui.DELETE_INCOME_COMMAND:
+                try {
+                    Parser.parseDeleteIncome(input); // Checking for errors
+                    // Need to delete income here
+                } catch (IllegalArgumentException e) {
+                    Ui.printError(e.getMessage());
+                }
+                break;
+            case Ui.LIST_COMMAND:
+                break;
+            case Ui.HELP_COMMAND:
+                break;
+            default:
+                Ui.printError("Invalid command. Type 'help' for a list of available commands.");
             }
-
-            Ui.printError("Unknown command.");
         }
 
         Ui.printExit();
