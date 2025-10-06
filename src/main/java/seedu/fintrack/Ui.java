@@ -3,7 +3,7 @@ package seedu.fintrack;
 import java.util.Scanner;
 
 public class Ui {
-    // Commands
+    // Commands (class/static variables)
     private static final String HELP_COMMAND = "help";
     private static final String ADD_EXPENSE_COMMAND = "add-expense";
     private static final String ADD_INCOME_COMMAND = "add-income";
@@ -17,13 +17,13 @@ public class Ui {
     private static final String CATEGORY_PREFIX = "c/";
     private static final String DATE_PREFIX = "d/";
 
+    private static final Scanner SCANNER = new Scanner(System.in);
+
     public static void printWelcome() {
         System.out.println("Welcome to FinTrack!");
         System.out.println("Type '" + HELP_COMMAND + "' for available commands.");
         System.out.println();
     }
-
-    private static final Scanner SCANNER = new Scanner(System.in);
 
     /**
      * Waits for a single line of user input and returns it.
@@ -33,7 +33,7 @@ public class Ui {
         System.out.print("> ");
         return SCANNER.nextLine();
     }
-    
+
     /**
      * Prints the exit message.
      */
