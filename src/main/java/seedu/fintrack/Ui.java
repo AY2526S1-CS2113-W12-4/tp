@@ -1,6 +1,8 @@
 package seedu.fintrack;
 
 import java.util.Scanner;
+
+import seedu.fintrack.model.Expense;
 import seedu.fintrack.model.Income;
 
 /**
@@ -57,6 +59,16 @@ public class Ui {
         System.out.println("  Date: " + income.getDate());
         if (income.getDescription() != null && !income.getDescription().isBlank()) {
             System.out.println("  Description: " + income.getDescription());
+        }
+    }
+
+    static void printExpenseAdded(Expense expense) {
+        System.out.println("Income added:");
+        System.out.println("  Amount: " + String.format("%.2f", expense.getAmount()));
+        System.out.println("  Category: " + expense.getCategory());
+        System.out.println("  Date: " + expense.getDate());
+        if (expense.getDescription() != null && !expense.getDescription().isBlank()) {
+            System.out.println("  Description: " + expense.getDescription());
         }
     }
 

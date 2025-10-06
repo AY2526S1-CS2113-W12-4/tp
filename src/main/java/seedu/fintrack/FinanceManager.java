@@ -16,6 +16,13 @@ public class FinanceManager {
         incomes.add(income);
     }
 
+    public void addExpense(Expense expense) {
+        if (expense == null) {
+            throw new IllegalArgumentException("Expense cannot be null");
+        }
+        expenses.add(expense);
+    }
+
     public double getTotalIncome() {
         return incomes.stream().mapToDouble(Income::getAmount).sum();
     }
