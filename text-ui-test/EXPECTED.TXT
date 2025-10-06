@@ -2,4 +2,42 @@ Welcome to FinTrack!
 Type 'help' for available commands.
 
 > Error: Invalid command. Type 'help' for a list of available commands.
-> Bye. Hope to see you again soon!
+> Income added:
+  Amount: 5000.00
+  Category: Salary
+  Date: 2024-01-01
+  Description: Monthly salary
+> Income added:
+  Amount: 200.00
+  Category: Freelance
+  Date: 2024-01-15
+> Expense added:
+  Amount: 1200.00
+  Category: Rent
+  Date: 2024-01-01
+  Description: Monthly rent payment
+> Expense added:
+  Amount: 50.00
+  Category: Food
+  Date: 2024-01-02
+> Expense added:
+  Amount: 30.00
+  Category: Transport
+  Date: 2024-01-03
+  Description: Bus fare
+> Overall Balance: 3920.00
+  Total Income:  5200.00
+  Total Expense: 1280.00
+> > Expense deleted (index 2):
+  Amount: 50.00
+  Category: Food
+  Date: 2024-01-02
+> Income deleted (index 1):
+  Amount: 5000.00
+  Category: Salary
+  Date: 2024-01-01
+  Description: Monthly salary
+> Overall Balance: -1030.00
+  Total Income:  200.00
+  Total Expense: 1230.00
+> > Bye. Hope to see you again soon!
