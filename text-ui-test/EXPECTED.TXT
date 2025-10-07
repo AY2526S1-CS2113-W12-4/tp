@@ -1,6 +1,7 @@
 Welcome to FinTrack!
 Type 'help' for available commands.
 
+> Error: Invalid command. Type 'help' for a list of available commands.
 > Income added:
   Amount: 5000.00
   Category: Salary
@@ -68,9 +69,8 @@ Description: Monthly rent payment
    add-income a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]
    Example: add-income a/2000 c/Salary d/2025-10-01 desc/Monthly pay
 
-3. View all expenses (newest first):
+3. View all expenses (from latest to earliest date):
    list
-   Displays all recorded expenses in reverse chronological order.
 
 4. Delete an expense:
    delete-expense <index>
