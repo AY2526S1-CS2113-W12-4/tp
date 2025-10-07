@@ -125,4 +125,51 @@ public class Ui {
         printHorizontalLine(50);
     }
 
+    /**
+     * Prints a concise summary of available commands and their usage.
+     */
+    static void printHelp() {
+        System.out.println("=== FinTrack Command Summary ===");
+        printHorizontalLine(80);
+
+        System.out.println("1. Add an expense:");
+        System.out.println("   " + ADD_EXPENSE_COMMAND + " a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]");
+        System.out.println("   Example: add-expense a/12.50 c/Food d/2025-10-08 desc/Lunch");
+
+        System.out.println();
+        System.out.println("2. Add an income:");
+        System.out.println("   " + ADD_INCOME_COMMAND + " a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]");
+        System.out.println("   Example: add-income a/2000 c/Salary d/2025-10-01 desc/Monthly pay");
+
+        System.out.println();
+        System.out.println("3. View all expenses (from latest to earliest date):");
+        System.out.println("   " + LIST_COMMAND);
+
+        System.out.println();
+        System.out.println("4. Delete an expense:");
+        System.out.println("   " + DELETE_EXPENSE_COMMAND + " <index>");
+        System.out.println("   Deletes the expense shown at that index in 'list'.");
+        System.out.println("   Example: delete-expense 1");
+
+        System.out.println();
+        System.out.println("5. Delete an income:");
+        System.out.println("   " + DELETE_INCOME_COMMAND + " <index>");
+        System.out.println("   Example: delete-income 1");
+
+        System.out.println();
+        System.out.println("6. View balance summary:");
+        System.out.println("   " + BALANCE_COMMAND);
+        System.out.println("   Shows total income, total expenses, and current balance.");
+
+        System.out.println();
+        System.out.println("7. Show this help menu:");
+        System.out.println("   " + HELP_COMMAND);
+
+        System.out.println();
+        System.out.println("8. Exit the program:");
+        System.out.println("   " + EXIT_COMMAND);
+
+        printHorizontalLine(80);
+    }
+
 }
