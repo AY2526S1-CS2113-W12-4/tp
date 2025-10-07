@@ -67,6 +67,7 @@ public class FinTrack {
                 }
                 break;
             case Ui.LIST_COMMAND:
+                Ui.printListOfExpenses(fm.getExpensesView());
                 break;
             case Ui.HELP_COMMAND:
                 break;
