@@ -11,15 +11,17 @@ final class Parser {
 
     public static String returnFirstWord(String input) {
         int firstSpaceIndex = getFirstSpaceIndex(input);
-        if (firstSpaceIndex != 0) {
-            return input.substring(0, firstSpaceIndex - 1);
+        if (firstSpaceIndex == 0) {
+            return returnFirstWord(input.substring(firstSpaceIndex + 1));
+        } else if (firstSpaceIndex != -1) {
+            return input.substring(0, firstSpaceIndex);
         } else {
             return input;
         }
     }
 
     public static int getFirstSpaceIndex(String input) {
-        return input.indexOf(' ') + 1;
+        return input.indexOf(' ');
     }
 
     private static String getValue(String args, String prefix) {
