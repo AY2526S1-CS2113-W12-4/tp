@@ -281,7 +281,7 @@ public class ParserTest {
      */
 
     @Test
-    public void parseDeleteExpense_valid_positiveId_ok() {
+    public void parseDeleteExpense_validPositiveId_ok() {
         try {
             Parser.parseDeleteExpense(Ui.DELETE_EXPENSE_COMMAND + " 1");
             Parser.parseDeleteExpense(Ui.DELETE_EXPENSE_COMMAND + " 42");
