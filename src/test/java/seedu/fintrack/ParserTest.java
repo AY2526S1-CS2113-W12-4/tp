@@ -88,7 +88,7 @@ public class ParserTest {
     }
 
     @Test
-    public void parseAddExpense_valid_withoutDescription_descriptionNull() {
+    public void parseAddExpense_validWithoutDescription_descriptionNull() {
         String input = addExpense("0", "Transport", "2025-01-02", null);
         Expense e = Parser.parseAddExpense(input);
 
@@ -202,7 +202,7 @@ public class ParserTest {
     }
 
     @Test
-    public void parseAddIncome_valid_withoutDescription_descriptionNull() {
+    public void parseAddIncome_validWithoutDescription_descriptionNull() {
         String input = addIncome("100", "Gift", "2025-10-05", null);
         Income inc = Parser.parseAddIncome(input);
 
@@ -337,7 +337,7 @@ public class ParserTest {
      */
 
     @Test
-    public void parseDeleteIncome_valid_positiveId_ok() {
+    public void parseDeleteIncome_validPositiveId_ok() {
         try {
             Parser.parseDeleteIncome(Ui.DELETE_INCOME_COMMAND + " 3");
         } catch (Exception e) {
