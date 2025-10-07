@@ -113,7 +113,7 @@ public class UiTest {
     }
 
     @Test
-    void printIncomeAdded_withoutDescription_omitsDescriptionLine_whenNull() {
+    void printIncomeAdded_withoutDescription_whenNull() {
         Income inc = new Income(50.0, "Gift", LocalDate.parse("2025-10-07"), null);
         Ui.printIncomeAdded(inc);
 
@@ -129,7 +129,7 @@ public class UiTest {
     }
 
     @Test
-    void printIncomeAdded_withoutDescription_omitsDescriptionLine_whenBlankProvidedToCtor() {
+    void printIncomeAdded_blankDescription_omitted() {
         // Income normalises blank -> null
         Income inc = new Income(75.5, "Other", LocalDate.parse("2025-10-07"), "   ");
         Ui.printIncomeAdded(inc);
@@ -153,7 +153,7 @@ public class UiTest {
     }
 
     @Test
-    void printExpenseAdded_withoutDescription_omitsDescriptionLine_whenNull() {
+    void printExpenseAdded_withoutDescription_whenNull() {
         Expense ex = new Expense(12.3, "Transport", LocalDate.parse("2025-10-03"), null);
         Ui.printExpenseAdded(ex);
 
@@ -166,7 +166,7 @@ public class UiTest {
     }
 
     @Test
-    void printExpenseAdded_withoutDescription_omitsDescriptionLine_whenBlank() {
+    void printExpenseAdded_blankDescription_omitted() {
         Expense ex = new Expense(12.3, "Transport", LocalDate.parse("2025-10-03"), "   ");
         Ui.printExpenseAdded(ex);
         assertFalse(out().contains("Description:"));
