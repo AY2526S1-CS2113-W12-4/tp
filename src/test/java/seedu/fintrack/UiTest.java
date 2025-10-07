@@ -203,4 +203,39 @@ public class UiTest {
         assertEquals(expected, out());
         assertFalse(out().contains("Description:"));
     }
+
+    @Test
+    void printListOfExpenses_formatsOutputCorrectly() {
+        var e1 = new Expense(10.0, "Food", LocalDate.parse("2025-10-05"), "Lunch");
+        var e2 = new Expense(20.0, "Transport", LocalDate.parse("2025-10-08"), "Grab");
+
+        Ui.printListOfExpenses(java.util.List.of(e1, e2));
+
+        String output = out();
+        assertTrue(output.contains("Expenses (Newest first):"));
+        assertTrue(output.contains("Amount: $10.00"));
+        assertTrue(output.contains("Category: Food"));
+        assertTrue(output.contains("Date: 2025-10-05"));
+        assertTrue(output.contains("Description: Lunch"));
+        assertTrue(output.contains("#1")); // numbered output
+    }
+
+    @Test
+    void printListOfExpenses_emptyList_showsNoExpensesMessage() {
+        Ui.printListOfExpenses(java.util.List.of());
+        assertTrue(out().contains("No expenses recorded."));
+    }
+
+    @Test
+    void printHelp_containsAllMainCommands() {
+        Ui.printHelp();
+        String s = out();
+        assertTrue(s.contains("FinTrack Command Summary"));
+        assertTrue(s.contains(Ui.ADD_EXPENSE_COMMAND));
+        assertTrue(s.contains(Ui.ADD_INCOME_COMMAND));
+        assertTrue(s.contains(Ui.DELETE_EXPENSE_COMMAND));
+        assertTrue(s.contains(Ui.LIST_COMMAND));
+        assertTrue(s.contains(Ui.BALANCE_COMMAND));
+        assertTrue(s.contains(Ui.EXIT_COMMAND));
+    }
 }
