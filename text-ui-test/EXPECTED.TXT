@@ -1,7 +1,6 @@
 Welcome to FinTrack!
 Type 'help' for available commands.
 
-> Error: Invalid command. Type 'help' for a list of available commands.
 > Income added:
   Amount: 5000.00
   Category: Salary
@@ -28,7 +27,26 @@ Type 'help' for available commands.
 > Overall Balance: 3920.00
   Total Income:  5200.00
   Total Expense: 1280.00
-> > Expense deleted (index 2):
+> Expenses (Newest first):
+──────────────────────────────────────────────────
+#1
+Date: 2024-01-03
+Amount: $30.00
+Category: Transport
+Description: Bus fare
+──────────────────────────────────────────────────
+#2
+Date: 2024-01-02
+Amount: $50.00
+Category: Food
+──────────────────────────────────────────────────
+#3
+Date: 2024-01-01
+Amount: $1200.00
+Category: Rent
+Description: Monthly rent payment
+──────────────────────────────────────────────────
+> Expense deleted (index 2):
   Amount: 50.00
   Category: Food
   Date: 2024-01-02
@@ -40,4 +58,37 @@ Type 'help' for available commands.
 > Overall Balance: -1030.00
   Total Income:  200.00
   Total Expense: 1230.00
-> > Bye. Hope to see you again soon!
+> === FinTrack Command Summary ===
+────────────────────────────────────────────────────────────────────────────────
+1. Add an expense:
+   add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]
+   Example: add-expense a/12.50 c/Food d/2025-10-08 desc/Lunch
+
+2. Add an income:
+   add-income a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]
+   Example: add-income a/2000 c/Salary d/2025-10-01 desc/Monthly pay
+
+3. View all expenses (newest first):
+   list
+   Displays all recorded expenses in reverse chronological order.
+
+4. Delete an expense:
+   delete-expense <index>
+   Deletes the expense shown at that index in 'list'.
+   Example: delete-expense 1
+
+5. Delete an income:
+   delete-income <index>
+   Example: delete-income 1
+
+6. View balance summary:
+   balance
+   Shows total income, total expenses, and current balance.
+
+7. Show this help menu:
+   help
+
+8. Exit the program:
+   bye
+────────────────────────────────────────────────────────────────────────────────
+> Bye. Hope to see you again soon!

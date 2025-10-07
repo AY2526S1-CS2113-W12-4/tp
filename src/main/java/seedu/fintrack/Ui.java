@@ -35,13 +35,17 @@ public class Ui {
         System.out.println();
     }
 
-    /** Waits for a single line of user input and returns it. */
+    /**
+     * Waits for a single line of user input and returns it.
+     */
     public static String waitForInput() {
         System.out.print("> ");
         return SCANNER.nextLine().trim();
     }
 
-    /** Prints the exit message. */
+    /**
+     * Prints the exit message.
+     */
     public static void printExit() {
         System.out.println("Bye. Hope to see you again soon!");
     }
