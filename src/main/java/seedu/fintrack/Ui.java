@@ -43,7 +43,7 @@ public class Ui {
 
     /** Prints the exit message. */
     public static void printExit() {
-        System.out.print("Bye. Hope to see you again soon!");
+        System.out.println("Bye. Hope to see you again soon!");
     }
 
     static void printHorizontalLine(int length) {

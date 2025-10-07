@@ -54,10 +54,11 @@ public class UiTest {
     }
 
     @Test
-    void printExit_noTrailingNewline() {
+    void printExit_hasTrailingNewline() {
         Ui.printExit();
-        assertEquals("Bye. Hope to see you again soon!", out());
+        assertEquals("Bye. Hope to see you again soon!" + System.lineSeparator(), out());
     }
+
 
     @Test
     void printBalance_formatsToTwoDecimalPlacesAndLabels() {
