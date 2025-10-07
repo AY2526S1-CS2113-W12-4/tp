@@ -29,24 +29,24 @@ Type 'help' for available commands.
   Total Income:  5200.00
   Total Expense: 1280.00
 > Expenses (Newest first):
-──────────────────────────────────────────────────
+--------------------------------------------------
 #1
 Date: 2024-01-03
 Amount: $30.00
 Category: Transport
 Description: Bus fare
-──────────────────────────────────────────────────
+--------------------------------------------------
 #2
 Date: 2024-01-02
 Amount: $50.00
 Category: Food
-──────────────────────────────────────────────────
+--------------------------------------------------
 #3
 Date: 2024-01-01
 Amount: $1200.00
 Category: Rent
 Description: Monthly rent payment
-──────────────────────────────────────────────────
+--------------------------------------------------
 > Expense deleted (index 2):
   Amount: 50.00
   Category: Food
@@ -60,7 +60,7 @@ Description: Monthly rent payment
   Total Income:  200.00
   Total Expense: 1230.00
 > === FinTrack Command Summary ===
-────────────────────────────────────────────────────────────────────────────────
+--------------------------------------------------------------------------------
 1. Add an expense:
    add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]
    Example: add-expense a/12.50 c/Food d/2025-10-08 desc/Lunch
@@ -90,5 +90,5 @@ Description: Monthly rent payment
 
 8. Exit the program:
    bye
-────────────────────────────────────────────────────────────────────────────────
+--------------------------------------------------------------------------------
 > Bye. Hope to see you again soon!
