@@ -67,8 +67,10 @@ public class FinTrack {
                 }
                 break;
             case Ui.LIST_COMMAND:
+                Ui.printListOfExpenses(fm.getExpensesView());
                 break;
             case Ui.HELP_COMMAND:
+                Ui.printHelp();
                 break;
             default:
                 Ui.printError("Invalid command. Type 'help' for a list of available commands.");
