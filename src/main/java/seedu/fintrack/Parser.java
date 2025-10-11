@@ -63,7 +63,7 @@ final class Parser {
      * @param args The argument string to parse. Must not be null.
      * @param prefix The prefix to search for (e.g., "a/"). Must not be null.
      * @return The trimmed value associated with the prefix, or {@code null} if the prefix
-     * is not found or has no value.
+     *     is not found or has no value.
      */
     private static String getValue(String args, String prefix) {
         assert args != null : "Arguments cannot be null.";
@@ -136,7 +136,7 @@ final class Parser {
      * @param input The full user command string. Must not be null.
      * @return A new {@code Expense} object created from the parsed data.
      * @throws IllegalArgumentException If any required parameters are missing or if the
-     * amount or date are in an invalid format.
+     *     amount or date are in an invalid format.
      */
     public static Expense parseAddExpense(String input) throws IllegalArgumentException {
         assert input != null : "Input for parsing add-expense cannot be null.";
@@ -191,7 +191,7 @@ final class Parser {
      * @param input The full user command string. Must not be null.
      * @return A new {@code Income} object created from the parsed data.
      * @throws IllegalArgumentException If any required parameters are missing or if the
-     * amount or date are in an invalid format.
+     *     amount or date are in an invalid format.
      */
     public static Income parseAddIncome(String input) throws IllegalArgumentException {
         assert input != null : "Input for parsing add-income cannot be null.";
@@ -245,7 +245,7 @@ final class Parser {
      * @param input The full command string from the user. Must not be null.
      * @return The 1-based index of the expense to delete.
      * @throws IllegalArgumentException If the format is invalid, the index is missing,
-     * not a number, or not a positive integer.
+     *     not a number, or not a positive integer.
      */
     public static int parseDeleteExpense(String input) throws IllegalArgumentException {
         assert input != null : "Input for parsing delete-expense cannot be null.";
@@ -278,7 +278,7 @@ final class Parser {
      * @param input The full command string from the user. Must not be null.
      * @return The 1-based index of the income to delete.
      * @throws IllegalArgumentException If the format is invalid, the index is missing,
-     * not a number, or not a positive integer.
+     *     not a number, or not a positive integer.
      */
     public static int parseDeleteIncome(String input) throws IllegalArgumentException {
         assert input != null : "Input for parsing delete-income cannot be null.";
