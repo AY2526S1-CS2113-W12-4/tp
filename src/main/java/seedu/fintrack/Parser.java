@@ -8,6 +8,10 @@ import java.util.logging.Logger;
 import seedu.fintrack.model.Expense;
 import seedu.fintrack.model.Income;
 
+/**
+ * A utility class for parsing user input commands into structured data.
+ * It handles the parsing of commands such as adding or deleting incomes and expenses.
+ */
 final class Parser {
     private static final Logger LOGGER = Logger.getLogger(Parser.class.getName());
 
@@ -18,6 +22,13 @@ final class Parser {
 
     private Parser() {}
 
+    /**
+     * Extracts the first word from the given input string, which is typically the command word.
+     * It handles leading spaces by trimming the input first.
+     *
+     * @param input The full user input string. Must not be null.
+     * @return The first word of the input string.
+     */
     public static String returnFirstWord(String input) {
         assert input != null : "Input cannot be null.";
 
@@ -32,12 +43,28 @@ final class Parser {
         }
     }
 
+    /**
+     * Finds the index of the first space character in a string.
+     *
+     * @param input The string to search within. Must not be null.
+     * @return The index of the first space, or -1 if no space is found.
+     */
     public static int getFirstSpaceIndex(String input) {
         assert input != null : "Input cannot be null.";
 
         return input.indexOf(' ');
     }
 
+    /**
+     * Extracts a value from an argument string based on a given prefix.
+     * The value is the substring that starts immediately after the prefix and ends
+     * just before the next known prefix or at the end of the string.
+     *
+     * @param args The argument string to parse. Must not be null.
+     * @param prefix The prefix to search for (e.g., "a/"). Must not be null.
+     * @return The trimmed value associated with the prefix, or {@code null} if the prefix
+     *     is not found or has no value.
+     */
     private static String getValue(String args, String prefix) {
         assert args != null : "Arguments cannot be null.";
         assert prefix != null : "Prefix cannot be null.";
@@ -69,6 +96,14 @@ final class Parser {
         return val;
     }
 
+    /**
+     * Extracts an optional value from an argument string based on a given prefix.
+     * If the prefix or its value is not found, returns an empty string instead of null.
+     *
+     * @param args The argument string to parse.
+     * @param prefix The prefix to search for.
+     * @return The trimmed value associated with the prefix, or an empty string if not found.
+     */
     private static String getOptionalValue(String args, String prefix) {
         String v = getValue(args, prefix);
         return v == null ? "" : v;
@@ -94,8 +129,14 @@ final class Parser {
     }
 
     /**
+     * Parses the user input for adding an expense.
      * Expected format:
      * {@code add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<text>]}
+     *
+     * @param input The full user command string. Must not be null.
+     * @return A new {@code Expense} object created from the parsed data.
+     * @throws IllegalArgumentException If any required parameters are missing or if the
+     *     amount or date are in an invalid format.
      */
     public static Expense parseAddExpense(String input) throws IllegalArgumentException {
         assert input != null : "Input for parsing add-expense cannot be null.";
@@ -143,8 +184,14 @@ final class Parser {
     }
 
     /**
+     * Parses the user input for adding an income.
      * Expected format:
      * {@code add-income a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<text>]}
+     *
+     * @param input The full user command string. Must not be null.
+     * @return A new {@code Income} object created from the parsed data.
+     * @throws IllegalArgumentException If any required parameters are missing or if the
+     *     amount or date are in an invalid format.
      */
     public static Income parseAddIncome(String input) throws IllegalArgumentException {
         assert input != null : "Input for parsing add-income cannot be null.";
@@ -192,11 +239,13 @@ final class Parser {
     }
 
     /**
-     * Parses delete-expense command and returns the index.
+     * Parses the 'delete-expense' command and returns the index of the expense to delete.
      * Expected format: {@code delete-expense <index>}
-     * @param input The full command string
-     * @return The 1-based index of the expense to delete
-     * @throws IllegalArgumentException if the format is invalid or index is not positive
+     *
+     * @param input The full command string from the user. Must not be null.
+     * @return The 1-based index of the expense to delete.
+     * @throws IllegalArgumentException If the format is invalid, the index is missing,
+     *     not a number, or not a positive integer.
      */
     public static int parseDeleteExpense(String input) throws IllegalArgumentException {
         assert input != null : "Input for parsing delete-expense cannot be null.";
@@ -223,11 +272,13 @@ final class Parser {
     }
 
     /**
-     * Parses delete-income command and returns the index.
+     * Parses the 'delete-income' command and returns the index of the income to delete.
      * Expected format: {@code delete-income <index>}
-     * @param input The full command string
-     * @return The 1-based index of the income to delete
-     * @throws IllegalArgumentException if the format is invalid or index is not positive
+     *
+     * @param input The full command string from the user. Must not be null.
+     * @return The 1-based index of the income to delete.
+     * @throws IllegalArgumentException If the format is invalid, the index is missing,
+     *     not a number, or not a positive integer.
      */
     public static int parseDeleteIncome(String input) throws IllegalArgumentException {
         assert input != null : "Input for parsing delete-income cannot be null.";
