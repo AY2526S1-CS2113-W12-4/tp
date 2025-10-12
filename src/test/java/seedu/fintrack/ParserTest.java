@@ -137,13 +137,13 @@ public class ParserTest {
      */
     @Test
     public void parseAddExpense_validWithoutDescription_descriptionNull() {
-        String input = addExpense("0", "Transport", "2025-01-02", null);
+        String input = addExpense("10", "Transport", "2025-01-02", null);
         Expense e = Parser.parseAddExpense(input);
 
-        assertEquals(0.0, e.getAmount(), 1e-9);
+        assertEquals(10.0, e.getAmount(), 1e-9);
         assertEquals("Transport", e.getCategory());
         assertEquals(LocalDate.of(2025, 1, 2), e.getDate());
-        assertEquals("", e.getDescription());
+        assertEquals(null, e.getDescription());
     }
 
     /**
