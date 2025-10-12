@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  * </ul>
  */
 public class FinTrack {
-    /**
+    /*
      * Initialises java.util.logging from a classpath resource ('logging.properties') when no
      * logging configuration is provided via system properties. Falls back to JDK defaults if the
      * resource is absent or cannot be read.
