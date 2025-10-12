@@ -44,7 +44,9 @@ public class ExpenseListTest {
 
     private static class TestLogHandler extends Handler {
         private final List<LogRecord> records = new ArrayList<>();
-        @Override public void publish(LogRecord record) { records.add(record); }
+        @Override public void publish(LogRecord record) {
+            records.add(record);
+        }
         @Override public void flush() {}
         @Override public void close() {}
 
@@ -173,21 +175,21 @@ public class ExpenseListTest {
     /* ===================== List-level exceptions ===================== */
 
     @Test
-    void add_nullExpense_throwsNPE_andLogsWarning() {
+    void add_nullExpense_throwsNPEandLogsWarning() {
         ExpenseList list = new ExpenseList();
         assertThrows(NullPointerException.class, () -> list.add(null));
         assertTrue(listHandler.any(Level.WARNING, "Null expense"));
     }
 
     @Test
-    void addAll_nullCollection_throwsNPE_andLogsWarning() {
+    void addAll_nullCollection_throwsNPEandLogsWarning() {
         ExpenseList list = new ExpenseList();
         assertThrows(NullPointerException.class, () -> list.addAll(null));
         assertTrue(listHandler.any(Level.WARNING, "null collection"));
     }
 
     @Test
-    void addAll_collectionContainingNull_throwsNPE_andLogsWarning() {
+    void addAll_collectionContainingNull_throwsNPEandLogsWarning() {
         ExpenseList list = new ExpenseList();
         Expense good = new Expense(10.0,
                 "A",
