@@ -2,7 +2,8 @@ package seedu.fintrack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.*;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 import seedu.fintrack.model.ExpenseList;
 import seedu.fintrack.model.Income;
