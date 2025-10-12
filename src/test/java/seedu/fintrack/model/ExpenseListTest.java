@@ -1,13 +1,23 @@
 package seedu.fintrack.model;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.time.LocalDate;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.*;
 
-import org.junit.jupiter.api.*;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 /**
  * Tests the responsibilities of ExpenseList (ordering, view, list-level validation, logging).
@@ -220,7 +230,7 @@ public class ExpenseListTest {
     @Test
     void assertionsHook_runsWhenEaEnabled() throws Exception {
         // Only run if JVM was launched with -ea; otherwise this is a no-op.
-        Assumptions.assumeTrue(ExpenseList.class.desiredAssertionStatus());
+        assumeTrue(ExpenseList.class.desiredAssertionStatus());
 
         ExpenseList list = new ExpenseList();
         list.add(new Expense(10.0,
