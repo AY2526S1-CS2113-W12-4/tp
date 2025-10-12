@@ -1,5 +1,11 @@
 package seedu.fintrack;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
 /**
  * Entry point of the FinTrack application.
  * <p>
@@ -12,6 +18,27 @@ package seedu.fintrack;
  * </ul>
  */
 public class FinTrack {
+    /*
+     * Initialises java.util.logging from a classpath resource ('logging.properties') when no
+     * logging configuration is provided via system properties. Falls back to JDK defaults if the
+     * resource is absent or cannot be read.
+     */
+    static {
+        if (System.getProperty("java.util.logging.config.file") == null &&
+                System.getProperty("java.util.logging.config.class") == null) {
+            try (InputStream is =
+                         FinTrack.class.getClassLoader().getResourceAsStream("logging.properties")) {
+                if (is != null) {
+                    LogManager.getLogManager().readConfiguration(is);
+                }
+            } catch (IOException e) {
+                Logger.getLogger(FinTrack.class.getName())
+                        .log(Level.WARNING, "Could not load logging.properties; using defaults.", e);
+            }
+        }
+    }
+
+
     /**
      * Main entry-point for the FinTrack application.
      */
