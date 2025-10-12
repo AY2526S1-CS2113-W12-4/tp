@@ -10,27 +10,27 @@ import seedu.fintrack.model.Income;
 import seedu.fintrack.model.Expense;
 
 public class FinanceManager {
-    private final static Logger logger = Logger.getLogger("FinanceManagerLogger");
+    private static final Logger LOGGER = Logger.getLogger(FinanceManager.class.getName());
     private final List<Income> incomes = new ArrayList<>();
     private final ExpenseList expenses = new ExpenseList(); // always newest->oldest
 
     public void addIncome(Income income) {
         if (income == null) {
-            logger.log(Level.WARNING, "addIncome called with null");
+            LOGGER.log(Level.WARNING, "addIncome called with null");
             throw new IllegalArgumentException("Income cannot be null");
         }
         incomes.add(income);
-        logger.log(Level.INFO, "Income added.");
+        LOGGER.log(Level.INFO, "Income added.");
         assert incomes.contains(income) : "Income should have been added.";
     }
 
     public void addExpense(Expense expense) {
         if (expense == null) {
-            logger.log(Level.WARNING, "addExpense called with null");
+            LOGGER.log(Level.WARNING, "addExpense called with null");
             throw new IllegalArgumentException("Expense cannot be null");
         }
         expenses.add(expense);
-        logger.log(Level.INFO, "Expense added");
+        LOGGER.log(Level.INFO, "Expense added");
         assert expenses.contains(expense);
     }
 
@@ -42,7 +42,7 @@ public class FinanceManager {
             assert !Double.isNaN(incomeAmount) : "Income amount should be a number";
             sum+=incomeAmount;
         }
-        logger.log(Level.INFO, "Total income calculated: " + sum);
+        LOGGER.log(Level.INFO, "Total income calculated: " + sum);
         return sum;
     }
 
@@ -54,7 +54,7 @@ public class FinanceManager {
             assert !Double.isNaN(expenseAmount) : "Expense should be a number.";
             sum+=expenseAmount;
         }
-        logger.log(Level.INFO, "Total Expense calculated: " + sum);
+        LOGGER.log(Level.INFO, "Total Expense calculated: " + sum);
         return sum;
     }
 
@@ -87,7 +87,7 @@ public class FinanceManager {
     public Expense deleteExpense(int index) {
         int oldExpensesSize = expenses.size();
         if (index < 1 || index > expenses.size()) {
-            logger.log(Level.WARNING, "deleteExpense called with out of range index");
+            LOGGER.log(Level.WARNING, "deleteExpense called with out of range index");
             throw new IndexOutOfBoundsException("Expense index out of range. Valid range: 1 to " + expenses.size());
         }
 
@@ -109,7 +109,7 @@ public class FinanceManager {
     public Income deleteIncome(int index) {
         int oldIncomeSize = incomes.size();
         if (index < 1 || index > incomes.size()) {
-            logger.log(Level.WARNING, "deleteIncome called with out of range index.");
+            LOGGER.log(Level.WARNING, "deleteIncome called with out of range index.");
             throw new IndexOutOfBoundsException("Income index out of range. Valid range: 1 to " + incomes.size());
         }
 
