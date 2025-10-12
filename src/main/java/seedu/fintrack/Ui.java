@@ -47,8 +47,20 @@ public class Ui {
         System.out.println();
     }
 
+
     /**
-     * Waits for a single line of user input and returns it.
+     * Reads a single line of user input from {@code System.in}.
+     *
+     * <p>The returned line is {@linkplain String#trim() trimmed}. If the input
+     * stream is unavailable (e.g., closed), this method logs a {@code SEVERE}
+     * message and returns the {@link #EXIT_COMMAND} sentinel so callers can
+     * shut down cleanly.</p>
+     *
+     * @return the trimmed line entered by the user; never {@code null}. If the
+     *         input stream is unavailable, returns {@link #EXIT_COMMAND}.
+     * @throws RuntimeException if an unexpected runtime error occurs while reading.
+     * @implNote {@link NoSuchElementException} and {@link IllegalStateException}
+     *           are handled internally to produce {@link #EXIT_COMMAND}.
      */
     public static String waitForInput() {
         System.out.print("> ");
@@ -66,13 +78,21 @@ public class Ui {
     }
 
     /**
-     * Prints the exit message.
+     * Prints the exit message and logs that the application is exiting.
+     *
+     * @apiNote This method writes to standard output and logs via {@link Logger}.
      */
     public static void printExit() {
         LOGGER.info("Exiting application by user request.");
         System.out.println("Bye. Hope to see you again soon!");
     }
 
+    /**
+     * Prints a horizontal divider line composed of {@code '-'} characters.
+     *
+     * @param length number of dashes to print; must be non-negative.
+     * @throws IllegalArgumentException if {@code length} is negative.
+     */
     static void printHorizontalLine(int length) {
         if (length < 0) {
             LOGGER.warning("Negative line length requested: " + length);
@@ -86,10 +106,12 @@ public class Ui {
     }
 
     /**
-     * Prints a confirmation message for an added income entry.
-     * <p>
-     * Performs basic defensive checks (non-null fields and finite amount) and logs at FINE level.
-     * </p>
+     * Prints a confirmation block for a newly added {@link Income}.
+     *
+     * @param income the persisted income to summarize; must not be {@code null}.
+     * @throws NullPointerException if {@code income}, its category, or date is {@code null}.
+     * @throws AssertionError if the amount is not finite when assertions are enabled.
+     * @implNote Logs at {@code FINE} level after printing.
      */
     static void printIncomeAdded(Income income) {
         Objects.requireNonNull(income, "income cannot be null");
@@ -108,10 +130,12 @@ public class Ui {
     }
 
     /**
-     * Prints a confirmation message for an added expense entry.
-     * <p>
-     * Performs basic defensive checks (non-null fields and finite amount) and logs at FINE level.
-     * </p>
+     * Prints a confirmation block for a newly added {@link Expense}.
+     *
+     * @param expense the persisted expense to summarize; must not be {@code null}.
+     * @throws NullPointerException if {@code expense}, its category, or date is {@code null}.
+     * @throws AssertionError if the amount is not finite when assertions are enabled.
+     * @implNote Logs at {@code FINE} level after printing.
      */
     static void printExpenseAdded(Expense expense) {
         Objects.requireNonNull(expense, "expense cannot be null");
@@ -129,6 +153,15 @@ public class Ui {
         LOGGER.fine("Printed expense added confirmation.");
     }
 
+    /**
+     * Prints a summary of totals and overall balance.
+     *
+     * @param balance the computed net balance (income − expense); must be finite.
+     * @param totalIncome sum of all incomes; must be finite.
+     * @param totalExpense sum of all expenses; must be finite.
+     * @throws AssertionError if any parameter is non-finite when assertions are enabled.
+     * @implNote Logs at {@code FINE} level after printing.
+     */
     static void printBalance(double balance, double totalIncome, double totalExpense) {
         assert Double.isFinite(balance) : "balance must be finite";
         assert Double.isFinite(totalIncome) : "totalIncome must be finite";
@@ -142,9 +175,12 @@ public class Ui {
 
     /**
      * Prints a user-visible error line and logs a structured warning.
-     * <p>
-     * This keeps the CLI output stable while still emitting a machine-readable log entry.
-     * </p>
+     *
+     * <p>User sees a single, stable line beginning with {@code "Error: "}.
+     * A parallel {@code WARNING}-level log entry includes the same message for
+     * tooling and troubleshooting.</p>
+     *
+     * @param message the human-readable error message to display; may be {@code null}.
      */
     static void printError(String message) {
         // Keep user-visible output identical; add structured logging.
@@ -152,6 +188,16 @@ public class Ui {
         LOGGER.log(Level.WARNING, "User-visible error: {0}", message == null ? "<null>" : message);
     }
 
+    /**
+     * Prints a confirmation block for a deleted {@link Expense}.
+     *
+     * @param expense the deleted expense; must not be {@code null}.
+     * @param index the 1-based index previously shown to the user; positive if available.
+     * @throws NullPointerException if {@code expense}, its category, or date is {@code null}.
+     * @throws AssertionError if {@code index} is non-positive or amount is non-finite
+     *                        when assertions are enabled.
+     * @implNote Logs at {@code FINE} and warns if a non-positive index is provided.
+     */
     static void printExpenseDeleted(Expense expense, int index) {
         Objects.requireNonNull(expense, "expense cannot be null");
         if (index <= 0) {
@@ -172,6 +218,16 @@ public class Ui {
         LOGGER.fine("Printed expense deleted confirmation for index " + index + ".");
     }
 
+    /**
+     * Prints a confirmation block for a deleted {@link Income}.
+     *
+     * @param income the deleted income; must not be {@code null}.
+     * @param index the 1-based index previously shown to the user; positive if available.
+     * @throws NullPointerException if {@code income}, its category, or date is {@code null}.
+     * @throws AssertionError if {@code index} is non-positive or amount is non-finite
+     *                        when assertions are enabled.
+     * @implNote Logs at {@code FINE} and warns if a non-positive index is provided.
+     */
     static void printIncomeDeleted(Income income, int index) {
         Objects.requireNonNull(income, "income cannot be null");
         if (index <= 0) {
@@ -194,10 +250,14 @@ public class Ui {
 
     /**
      * Prints the list of expenses in reverse chronological order (newest first).
-     * <p>
-     * Each entry is separated by a horizontal line and shows index, date, amount, category,
-     * and (if present) description. Malformed entries are skipped with a warning log.
-     * </p>
+     *
+     * <p>Each entry shows 1-based index, date ({@code yyyy-MM-dd}), amount, category,
+     * and optional description. Malformed entries are skipped with a {@code WARNING}
+     * log record; printing continues for the remaining items.</p>
+     *
+     * @param expensesView read-only view of expenses to print; must not be {@code null}.
+     * @throws NullPointerException if {@code expensesView} is {@code null}.
+     * @implNote Logs at {@code FINE} when the list is empty and after completion.
      */
     static void printListOfExpenses(java.util.List<seedu.fintrack.model.Expense> expensesView) {
         Objects.requireNonNull(expensesView, "expensesView cannot be null");
@@ -238,6 +298,11 @@ public class Ui {
 
     /**
      * Prints a concise summary of available commands and their usage.
+     *
+     * <p>Includes examples for each command and the canonical parameter prefixes:
+     * {@link #AMOUNT_PREFIX}, {@link #CATEGORY_PREFIX}, {@link #DATE_PREFIX},
+     * and {@link #DESCRIPTION_PREFIX}.</p>
+     *
      */
     static void printHelp() {
         System.out.println("=== FinTrack Command Summary ===");
