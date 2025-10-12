@@ -12,7 +12,7 @@ public class Expense {
         this.amount = amount;
         this.category = category;
         this.date = date;
-        this. description = description;
+        this.description = description;
     }
 
     public double getAmount() {
