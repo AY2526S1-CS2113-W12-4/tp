@@ -143,7 +143,7 @@ public class ParserTest {
         assertEquals(10.0, e.getAmount(), 1e-9);
         assertEquals("Transport", e.getCategory());
         assertEquals(LocalDate.of(2025, 1, 2), e.getDate());
-        assertEquals("", e.getDescription());
+        assertEquals(null, e.getDescription());
     }
 
     /**
