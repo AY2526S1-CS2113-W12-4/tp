@@ -9,6 +9,9 @@ public class Expense {
     private final String description;
 
     public Expense(double amount, String category, LocalDate date, String description) {
+        assert amount >= 0 : "Amount must be non-negative.";
+        assert category != null : "Category cannot be null.";
+        assert date != null : "Date cannot be null.";
         this.amount = amount;
         this.category = category;
         this.date = date;
