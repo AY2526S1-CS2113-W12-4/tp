@@ -12,6 +12,14 @@ public class Expense {
     private final LocalDate date;
     private final String description;
 
+    /**
+     * Creates an expense with the given amount, category, date and description.
+     *
+     * @param amount Expense amount.
+     * @param category Expense category.
+     * @param date Expense date.
+     * @param description Expense description.
+     */
     public Expense(double amount, String category, LocalDate date, String description) {
         assert amount >= 0 : "Amount must be non-negative.";
         assert category != null : "Category cannot be null.";
@@ -36,18 +44,38 @@ public class Expense {
         this.description = (description == null || description.isBlank()) ? null : description;
     }
 
+    /**
+     * Returns the amount of the expense.
+     *
+     * @return the amount.
+     */
     public double getAmount() {
         return amount;
     }
 
+    /**
+     * Returns the category of the expense.
+     *
+     * @return the amount.
+     */
     public String getCategory() {
         return category;
     }
 
+    /**
+     * Returns the date of the expense in YYYY-MM-DD format.
+     *
+     * @return the date.
+     */
     public LocalDate getDate() {
         return date;
     }
 
+    /**
+     * Returns the description of the expense.
+     *
+     * @return the expense.
+     */
     public String getDescription() {
         return description;
     }
