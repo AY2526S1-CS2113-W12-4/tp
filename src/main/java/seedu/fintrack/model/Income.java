@@ -12,6 +12,15 @@ public class Income {
     private final LocalDate date;
     private final String description; // optional
 
+    /**
+     * Creates an income with the given amount, category, date and description.
+     *
+     * @param amount Income amount.
+     * @param category Income category.
+     * @param date Income date.
+     * @param description Income description.
+     */
+
     public Income(double amount, String category, LocalDate date, String description) {
         assert amount >= 0 : "Amount must be non-negative.";
         assert category != null : "Category cannot be null.";
@@ -36,18 +45,38 @@ public class Income {
         this.description = (description == null || description.isBlank()) ? null : description;
     }
 
+    /**
+     * Returns the amount of the income.
+     *
+     * @return the amount.
+     */
     public double getAmount() {
         return amount;
     }
 
+    /**
+     * Returns the category of the income.
+     *
+     * @return the amount.
+     */
     public String getCategory() {
         return category;
     }
 
+    /**
+     * Returns the date of the income in YYYY-MM-DD format.
+     *
+     * @return the date.
+     */
     public LocalDate getDate() {
         return date;
     }
 
+    /**
+     * Returns the description of the income.
+     *
+     * @return the expense.
+     */
     public String getDescription() {
         return description;
     }
