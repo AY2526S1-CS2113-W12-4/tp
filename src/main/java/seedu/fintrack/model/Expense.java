@@ -49,6 +49,7 @@ public class Expense {
      *
      * @return the amount.
      */
+    //@@author goodguyryan
     public double getAmount() {
         return amount;
     }
