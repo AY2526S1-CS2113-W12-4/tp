@@ -80,6 +80,24 @@ public class FinanceManagerTest {
         fm.addIncome(sampleIncome2); // 200
         assertEquals(5200.0, fm.getTotalIncome());
     }
+
+    @Test
+    void getIncomesView_noIncomes_returnsEmptyList() {
+        List<Income> incomes = fm.getIncomesView();
+        assertTrue(incomes.isEmpty());
+    }
+
+    @Test
+    void getIncomesView_withIncomes_returnsUnmodifiableOldestFirstView() {
+        fm.addIncome(sampleIncome1);
+        fm.addIncome(sampleIncome2);
+
+        List<Income> incomes = fm.getIncomesView();
+        assertEquals(2, incomes.size());
+        assertEquals(sampleIncome1, incomes.get(0)); // oldest first
+        assertEquals(sampleIncome2, incomes.get(1));
+        assertThrows(UnsupportedOperationException.class, () -> incomes.add(sampleIncome1));
+    }
     
     @Test
     void getTotalExpense_noExpenses_returnsZero() {

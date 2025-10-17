@@ -6,6 +6,7 @@ add-expense a/50 c/Food d/2024-01-02
 add-expense a/30 c/Transport d/2024-01-03 desc/Bus fare
 balance
 list
+list-income
 delete-expense 2
 delete-income 1
 balance

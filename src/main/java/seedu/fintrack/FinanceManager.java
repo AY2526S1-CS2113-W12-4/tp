@@ -1,6 +1,7 @@
 package seedu.fintrack;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.logging.Level;
@@ -65,6 +66,13 @@ public class FinanceManager {
         assert !Double.isNaN(totalIncome) : "Total income should be a number.";
         assert !Double.isNaN(totalExpense) : "Total expense should be a number.";
         return totalIncome - totalExpense;
+    }
+
+    /** Returns an unmodifiable view of incomes in the order they were added. */
+    public List<Income> getIncomesView() {
+        List<Income> incomeList = Collections.unmodifiableList(incomes);
+        assert incomeList != null : "Income list should not be null.";
+        return incomeList;
     }
 
     /** Returns an unmodifiable newest-first view for printing. */
