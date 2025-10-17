@@ -8,7 +8,7 @@ public class Expense {
     private static final Logger LOGGER = Logger.getLogger(Expense.class.getName());
 
     private final double amount;
-    private final String category;
+    private final ExpenseCategory category;
     private final LocalDate date;
     private final String description;
 
@@ -20,7 +20,7 @@ public class Expense {
      * @param date Expense date.
      * @param description Expense description.
      */
-    public Expense(double amount, String category, LocalDate date, String description) {
+    public Expense(double amount, ExpenseCategory category, LocalDate date, String description) {
         assert amount >= 0 : "Amount must be non-negative.";
         assert category != null : "Category cannot be null.";
         assert date != null : "Date cannot be null.";
@@ -59,7 +59,7 @@ public class Expense {
      *
      * @return the amount.
      */
-    public String getCategory() {
+    public ExpenseCategory getCategory() {
         return category;
     }
 
