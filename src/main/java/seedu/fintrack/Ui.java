@@ -23,6 +23,7 @@ public class Ui {
     public static final String DELETE_INCOME_COMMAND = "delete-income";
     public static final String BALANCE_COMMAND = "balance";
     public static final String LIST_COMMAND = "list";
+    public static final String LIST_INCOME_COMMAND = "list-income";
     public static final String EXIT_COMMAND = "bye";
 
     // Parameter prefixes
@@ -249,6 +250,53 @@ public class Ui {
     }
 
     /**
+     * Prints the list of incomes in the order they were added.
+     *
+     * <p>Each entry shows 1-based index, date ({@code yyyy-MM-dd}), amount, category,
+     * and optional description. Malformed entries are skipped with a {@code WARNING}
+     * log record; printing continues for the remaining items.</p>
+     *
+     * @param incomesView read-only view of incomes to print; must not be {@code null}.
+     * @throws NullPointerException if {@code incomesView} is {@code null}.
+     * @implNote Logs at {@code FINE} when the list is empty and after completion.
+     */
+    static void printListOfIncomes(java.util.List<Income> incomesView) {
+        Objects.requireNonNull(incomesView, "incomesView cannot be null");
+
+        if (incomesView.isEmpty()) {
+            System.out.println("No incomes recorded.");
+            LOGGER.fine("No incomes to list.");
+            return;
+        }
+        System.out.println("Incomes (Oldest first):");
+        var fmt = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        for (int i = 0; i < incomesView.size(); i++) {
+            try {
+                var income = incomesView.get(i);
+                int idx = i + 1;
+                Objects.requireNonNull(income, "income entry cannot be null");
+                Objects.requireNonNull(income.getCategory(), "income category cannot be null");
+                Objects.requireNonNull(income.getDate(), "income date cannot be null");
+                assert Double.isFinite(income.getAmount()) : "income amount must be finite";
+
+                printHorizontalLine(50);
+                System.out.println("#" + idx);
+                System.out.println("Date: " + income.getDate().format(fmt));
+                System.out.println("Amount: $" + String.format("%.2f", income.getAmount()));
+                System.out.println("Category: " + income.getCategory());
+                if (income.getDescription() != null && !income.getDescription().isBlank()) {
+                    System.out.println("Description: " + income.getDescription());
+                }
+            } catch (RuntimeException ex) {
+                LOGGER.log(Level.WARNING, "Skipping malformed income at position {0}: {1}",
+                        new Object[]{i, ex.toString()});
+            }
+        }
+        printHorizontalLine(50);
+        LOGGER.fine("Finished printing incomes list (count=" + incomesView.size() + ").");
+    }
+
+    /**
      * Prints the list of expenses in reverse chronological order (newest first).
      *
      * <p>Each entry shows 1-based index, date ({@code yyyy-MM-dd}), amount, category,
@@ -323,27 +371,31 @@ public class Ui {
         System.out.println("   " + LIST_COMMAND);
 
         System.out.println();
-        System.out.println("4. Delete an expense:");
+        System.out.println("4. View all incomes (in the order they were added):");
+        System.out.println("   " + LIST_INCOME_COMMAND);
+
+        System.out.println();
+        System.out.println("5. Delete an expense:");
         System.out.println("   " + DELETE_EXPENSE_COMMAND + " <index>");
         System.out.println("   Deletes the expense shown at that index in 'list'.");
         System.out.println("   Example: delete-expense 1");
 
         System.out.println();
-        System.out.println("5. Delete an income:");
+        System.out.println("6. Delete an income:");
         System.out.println("   " + DELETE_INCOME_COMMAND + " <index>");
         System.out.println("   Example: delete-income 1");
 
         System.out.println();
-        System.out.println("6. View balance summary:");
+        System.out.println("7. View balance summary:");
         System.out.println("   " + BALANCE_COMMAND);
         System.out.println("   Shows total income, total expenses, and current balance.");
 
         System.out.println();
-        System.out.println("7. Show this help menu:");
+        System.out.println("8. Show this help menu:");
         System.out.println("   " + HELP_COMMAND);
 
         System.out.println();
-        System.out.println("8. Exit the program:");
+        System.out.println("9. Exit the program:");
         System.out.println("   " + EXIT_COMMAND);
 
         printHorizontalLine(80);
