@@ -2,6 +2,7 @@ package seedu.fintrack;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -128,6 +129,44 @@ final class Parser {
             }
         }
         return next;
+    }
+
+    public static Map.Entry<ExpenseCategory, Double> parseSetBudget(String input) throws IllegalArgumentException {
+        assert input != null : "Input for parsing budget cannot be null.";
+        LOGGER.log(Level.FINER, "Parsing budget entry: ''{0}''.", input);
+
+        String args = input.substring(Ui.BUDGET_COMMAND.length()).trim();
+        if (args.isEmpty()) {
+            LOGGER.log(Level.WARNING, "Missing parameters for budget command.");
+            throw new IllegalArgumentException("Missing parameters for budget command. Usage: budget c/<category> a/<amount>");
+        }
+
+        String categoryStr = getValue(args, Ui.CATEGORY_PREFIX);
+        String amountStr = getValue(args, Ui.AMOUNT_PREFIX);
+
+        if (categoryStr == null || amountStr == null) {
+            LOGGER.log(Level.WARNING, "Missing one or more required parameters for budget command.");
+            throw new IllegalArgumentException("Usage: budget c/<category> a/<amount>");
+        }
+
+        ExpenseCategory category = ExpenseCategory.parse(categoryStr);
+
+        double amount;
+        try {
+            amount = Double.parseDouble(amountStr);
+        } catch (NumberFormatException e) {
+            LOGGER.log(Level.WARNING, "Invalid amount for budget command: {0}.", amountStr);
+            throw new IllegalArgumentException("Amount must be a valid number.");
+        }
+
+        if (amount < 0) {
+            LOGGER.log(Level.WARNING, "Negative amount provided for budget command: {0}.", amount);
+            throw new IllegalArgumentException("Amount must be non-negative.");
+        }
+
+        LOGGER.log(Level.INFO, "Successfully parsed budget command for {0} with amount {1}.",
+                new Object[]{category, amount});
+        return Map.entry(category, amount);
     }
 
     /**
