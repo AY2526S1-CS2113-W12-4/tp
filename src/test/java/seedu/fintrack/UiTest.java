@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import seedu.fintrack.model.Expense;
 import seedu.fintrack.model.ExpenseCategory;
 import seedu.fintrack.model.Income;
+import seedu.fintrack.model.IncomeCategory;
 
 /**
  * Tests printing and constants in Ui, including add/delete entry outputs.
@@ -100,14 +101,14 @@ public class UiTest {
 
     @Test
     void printIncomeAdded_withDescription_printsAllFields() {
-        Income inc = new Income(123.0, "Salary", LocalDate.parse("2025-10-01"), "Oct pay");
+        Income inc = new Income(123.0, IncomeCategory.SALARY, LocalDate.parse("2025-10-01"), "Oct pay");
         Ui.printIncomeAdded(inc);
 
         String ls = System.lineSeparator();
         String expected = ""
                 + "Income added:" + ls
                 + "  Amount: 123.00" + ls
-                + "  Category: Salary" + ls
+                + "  Category: SALARY" + ls
                 + "  Date: 2025-10-01" + ls
                 + "  Description: Oct pay" + ls;
 
@@ -116,14 +117,14 @@ public class UiTest {
 
     @Test
     void printIncomeAdded_withoutDescription_whenNull() {
-        Income inc = new Income(50.0, "Gift", LocalDate.parse("2025-10-07"), null);
+        Income inc = new Income(50.0, IncomeCategory.GIFT, LocalDate.parse("2025-10-07"), null);
         Ui.printIncomeAdded(inc);
 
         String ls = System.lineSeparator();
         String expected = ""
                 + "Income added:" + ls
                 + "  Amount: 50.00" + ls
-                + "  Category: Gift" + ls
+                + "  Category: GIFT" + ls
                 + "  Date: 2025-10-07" + ls;
 
         assertEquals(expected, out());
@@ -133,7 +134,7 @@ public class UiTest {
     @Test
     void printIncomeAdded_blankDescription_omitted() {
         // Income normalises blank -> null
-        Income inc = new Income(75.5, "Other", LocalDate.parse("2025-10-07"), "   ");
+        Income inc = new Income(75.5, IncomeCategory.SALARY, LocalDate.parse("2025-10-07"), "   ");
         Ui.printIncomeAdded(inc);
         assertFalse(out().contains("Description:"));
     }
@@ -176,14 +177,14 @@ public class UiTest {
 
     @Test
     void printIncomeDeleted_withIndex_andDescription() {
-        Income inc = new Income(100.0, "Salary", LocalDate.parse("2025-10-05"), "Bonus");
+        Income inc = new Income(100.0, IncomeCategory.SALARY, LocalDate.parse("2025-10-05"), "Bonus");
         Ui.printIncomeDeleted(inc, 2);
 
         String ls = System.lineSeparator();
         String expected = ""
                 + "Income deleted (index 2):" + ls
                 + "  Amount: 100.00" + ls
-                + "  Category: Salary" + ls
+                + "  Category: SALARY" + ls
                 + "  Date: 2025-10-05" + ls
                 + "  Description: Bonus" + ls;
 

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import seedu.fintrack.model.Expense;
 import seedu.fintrack.model.ExpenseCategory;
 import seedu.fintrack.model.Income;
+import seedu.fintrack.model.IncomeCategory;
 
 public class FinanceManagerTest {
     
@@ -28,8 +29,8 @@ public class FinanceManagerTest {
         fm = new FinanceManager();
         
         // Create sample data for testing
-        sampleIncome1 = new Income(5000.0, "Salary", LocalDate.parse("2025-01-01"), "Monthly salary");
-        sampleIncome2 = new Income(200.0, "Freelance", LocalDate.parse("2025-01-15"), null);
+        sampleIncome1 = new Income(5000.0, IncomeCategory.SALARY, LocalDate.parse("2025-01-01"), "Monthly salary");
+        sampleIncome2 = new Income(200.0, IncomeCategory.SCHOLARSHIP, LocalDate.parse("2025-01-15"), null);
         
         sampleExpense1 = new Expense(1200.0, ExpenseCategory.RENT, LocalDate.parse("2025-01-01"), "Monthly rent");
         sampleExpense2 = new Expense(50.0, ExpenseCategory.FOOD, LocalDate.parse("2025-01-02"), null);
@@ -154,7 +155,7 @@ public class FinanceManagerTest {
         
         // Verify it's unmodifiable
         assertThrows(UnsupportedOperationException.class, () -> {
-            expenses.add(new Expense(100.0, ExpenseCategory.parse("Food"), LocalDate.now(), "Test"));
+            expenses.add(new Expense(100.0, ExpenseCategory.FOOD, LocalDate.now(), "Test"));
         });
     }
     
@@ -282,9 +283,9 @@ public class FinanceManagerTest {
     @Test
     void deleteMultipleItems_maintainsCorrectIndexing() {
         // Add expenses in chronological order
-        Expense e1 = new Expense(100.0, ExpenseCategory.parse("Food"), LocalDate.parse("2025-01-01"), "First");
-        Expense e2 = new Expense(200.0, ExpenseCategory.parse("Food"), LocalDate.parse("2025-01-02"), "Second");
-        Expense e3 = new Expense(300.0, ExpenseCategory.parse("Food"), LocalDate.parse("2025-01-03"), "Third");
+        Expense e1 = new Expense(100.0, ExpenseCategory.FOOD, LocalDate.parse("2025-01-01"), "First");
+        Expense e2 = new Expense(200.0, ExpenseCategory.FOOD, LocalDate.parse("2025-01-02"), "Second");
+        Expense e3 = new Expense(300.0, ExpenseCategory.FOOD, LocalDate.parse("2025-01-03"), "Third");
         
         fm.addExpense(e1);
         fm.addExpense(e2);
