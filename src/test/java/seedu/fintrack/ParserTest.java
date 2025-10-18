@@ -9,7 +9,9 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 
 import seedu.fintrack.model.Expense;
+import seedu.fintrack.model.ExpenseCategory;
 import seedu.fintrack.model.Income;
+import seedu.fintrack.model.IncomeCategory;
 
 /**
  * Contains JUnit tests for the {@link Parser} class.
@@ -126,7 +128,7 @@ public class ParserTest {
         Expense e = Parser.parseAddExpense(input);
 
         assertEquals(12.50, e.getAmount(), 1e-9);
-        assertEquals("food", e.getCategory());
+        assertEquals(ExpenseCategory.FOOD, e.getCategory());
         assertEquals(LocalDate.of(2025, 10, 1), e.getDate());
         assertEquals("lunch", e.getDescription());
     }
@@ -141,7 +143,7 @@ public class ParserTest {
         Expense e = Parser.parseAddExpense(input);
 
         assertEquals(10.0, e.getAmount(), 1e-9);
-        assertEquals("Transport", e.getCategory());
+        assertEquals(ExpenseCategory.TRANSPORT, e.getCategory());
         assertEquals(LocalDate.of(2025, 1, 2), e.getDate());
         assertEquals(null, e.getDescription());
     }
@@ -260,7 +262,7 @@ public class ParserTest {
         Income inc = Parser.parseAddIncome(input);
 
         assertEquals(999.99, inc.getAmount(), 1e-9);
-        assertEquals("Salary", inc.getCategory());
+        assertEquals(IncomeCategory.SALARY, inc.getCategory());
         assertEquals(LocalDate.of(2025, 9, 30), inc.getDate());
         assertEquals("September payroll", inc.getDescription());
     }
@@ -275,7 +277,7 @@ public class ParserTest {
         Income inc = Parser.parseAddIncome(input);
 
         assertEquals(100.0, inc.getAmount(), 1e-9);
-        assertEquals("Gift", inc.getCategory());
+        assertEquals(IncomeCategory.GIFT, inc.getCategory());
         assertEquals(LocalDate.of(2025, 10, 5), inc.getDate());
         assertNull(inc.getDescription());
     }

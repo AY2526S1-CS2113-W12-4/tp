@@ -6,7 +6,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import seedu.fintrack.model.Expense;
+import seedu.fintrack.model.ExpenseCategory;
 import seedu.fintrack.model.Income;
+import seedu.fintrack.model.IncomeCategory;
 
 /**
  * A utility class for parsing user input commands into structured data.
@@ -149,11 +151,11 @@ final class Parser {
         }
 
         String amountStr = getValue(args, Ui.AMOUNT_PREFIX);
-        String category = getValue(args, Ui.CATEGORY_PREFIX);
+        String categoryString = getValue(args, Ui.CATEGORY_PREFIX);
         String dateStr = getValue(args, Ui.DATE_PREFIX);
         String description = getOptionalValue(args, Ui.DESCRIPTION_PREFIX);
 
-        if (amountStr == null || category == null || dateStr == null) {
+        if (amountStr == null || categoryString == null || dateStr == null) {
             LOGGER.log(Level.WARNING,"Missing one or more required parameters for add-expense command.");
             throw new IllegalArgumentException("Required fields: a/<amount> c/<category> d/<YYYY-MM-DD>.");
         }
@@ -178,6 +180,7 @@ final class Parser {
             throw new IllegalArgumentException("Date must be in YYYY-MM-DD format.");
         }
 
+        ExpenseCategory category = ExpenseCategory.parse(categoryString);
         Expense newExpense = new Expense(amount, category, date, description);
         LOGGER.log(Level.INFO, "Successfully parsed new expense: {0}.", newExpense);
         return newExpense;
@@ -204,11 +207,11 @@ final class Parser {
         }
 
         String amountStr = getValue(args, Ui.AMOUNT_PREFIX);
-        String category = getValue(args, Ui.CATEGORY_PREFIX);
+        String categoryString = getValue(args, Ui.CATEGORY_PREFIX);
         String dateStr = getValue(args, Ui.DATE_PREFIX);
         String description = getOptionalValue(args, Ui.DESCRIPTION_PREFIX);
 
-        if (amountStr == null || category == null || dateStr == null) {
+        if (amountStr == null || categoryString == null || dateStr == null) {
             LOGGER.log(Level.WARNING,"Missing one or more required parameters for add-income.");
             throw new IllegalArgumentException("Required fields: a/<amount> c/<category> d/<YYYY-MM-DD>.");
         }
@@ -233,6 +236,7 @@ final class Parser {
             throw new IllegalArgumentException("Date must be in YYYY-MM-DD format.");
         }
 
+        IncomeCategory category = IncomeCategory.parse(categoryString);
         Income newIncome = new Income(amount, category, date, description);
         LOGGER.log(Level.INFO, "Successfully parsed new income: {0}", newIncome);
         return newIncome;

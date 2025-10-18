@@ -130,8 +130,8 @@ public class ExpenseList extends ArrayList<Expense> {
         Objects.requireNonNull(e.getDate(), "Expense date cannot be null");
         Objects.requireNonNull(e.getCategory(), "Expense category cannot be null");
 
-        String category = e.getCategory().trim();
-        if (category.isEmpty()) {
+        ExpenseCategory category = e.getCategory();
+        if (category == null) {
             LOGGER.log(Level.WARNING, "Blank category for expense at pos={0}", positionHint);
             throw new IllegalArgumentException("Expense category cannot be blank");
         }

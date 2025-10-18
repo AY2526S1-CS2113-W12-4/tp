@@ -74,15 +74,15 @@ public class ExpenseListTest {
     void add_keepsSortedNewestFirst() {
         ExpenseList list = new ExpenseList();
 
-        Expense e1 = new Expense(10.0, "Food",
+        Expense e1 = new Expense(10.0, ExpenseCategory.FOOD,
                 LocalDate.parse("2025-10-05"),
                 "Lunch");
         Expense e2 = new Expense(20.0,
-                "Transport",
+                ExpenseCategory.TRANSPORT,
                 LocalDate.parse("2025-10-08"),
                 "Grab");
         Expense e3 = new Expense(15.0,
-                "Groceries",
+                ExpenseCategory.GROCERIES,
                 LocalDate.parse("2025-10-06"),
                 "NTUC");
 
@@ -100,14 +100,14 @@ public class ExpenseListTest {
         ExpenseList list = new ExpenseList();
 
         Expense jan = new Expense(10.0,
-                "A", LocalDate.parse("2025-01-01"),
+                ExpenseCategory.FOOD, LocalDate.parse("2025-01-01"),
                 "");
         Expense mar = new Expense(30.0,
-                "C",
+                ExpenseCategory.TRANSPORT,
                 LocalDate.parse("2025-03-01"),
                 "");
         Expense feb = new Expense(20.0,
-                "B",
+                ExpenseCategory.FOOD,
                 LocalDate.parse("2025-02-01"),
                 "");
 
@@ -124,15 +124,15 @@ public class ExpenseListTest {
     void addAll_keepsSortedNewestFirst() {
         ExpenseList list = new ExpenseList();
         Expense e1 = new Expense(10.0,
-                "A",
+                ExpenseCategory.FOOD,
                 LocalDate.parse("2025-01-01"),
                 "");
         Expense e3 = new Expense(30.0,
-                "C",
+                ExpenseCategory.FOOD,
                 LocalDate.parse("2025-02-01"),
                 "");
         Expense e2 = new Expense(20.0,
-                "B",
+                ExpenseCategory.FOOD,
                 LocalDate.parse("2025-03-01"),
                 "");
 
@@ -147,15 +147,15 @@ public class ExpenseListTest {
     void addAll_withIndex_stillSortedNewestFirst() {
         ExpenseList list = new ExpenseList();
         Expense jan = new Expense(10.0,
-                "A",
+                ExpenseCategory.FOOD,
                 LocalDate.parse("2025-01-01"),
                 "");
         Expense mar = new Expense(30.0,
-                "C",
+                ExpenseCategory.FOOD,
                 LocalDate.parse("2025-03-01"),
                 "");
         Expense feb = new Expense(20.0,
-                "B",
+                ExpenseCategory.FOOD,
                 LocalDate.parse("2025-02-01"),
                 "");
 
@@ -172,7 +172,7 @@ public class ExpenseListTest {
     void asUnmodifiableView_cannotMutate() {
         ExpenseList list = new ExpenseList();
         Expense e = new Expense(10.0,
-                "Test",
+                ExpenseCategory.FOOD,
                 LocalDate.parse("2025-01-01"),
                 "");
         list.add(e);
@@ -202,7 +202,7 @@ public class ExpenseListTest {
     void addAll_collectionContainingNull_throwsNPEandLogsWarning() {
         ExpenseList list = new ExpenseList();
         Expense good = new Expense(10.0,
-                "A",
+                ExpenseCategory.FOOD,
                 LocalDate.parse("2025-01-01"),
                 "");
         List<Expense> mixed = new ArrayList<>();
@@ -218,7 +218,7 @@ public class ExpenseListTest {
     void add_logsFineOnSuccess() {
         ExpenseList list = new ExpenseList();
         Expense e = new Expense(10.0,
-                "Food",
+                ExpenseCategory.FOOD,
                 LocalDate.parse("2025-10-10"),
                 "");
         list.add(e);
@@ -234,11 +234,11 @@ public class ExpenseListTest {
 
         ExpenseList list = new ExpenseList();
         list.add(new Expense(10.0,
-                "A",
+                ExpenseCategory.FOOD,
                 LocalDate.parse("2025-01-01"),
                 ""));
         list.add(new Expense(20.0,
-                "B",
+                ExpenseCategory.FOOD,
                 LocalDate.parse("2025-02-01"),
                 ""));
 

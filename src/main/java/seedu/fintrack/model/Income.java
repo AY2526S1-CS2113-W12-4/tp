@@ -8,7 +8,7 @@ public class Income {
     private static final Logger LOGGER = Logger.getLogger(Income.class.getName());
 
     private final double amount;
-    private final String category;
+    private final IncomeCategory category;
     private final LocalDate date;
     private final String description; // optional
 
@@ -21,7 +21,7 @@ public class Income {
      * @param description Income description.
      */
 
-    public Income(double amount, String category, LocalDate date, String description) {
+    public Income(double amount, IncomeCategory category, LocalDate date, String description) {
         assert amount >= 0 : "Amount must be non-negative.";
         assert category != null : "Category cannot be null.";
         assert date != null : "Date cannot be null.";
@@ -59,7 +59,7 @@ public class Income {
      *
      * @return the amount.
      */
-    public String getCategory() {
+    public IncomeCategory getCategory() {
         return category;
     }
 

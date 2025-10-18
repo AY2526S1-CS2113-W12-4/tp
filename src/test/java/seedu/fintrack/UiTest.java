@@ -14,7 +14,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import seedu.fintrack.model.Expense;
+import seedu.fintrack.model.ExpenseCategory;
 import seedu.fintrack.model.Income;
+import seedu.fintrack.model.IncomeCategory;
 
 /**
  * Tests printing and constants in Ui, including add/delete entry outputs.
@@ -99,14 +101,14 @@ public class UiTest {
 
     @Test
     void printIncomeAdded_withDescription_printsAllFields() {
-        Income inc = new Income(123.0, "Salary", LocalDate.parse("2025-10-01"), "Oct pay");
+        Income inc = new Income(123.0, IncomeCategory.SALARY, LocalDate.parse("2025-10-01"), "Oct pay");
         Ui.printIncomeAdded(inc);
 
         String ls = System.lineSeparator();
         String expected = ""
                 + "Income added:" + ls
                 + "  Amount: 123.00" + ls
-                + "  Category: Salary" + ls
+                + "  Category: SALARY" + ls
                 + "  Date: 2025-10-01" + ls
                 + "  Description: Oct pay" + ls;
 
@@ -115,14 +117,14 @@ public class UiTest {
 
     @Test
     void printIncomeAdded_withoutDescription_whenNull() {
-        Income inc = new Income(50.0, "Gift", LocalDate.parse("2025-10-07"), null);
+        Income inc = new Income(50.0, IncomeCategory.GIFT, LocalDate.parse("2025-10-07"), null);
         Ui.printIncomeAdded(inc);
 
         String ls = System.lineSeparator();
         String expected = ""
                 + "Income added:" + ls
                 + "  Amount: 50.00" + ls
-                + "  Category: Gift" + ls
+                + "  Category: GIFT" + ls
                 + "  Date: 2025-10-07" + ls;
 
         assertEquals(expected, out());
@@ -132,21 +134,21 @@ public class UiTest {
     @Test
     void printIncomeAdded_blankDescription_omitted() {
         // Income normalises blank -> null
-        Income inc = new Income(75.5, "Other", LocalDate.parse("2025-10-07"), "   ");
+        Income inc = new Income(75.5, IncomeCategory.SALARY, LocalDate.parse("2025-10-07"), "   ");
         Ui.printIncomeAdded(inc);
         assertFalse(out().contains("Description:"));
     }
 
     @Test
     void printExpenseAdded_withDescription_printsAllFields() {
-        Expense ex = new Expense(9.5, "Food", LocalDate.parse("2025-10-02"), "Lunch");
+        Expense ex = new Expense(9.5, ExpenseCategory.parse("Food"), LocalDate.parse("2025-10-02"), "Lunch");
         Ui.printExpenseAdded(ex);
 
         String ls = System.lineSeparator();
         String expected = ""
                 + "Expense added:" + ls
                 + "  Amount: 9.50" + ls
-                + "  Category: Food" + ls
+                + "  Category: FOOD" + ls
                 + "  Date: 2025-10-02" + ls
                 + "  Description: Lunch" + ls;
 
@@ -155,34 +157,34 @@ public class UiTest {
 
     @Test
     void printExpenseAdded_withoutDescription_whenNull() {
-        Expense ex = new Expense(12.3, "Transport", LocalDate.parse("2025-10-03"), null);
+        Expense ex = new Expense(12.3, ExpenseCategory.TRANSPORT, LocalDate.parse("2025-10-03"), null);
         Ui.printExpenseAdded(ex);
 
         String text = out();
         assertTrue(text.contains("Expense added:"));
         assertTrue(text.contains("Amount: 12.30"));
-        assertTrue(text.contains("Category: Transport"));
+        assertTrue(text.contains("Category: TRANSPORT"));
         assertTrue(text.contains("Date: 2025-10-03"));
         assertFalse(text.contains("Description:"));
     }
 
     @Test
     void printExpenseAdded_blankDescription_omitted() {
-        Expense ex = new Expense(12.3, "Transport", LocalDate.parse("2025-10-03"), "   ");
+        Expense ex = new Expense(12.3, ExpenseCategory.TRANSPORT, LocalDate.parse("2025-10-03"), "   ");
         Ui.printExpenseAdded(ex);
         assertFalse(out().contains("Description:"));
     }
 
     @Test
     void printIncomeDeleted_withIndex_andDescription() {
-        Income inc = new Income(100.0, "Salary", LocalDate.parse("2025-10-05"), "Bonus");
+        Income inc = new Income(100.0, IncomeCategory.SALARY, LocalDate.parse("2025-10-05"), "Bonus");
         Ui.printIncomeDeleted(inc, 2);
 
         String ls = System.lineSeparator();
         String expected = ""
                 + "Income deleted (index 2):" + ls
                 + "  Amount: 100.00" + ls
-                + "  Category: Salary" + ls
+                + "  Category: SALARY" + ls
                 + "  Date: 2025-10-05" + ls
                 + "  Description: Bonus" + ls;
 
@@ -191,14 +193,14 @@ public class UiTest {
 
     @Test
     void printExpenseDeleted_withoutDescription() {
-        Expense ex = new Expense(7.0, "Snacks", LocalDate.parse("2025-10-06"), null);
+        Expense ex = new Expense(7.0, ExpenseCategory.FOOD, LocalDate.parse("2025-10-06"), null);
         Ui.printExpenseDeleted(ex, 1);
 
         String ls = System.lineSeparator();
         String expected = ""
                 + "Expense deleted (index 1):" + ls
                 + "  Amount: 7.00" + ls
-                + "  Category: Snacks" + ls
+                + "  Category: FOOD" + ls
                 + "  Date: 2025-10-06" + ls;
 
         assertEquals(expected, out());
@@ -207,15 +209,15 @@ public class UiTest {
 
     @Test
     void printListOfExpenses_formatsOutputCorrectly() {
-        var e1 = new Expense(10.0, "Food", LocalDate.parse("2025-10-05"), "Lunch");
-        var e2 = new Expense(20.0, "Transport", LocalDate.parse("2025-10-08"), "Grab");
+        var e1 = new Expense(10.0, ExpenseCategory.parse("Food"), LocalDate.parse("2025-10-05"), "Lunch");
+        var e2 = new Expense(20.0, ExpenseCategory.parse("Transport"), LocalDate.parse("2025-10-08"), "Grab");
 
         Ui.printListOfExpenses(java.util.List.of(e1, e2));
 
         String output = out();
         assertTrue(output.contains("Expenses (Newest first):"));
         assertTrue(output.contains("Amount: $10.00"));
-        assertTrue(output.contains("Category: Food"));
+        assertTrue(output.contains("Category: FOOD"));
         assertTrue(output.contains("Date: 2025-10-05"));
         assertTrue(output.contains("Description: Lunch"));
         assertTrue(output.contains("#1")); // numbered output
