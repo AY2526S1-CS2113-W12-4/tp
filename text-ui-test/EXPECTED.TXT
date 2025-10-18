@@ -4,25 +4,25 @@ Type 'help' for available commands.
 > Error: Invalid command. Type 'help' for a list of available commands.
 > Income added:
   Amount: 5000.00
-  Category: Salary
+  Category: SALARY
   Date: 2024-01-01
   Description: Monthly salary
 > Income added:
   Amount: 200.00
-  Category: Freelance
+  Category: SALARY
   Date: 2024-01-15
 > Expense added:
   Amount: 1200.00
-  Category: Rent
+  Category: RENT
   Date: 2024-01-01
   Description: Monthly rent payment
 > Expense added:
   Amount: 50.00
-  Category: Food
+  Category: FOOD
   Date: 2024-01-02
 > Expense added:
   Amount: 30.00
-  Category: Transport
+  Category: TRANSPORT
   Date: 2024-01-03
   Description: Bus fare
 > Overall Balance: 3920.00
@@ -33,18 +33,18 @@ Type 'help' for available commands.
 #1
 Date: 2024-01-03
 Amount: $30.00
-Category: Transport
+Category: TRANSPORT
 Description: Bus fare
 --------------------------------------------------
 #2
 Date: 2024-01-02
 Amount: $50.00
-Category: Food
+Category: FOOD
 --------------------------------------------------
 #3
 Date: 2024-01-01
 Amount: $1200.00
-Category: Rent
+Category: RENT
 Description: Monthly rent payment
 --------------------------------------------------
 > Incomes (Oldest first):
@@ -52,21 +52,21 @@ Description: Monthly rent payment
 #1
 Date: 2024-01-01
 Amount: $5000.00
-Category: Salary
+Category: SALARY
 Description: Monthly salary
 --------------------------------------------------
 #2
 Date: 2024-01-15
 Amount: $200.00
-Category: Freelance
+Category: SALARY
 --------------------------------------------------
 > Expense deleted (index 2):
   Amount: 50.00
-  Category: Food
+  Category: FOOD
   Date: 2024-01-02
 > Income deleted (index 1):
   Amount: 5000.00
-  Category: Salary
+  Category: SALARY
   Date: 2024-01-01
   Description: Monthly salary
 > Overall Balance: -1030.00
