@@ -228,8 +228,7 @@ public class Ui {
         budgets.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .forEach(entry ->
-                        System.out.printf("%-20s: $%.2f%n", entry.getKey(), entry.getValue())
-                );
+                        System.out.printf("%-20s: $%.2f%n", entry.getKey(), entry.getValue()));
         printHorizontalLine(40);
         LOGGER.fine("Finished printing budgets list (count=" + budgets.size() + ").");
     }

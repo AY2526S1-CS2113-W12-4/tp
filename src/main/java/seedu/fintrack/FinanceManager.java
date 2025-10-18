@@ -34,7 +34,7 @@ public class FinanceManager {
      *
      * @param expense The expense to add. Must not be null.
      * @return {@code true} if adding this expense causes the total spending in its
-     * category to exceed the set budget for the first time, {@code false} otherwise.
+     *     category to exceed the set budget for the first time, {@code false} otherwise.
      */
     public boolean addExpense(Expense expense) {
         if (expense == null) {

@@ -138,7 +138,8 @@ final class Parser {
         String args = input.substring(Ui.BUDGET_COMMAND.length()).trim();
         if (args.isEmpty()) {
             LOGGER.log(Level.WARNING, "Missing parameters for budget command.");
-            throw new IllegalArgumentException("Missing parameters for budget command. Usage: budget c/<category> a/<amount>");
+            throw new IllegalArgumentException("Missing parameters for budget command. " +
+                    "Usage: budget c/<category> a/<amount>");
         }
 
         String categoryStr = getValue(args, Ui.CATEGORY_PREFIX);
