@@ -56,8 +56,14 @@ public class FinTrack {
             case Ui.ADD_EXPENSE_COMMAND:
                 try {
                     var expense = Parser.parseAddExpense(input);
-                    fm.addExpense(expense);
+                    boolean isOverBudget = fm.addExpense(expense);
                     Ui.printExpenseAdded(expense);
+
+                    if (isOverBudget) {
+                        double totalSpent = fm.getTotalExpenseForCategory(expense.getCategory());
+                        double budget = fm.getBudgetForCategory(expense.getCategory());
+                        Ui.printBudgetExceededWarning(expense.getCategory(), budget, totalSpent);
+                    }
                 } catch (IllegalArgumentException e) {
                     Ui.printError(e.getMessage());
                 }
@@ -74,6 +80,18 @@ public class FinTrack {
             case Ui.BALANCE_COMMAND:
                 double balance = fm.getBalance();
                 Ui.printBalance(balance, fm.getTotalIncome(), fm.getTotalExpense());
+                break;
+            case Ui.BUDGET_COMMAND:
+                try {
+                    var budgetInfo = Parser.parseSetBudget(input);
+                    fm.setBudget(budgetInfo.getKey(), budgetInfo.getValue());
+                    Ui.printBudgetSet(budgetInfo.getKey(), budgetInfo.getValue());
+                } catch (IllegalArgumentException e) {
+                    Ui.printError(e.getMessage());
+                }
+                break;
+            case Ui.LIST_BUDGET_COMMAND:
+                Ui.printBudgets(fm.getBudgetsView());
                 break;
             case Ui.DELETE_EXPENSE_COMMAND:
                 try {

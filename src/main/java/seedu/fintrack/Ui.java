@@ -4,10 +4,12 @@ package seedu.fintrack;
 import java.util.Scanner;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import seedu.fintrack.model.Expense;
+import seedu.fintrack.model.ExpenseCategory;
 import seedu.fintrack.model.Income;
 
 /**
@@ -22,6 +24,8 @@ public class Ui {
     public static final String DELETE_EXPENSE_COMMAND = "delete-expense";
     public static final String DELETE_INCOME_COMMAND = "delete-income";
     public static final String BALANCE_COMMAND = "balance";
+    public static final String BUDGET_COMMAND = "budget";
+    public static final String LIST_BUDGET_COMMAND = "list-budget";
     public static final String LIST_COMMAND = "list";
     public static final String LIST_INCOME_COMMAND = "list-income";
     public static final String EXIT_COMMAND = "bye";
@@ -172,6 +176,61 @@ public class Ui {
         System.out.println("  Total Income:  " + String.format("%.2f", totalIncome));
         System.out.println("  Total Expense: " + String.format("%.2f", totalExpense));
         LOGGER.fine("Printed balance summary.");
+    }
+
+    /**
+     * Prints a confirmation that a budget has been set for a category.
+     *
+     * @param category The expense category for which the budget was set.
+     * @param amount The budget amount.
+     */
+    static void printBudgetSet(ExpenseCategory category, double amount) {
+        Objects.requireNonNull(category, "category cannot be null");
+        assert Double.isFinite(amount) : "amount must be finite";
+
+        System.out.println("Budget set for " + category + ": $" + String.format("%.2f", amount));
+        LOGGER.fine("Printed budget set confirmation.");
+    }
+
+    /**
+     * Prints a warning that the user has exceeded their budget for a category.
+     *
+     * @param category The category for which the budget was exceeded.
+     * @param budget The budget amount.
+     * @param totalSpent The new total amount spent in that category.
+     */
+    static void printBudgetExceededWarning(ExpenseCategory category, double budget, double totalSpent) {
+        System.out.println();
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ BUDGET ALERT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        System.out.printf("Warning: You've exceeded your budget of $%.2f for the %s category.%n", budget, category);
+        System.out.printf("You have now spent a total of $%.2f in this category.%n", totalSpent);
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        System.out.println();
+        LOGGER.fine("Printed budget exceeded warning.");
+    }
+
+    /**
+     * Prints the list of all set budgets for expense categories, sorted by category name.
+     *
+     * @param budgets A map view of the budgets. Must not be null.
+     */
+    static void printBudgets(Map<ExpenseCategory, Double> budgets) {
+        Objects.requireNonNull(budgets, "budgets cannot be null");
+
+        if (budgets.isEmpty()) {
+            System.out.println("No budgets have been set.");
+            LOGGER.fine("No budgets to list.");
+            return;
+        }
+
+        System.out.println("Current Budgets:");
+        printHorizontalLine(40);
+        budgets.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEach(entry ->
+                        System.out.printf("%-20s: $%.2f%n", entry.getKey(), entry.getValue()));
+        printHorizontalLine(40);
+        LOGGER.fine("Finished printing budgets list (count=" + budgets.size() + ").");
     }
 
     /**
@@ -360,11 +419,14 @@ public class Ui {
         System.out.print("   " + ADD_EXPENSE_COMMAND);
         System.out.println(" a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]");
         System.out.println("   Example: add-expense a/12.50 c/Food d/2025-10-08 desc/Lunch");
+        System.out.println("   Available categories: " +
+                "FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS");
 
         System.out.println();
         System.out.println("2. Add an income:");
         System.out.println("   " + ADD_INCOME_COMMAND + " a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]");
         System.out.println("   Example: add-income a/2000 c/Salary d/2025-10-01 desc/Monthly pay");
+        System.out.println("   Available categories: SALARY, SCHOLARSHIP, INVESTMENT, GIFT");
 
         System.out.println();
         System.out.println("3. View all expenses (from latest to earliest date):");
@@ -391,11 +453,22 @@ public class Ui {
         System.out.println("   Shows total income, total expenses, and current balance.");
 
         System.out.println();
-        System.out.println("8. Show this help menu:");
+        System.out.println("8. Set budget for expense categories:");
+        System.out.println("   " + BUDGET_COMMAND);
+        System.out.println("   Available categories: " +
+                "FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS");
+
+        System.out.println();
+        System.out.println("9. List budgets for expense categories:");
+        System.out.println("   " + LIST_BUDGET_COMMAND);
+        System.out.println("   Example: list-budget");
+
+        System.out.println();
+        System.out.println("10. Show this help menu:");
         System.out.println("   " + HELP_COMMAND);
 
         System.out.println();
-        System.out.println("9. Exit the program:");
+        System.out.println("11. Exit the program:");
         System.out.println("   " + EXIT_COMMAND);
 
         printHorizontalLine(80);
