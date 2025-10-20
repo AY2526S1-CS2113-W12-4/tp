@@ -361,14 +361,18 @@ final class Parser {
         String args = input.substring(Ui.MODIFY_EXPENSE_COMMAND.length()).trim();
         if (args.isEmpty()) {
             LOGGER.log(Level.WARNING, "Missing parameters for modify-expense command.");
-            throw new IllegalArgumentException("Missing parameters. Usage: modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD>");
+            throw new IllegalArgumentException(
+                    "Missing parameters. Usage: modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD>"
+            );
         }
 
         // Extract the index
         int spaceIndex = args.indexOf(' ');
         if (spaceIndex == -1) {
             LOGGER.log(Level.WARNING, "Missing parameters after index in modify-expense command.");
-            throw new IllegalArgumentException("Missing parameters after index. Usage: modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD>");
+            throw new IllegalArgumentException(
+                    "Missing parameters. Usage: modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD>"
+            );
         }
 
         String indexStr = args.substring(0, spaceIndex);
@@ -406,14 +410,18 @@ final class Parser {
         String args = input.substring(Ui.MODIFY_INCOME_COMMAND.length()).trim();
         if (args.isEmpty()) {
             LOGGER.log(Level.WARNING, "Missing parameters for modify-income command.");
-            throw new IllegalArgumentException("Missing parameters. Usage: modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD>");
+            throw new IllegalArgumentException(
+                    "Missing parameters. Usage: modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD>"
+            );
         }
 
         // Extract the index
         int spaceIndex = args.indexOf(' ');
         if (spaceIndex == -1) {
             LOGGER.log(Level.WARNING, "Missing parameters after index in modify-income command.");
-            throw new IllegalArgumentException("Missing parameters after index. Usage: modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD>");
+            throw new IllegalArgumentException(
+                    "Missing parameters. Usage: modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD>"
+            );
         }
 
         String indexStr = args.substring(0, spaceIndex);
