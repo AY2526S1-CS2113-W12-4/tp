@@ -47,18 +47,18 @@ Amount: $1200.00
 Category: RENT
 Description: Monthly rent payment
 --------------------------------------------------
-> Incomes (Oldest first):
+> Incomes (Newest first):
 --------------------------------------------------
 #1
+Date: 2024-01-15
+Amount: $200.00
+Category: SALARY
+--------------------------------------------------
+#2
 Date: 2024-01-01
 Amount: $5000.00
 Category: SALARY
 Description: Monthly salary
---------------------------------------------------
-#2
-Date: 2024-01-15
-Amount: $200.00
-Category: SALARY
 --------------------------------------------------
 > Expense deleted (index 2):
   Amount: 50.00
@@ -87,7 +87,7 @@ Category: SALARY
 3. View all expenses (from latest to earliest date):
    list
 
-4. View all incomes (in the order they were added):
+4. View all incomes (from latest to earliest date):
    list-income
 
 5. Delete an expense:
@@ -97,6 +97,7 @@ Category: SALARY
 
 6. Delete an income:
    delete-income <index>
+   Deletes the income shown at that index in 'list-income'.
    Example: delete-income 1
 
 7. View balance summary:

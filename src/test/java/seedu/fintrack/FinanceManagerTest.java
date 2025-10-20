@@ -90,14 +90,15 @@ public class FinanceManagerTest {
     }
 
     @Test
-    void getIncomesView_withIncomes_returnsUnmodifiableOldestFirstView() {
-        fm.addIncome(sampleIncome1);
-        fm.addIncome(sampleIncome2);
+    void getIncomesView_withIncomes_returnsUnmodifiableNewestFirstView() {
+        fm.addIncome(sampleIncome1); // 2025-01-01
+        fm.addIncome(sampleIncome2); // 2025-01-15 (newest)
 
         List<Income> incomes = fm.getIncomesView();
         assertEquals(2, incomes.size());
-        assertEquals(sampleIncome1, incomes.get(0)); // oldest first
-        assertEquals(sampleIncome2, incomes.get(1));
+        // newest first view
+        assertEquals(sampleIncome2, incomes.get(0)); // 2025-01-15 (newest)
+        assertEquals(sampleIncome1, incomes.get(1)); // 2025-01-01 (older)
         assertThrows(UnsupportedOperationException.class, () -> incomes.add(sampleIncome1));
     }
     
@@ -209,19 +210,19 @@ public class FinanceManagerTest {
     
     @Test
     void deleteIncome_validIndex_deletesAndReturnsIncome() {
-        fm.addIncome(sampleIncome1); // index 1
-        fm.addIncome(sampleIncome2); // index 2
-        
-        // Delete first income
+        fm.addIncome(sampleIncome1); // 2025-01-01
+        fm.addIncome(sampleIncome2); // 2025-01-15 (newest)
+
+        // Delete the newest income (index 1 in newest-first view)
         Income deleted = fm.deleteIncome(1);
-        assertEquals(sampleIncome1, deleted);
+        assertEquals(sampleIncome2, deleted);
         
         // Verify remaining income
-        assertEquals(200.0, fm.getTotalIncome()); // Only sampleIncome2 remains
+        assertEquals(5000.0, fm.getTotalIncome()); // Only sampleIncome1 remains
         
         // Delete remaining income
         deleted = fm.deleteIncome(1);
-        assertEquals(sampleIncome2, deleted);
+        assertEquals(sampleIncome1, deleted);
         assertEquals(0.0, fm.getTotalIncome());
     }
     
@@ -273,11 +274,11 @@ public class FinanceManagerTest {
         assertEquals(1250.0, fm.getTotalExpense()); // 1280 - 30
         assertEquals(3950.0, fm.getBalance());
         
-        // Delete an income
+        // Delete an income (newest first, so index 1 = sampleIncome2)
         fm.deleteIncome(1);
-        assertEquals(200.0, fm.getTotalIncome()); // 5200 - 5000
+        assertEquals(5000.0, fm.getTotalIncome()); // 5200 - 200
         assertEquals(1250.0, fm.getTotalExpense());
-        assertEquals(-1050.0, fm.getBalance());
+        assertEquals(3750.0, fm.getBalance());
     }
     
     @Test

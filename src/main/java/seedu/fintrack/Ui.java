@@ -309,7 +309,7 @@ public class Ui {
     }
 
     /**
-     * Prints the list of incomes in the order they were added.
+     * Prints the list of incomes in reverse chronological order (newest first).
      *
      * <p>Each entry shows 1-based index, date ({@code yyyy-MM-dd}), amount, category,
      * and optional description. Malformed entries are skipped with a {@code WARNING}
@@ -327,7 +327,7 @@ public class Ui {
             LOGGER.fine("No incomes to list.");
             return;
         }
-        System.out.println("Incomes (Oldest first):");
+        System.out.println("Incomes (Newest first):");
         var fmt = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd");
         for (int i = 0; i < incomesView.size(); i++) {
             try {
@@ -433,7 +433,7 @@ public class Ui {
         System.out.println("   " + LIST_COMMAND);
 
         System.out.println();
-        System.out.println("4. View all incomes (in the order they were added):");
+        System.out.println("4. View all incomes (from latest to earliest date):");
         System.out.println("   " + LIST_INCOME_COMMAND);
 
         System.out.println();
@@ -445,6 +445,7 @@ public class Ui {
         System.out.println();
         System.out.println("6. Delete an income:");
         System.out.println("   " + DELETE_INCOME_COMMAND + " <index>");
+        System.out.println("   Deletes the income shown at that index in 'list-income'.");
         System.out.println("   Example: delete-income 1");
 
         System.out.println();
