@@ -193,10 +193,6 @@ public class ParserTest {
     }
 
     /**
-     * Tests 'add-expense' parsing with invalid amount formats (non-numeric, negative).
-     * Expects an {@link IllegalArgumentException} for each case.
-     */
-    /**
      * Helper method to construct a valid 'modify-expense' command string for testing.
      *
      * @param index The index of the expense to modify.
