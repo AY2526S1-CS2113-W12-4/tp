@@ -370,6 +370,10 @@ public class ParserTest {
         }
     }
 
+    /**
+     * Tests 'add-expense' parsing with invalid amount formats (non-numeric, negative).
+     * Expects an {@link IllegalArgumentException} for each case.
+    */
     @Test
     public void parseAddExpense_invalidAmount_throws() {
         String notNumber = addExpense("twelve", "Food", "2025-10-01", null);
