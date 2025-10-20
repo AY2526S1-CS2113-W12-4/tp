@@ -60,18 +60,70 @@ Date: 2024-01-15
 Amount: $200.00
 Category: SALARY
 --------------------------------------------------
-> Expense deleted (index 2):
-  Amount: 50.00
+> Expense at index 1 modified to:
+  Amount: 1300.00
+  Category: RENT
+  Date: 2024-01-01
+  Description: Monthly rent increased
+> Expense at index 2 modified to:
+  Amount: 45.00
   Category: FOOD
   Date: 2024-01-02
+  Description: Updated food cost
+> Income at index 2 modified to:
+  Amount: 250.00
+  Category: SALARY
+  Date: 2024-01-15
+  Description: Extra performance bonus
+> Expenses (Newest first):
+--------------------------------------------------
+#1
+Date: 2024-01-02
+Amount: $50.00
+Category: FOOD
+--------------------------------------------------
+#2
+Date: 2024-01-02
+Amount: $45.00
+Category: FOOD
+Description: Updated food cost
+--------------------------------------------------
+#3
+Date: 2024-01-01
+Amount: $1300.00
+Category: RENT
+Description: Monthly rent increased
+--------------------------------------------------
+> Incomes (Oldest first):
+--------------------------------------------------
+#1
+Date: 2024-01-01
+Amount: $5000.00
+Category: SALARY
+Description: Monthly salary
+--------------------------------------------------
+#2
+Date: 2024-01-15
+Amount: $250.00
+Category: SALARY
+Description: Extra performance bonus
+--------------------------------------------------
+> Overall Balance: 3855.00
+  Total Income:  5250.00
+  Total Expense: 1395.00
+> Expense deleted (index 2):
+  Amount: 45.00
+  Category: FOOD
+  Date: 2024-01-02
+  Description: Updated food cost
 > Income deleted (index 1):
   Amount: 5000.00
   Category: SALARY
   Date: 2024-01-01
   Description: Monthly salary
-> Overall Balance: -1030.00
-  Total Income:  200.00
-  Total Expense: 1230.00
+> Overall Balance: -1100.00
+  Total Income:  250.00
+  Total Expense: 1350.00
 > === FinTrack Command Summary ===
 --------------------------------------------------------------------------------
 1. Add an expense:
