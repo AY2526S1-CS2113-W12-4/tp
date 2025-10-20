@@ -7,6 +7,12 @@ add-expense a/30 c/Transport d/2024-01-03 desc/Bus fare
 balance
 list
 list-income
+modify-expense 1 a/1300 c/Rent d/2024-01-01 desc/Monthly rent increased
+modify-expense 2 a/45 c/Food d/2024-01-02 desc/Updated food cost
+modify-income 2 a/250 c/Salary d/2024-01-15 desc/Extra performance bonus
+list
+list-income
+balance
 delete-expense 2
 delete-income 1
 balance

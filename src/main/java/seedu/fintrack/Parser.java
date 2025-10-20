@@ -345,4 +345,102 @@ final class Parser {
             throw new IllegalArgumentException("Income index must be a valid number.");
         }
     }
+
+    /**
+     * Parses a modify-expense command into an index and new expense data.
+     * Expected format: {@code modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<text>]}
+     *
+     * @param input The full command string. Must not be null.
+     * @return A pair containing the 1-based index and the new expense object.
+     * @throws IllegalArgumentException If any required parameters are missing or invalid.
+     */
+    public static Map.Entry<Integer, Expense> parseModifyExpense(String input) {
+        assert input != null : "Input for parsing modify-expense cannot be null.";
+        LOGGER.log(Level.INFO, "Parsing modify-expense input: ''{0}''.", input);
+
+        String args = input.substring(Ui.MODIFY_EXPENSE_COMMAND.length()).trim();
+        if (args.isEmpty()) {
+            LOGGER.log(Level.WARNING, "Missing parameters for modify-expense command.");
+            throw new IllegalArgumentException(
+                    "Missing parameters. Usage: modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD>"
+            );
+        }
+
+        // Extract the index
+        int spaceIndex = args.indexOf(' ');
+        if (spaceIndex == -1) {
+            LOGGER.log(Level.WARNING, "Missing parameters after index in modify-expense command.");
+            throw new IllegalArgumentException(
+                    "Missing parameters. Usage: modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD>"
+            );
+        }
+
+        String indexStr = args.substring(0, spaceIndex);
+        String remainingArgs = args.substring(spaceIndex + 1);
+
+        int index;
+        try {
+            index = Integer.parseInt(indexStr);
+            if (index <= 0) {
+                LOGGER.log(Level.WARNING, "Non-positive index for modify-expense command: {0}", index);
+                throw new IllegalArgumentException("Expense index must be a positive number.");
+            }
+        } catch (NumberFormatException e) {
+            LOGGER.log(Level.WARNING, "Invalid index for modify-expense command: {0}", indexStr);
+            throw new IllegalArgumentException("Expense index must be a valid number.");
+        }
+
+        // Parse the new expense data using existing add-expense logic
+        Expense newExpense = parseAddExpense(Ui.ADD_EXPENSE_COMMAND + " " + remainingArgs);
+        return Map.entry(index, newExpense);
+    }
+
+    /**
+     * Parses a modify-income command into an index and new income data.
+     * Expected format: {@code modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<text>]}
+     *
+     * @param input The full command string. Must not be null.
+     * @return A pair containing the 1-based index and the new income object.
+     * @throws IllegalArgumentException If any required parameters are missing or invalid.
+     */
+    public static Map.Entry<Integer, Income> parseModifyIncome(String input) {
+        assert input != null : "Input for parsing modify-income cannot be null.";
+        LOGGER.log(Level.INFO, "Parsing modify-income input: ''{0}''.", input);
+
+        String args = input.substring(Ui.MODIFY_INCOME_COMMAND.length()).trim();
+        if (args.isEmpty()) {
+            LOGGER.log(Level.WARNING, "Missing parameters for modify-income command.");
+            throw new IllegalArgumentException(
+                    "Missing parameters. Usage: modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD>"
+            );
+        }
+
+        // Extract the index
+        int spaceIndex = args.indexOf(' ');
+        if (spaceIndex == -1) {
+            LOGGER.log(Level.WARNING, "Missing parameters after index in modify-income command.");
+            throw new IllegalArgumentException(
+                    "Missing parameters. Usage: modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD>"
+            );
+        }
+
+        String indexStr = args.substring(0, spaceIndex);
+        String remainingArgs = args.substring(spaceIndex + 1);
+
+        int index;
+        try {
+            index = Integer.parseInt(indexStr);
+            if (index <= 0) {
+                LOGGER.log(Level.WARNING, "Non-positive index for modify-income command: {0}", index);
+                throw new IllegalArgumentException("Income index must be a positive number.");
+            }
+        } catch (NumberFormatException e) {
+            LOGGER.log(Level.WARNING, "Invalid index for modify-income command: {0}", indexStr);
+            throw new IllegalArgumentException("Income index must be a valid number.");
+        }
+
+        // Parse the new income data using existing add-income logic
+        Income newIncome = parseAddIncome(Ui.ADD_INCOME_COMMAND + " " + remainingArgs);
+        return Map.entry(index, newIncome);
+    }
 }
