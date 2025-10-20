@@ -18,6 +18,11 @@ import java.util.logging.Logger;
  * </ul>
  */
 public class FinTrack {
+    private static final String INVALID_COMMAND_MESSAGE =
+            "Invalid command. Type 'help' for a list of available commands.";
+    private static final String NO_ARGUMENTS_MESSAGE_TEMPLATE =
+            "The '%s' command does not take additional arguments.";
+
     /*
      * Initialises java.util.logging from a classpath resource ('logging.properties') when no
      * logging configuration is provided via system properties. Falls back to JDK defaults if the
@@ -50,6 +55,10 @@ public class FinTrack {
             String input = Ui.waitForInput();
             String firstWord = Parser.returnFirstWord(input);
             if (firstWord.equals(Ui.EXIT_COMMAND)) {
+                if (hasUnexpectedArguments(input, Ui.EXIT_COMMAND)) {
+                    Ui.printError(formatNoArgumentsMessage(Ui.EXIT_COMMAND));
+                    continue;
+                }
                 break;
             }
             switch (firstWord) {
@@ -78,6 +87,10 @@ public class FinTrack {
                 }
                 break;
             case Ui.BALANCE_COMMAND:
+                if (hasUnexpectedArguments(input, Ui.BALANCE_COMMAND)) {
+                    Ui.printError(formatNoArgumentsMessage(Ui.BALANCE_COMMAND));
+                    break;
+                }
                 double balance = fm.getBalance();
                 Ui.printBalance(balance, fm.getTotalIncome(), fm.getTotalExpense());
                 break;
@@ -91,6 +104,10 @@ public class FinTrack {
                 }
                 break;
             case Ui.LIST_BUDGET_COMMAND:
+                if (hasUnexpectedArguments(input, Ui.LIST_BUDGET_COMMAND)) {
+                    Ui.printError(formatNoArgumentsMessage(Ui.LIST_BUDGET_COMMAND));
+                    break;
+                }
                 Ui.printBudgets(fm.getBudgetsView());
                 break;
             case Ui.DELETE_EXPENSE_COMMAND:
@@ -139,19 +156,46 @@ public class FinTrack {
                 }
                 break;
             case Ui.LIST_COMMAND:
+                if (hasUnexpectedArguments(input, Ui.LIST_COMMAND)) {
+                    Ui.printError(formatNoArgumentsMessage(Ui.LIST_COMMAND));
+                    break;
+                }
                 Ui.printListOfExpenses(fm.getExpensesView());
                 break;
             case Ui.LIST_INCOME_COMMAND:
+                if (hasUnexpectedArguments(input, Ui.LIST_INCOME_COMMAND)) {
+                    Ui.printError(formatNoArgumentsMessage(Ui.LIST_INCOME_COMMAND));
+                    break;
+                }
                 Ui.printListOfIncomes(fm.getIncomesView());
                 break;
             case Ui.HELP_COMMAND:
+                if (hasUnexpectedArguments(input, Ui.HELP_COMMAND)) {
+                    Ui.printError(formatNoArgumentsMessage(Ui.HELP_COMMAND));
+                    break;
+                }
                 Ui.printHelp();
                 break;
             default:
-                Ui.printError("Invalid command. Type 'help' for a list of available commands.");
+                Ui.printError(INVALID_COMMAND_MESSAGE);
             }
         }
 
         Ui.printExit();
+    }
+
+    private static boolean hasUnexpectedArguments(String input, String commandWord) {
+        if (!input.startsWith(commandWord)) {
+            return false;
+        }
+        if (input.length() == commandWord.length()) {
+            return false;
+        }
+        String arguments = input.substring(commandWord.length()).trim();
+        return !arguments.isEmpty();
+    }
+
+    private static String formatNoArgumentsMessage(String commandWord) {
+        return String.format(NO_ARGUMENTS_MESSAGE_TEMPLATE, commandWord);
     }
 }
