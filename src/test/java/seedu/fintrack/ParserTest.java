@@ -196,6 +196,185 @@ public class ParserTest {
      * Tests 'add-expense' parsing with invalid amount formats (non-numeric, negative).
      * Expects an {@link IllegalArgumentException} for each case.
      */
+    
+    /**
+     * Helper method to construct a valid 'modify-expense' command string for testing.
+     *
+     * @param index The index of the expense to modify.
+     * @param amount The new amount of the expense.
+     * @param category The new category of the expense.
+     * @param date The new date of the expense in 'YYYY-MM-DD' format.
+     * @param desc The new description of the expense. Can be null for no description.
+     * @return A formatted 'modify-expense' command string.
+     */
+    private static String modifyExpense(String index, String amount, String category, String date, String desc) {
+        String base = Ui.MODIFY_EXPENSE_COMMAND + " " + index + " "
+                + Ui.AMOUNT_PREFIX + amount + " "
+                + Ui.CATEGORY_PREFIX + category + " "
+                + Ui.DATE_PREFIX + date;
+        if (desc != null) {
+            base += " " + Ui.DESCRIPTION_PREFIX + desc;
+        }
+        return base;
+    }
+
+    /**
+     * Helper method to construct a valid 'modify-income' command string for testing.
+     *
+     * @param index The index of the income to modify.
+     * @param amount The new amount of the income.
+     * @param category The new category of the income.
+     * @param date The new date of the income in 'YYYY-MM-DD' format.
+     * @param desc The new description of the income. Can be null for no description.
+     * @return A formatted 'modify-income' command string.
+     */
+    private static String modifyIncome(String index, String amount, String category, String date, String desc) {
+        String base = Ui.MODIFY_INCOME_COMMAND + " " + index + " "
+                + Ui.AMOUNT_PREFIX + amount + " "
+                + Ui.CATEGORY_PREFIX + category + " "
+                + Ui.DATE_PREFIX + date;
+        if (desc != null) {
+            base += " " + Ui.DESCRIPTION_PREFIX + desc;
+        }
+        return base;
+    }
+
+    /**
+     * Tests parsing of a valid 'modify-expense' command with an optional description.
+     * Expects a correctly configured Map.Entry with index and Expense object.
+     */
+    @Test
+    public void parseModifyExpense_valid_withDescription() {
+        String input = modifyExpense("1", "12.50", "food", "2025-10-01", "lunch");
+        var result = Parser.parseModifyExpense(input);
+        
+        assertEquals(1, result.getKey());
+        Expense e = result.getValue();
+        assertEquals(12.50, e.getAmount(), 1e-9);
+        assertEquals(ExpenseCategory.FOOD, e.getCategory());
+        assertEquals(LocalDate.of(2025, 10, 1), e.getDate());
+        assertEquals("lunch", e.getDescription());
+    }
+
+    /**
+     * Tests parsing of a valid 'modify-expense' command without an optional description.
+     * Expects the description field to be null in the resulting Expense object.
+     */
+    @Test
+    public void parseModifyExpense_validWithoutDescription_descriptionNull() {
+        String input = modifyExpense("2", "10", "Transport", "2025-01-02", null);
+        var result = Parser.parseModifyExpense(input);
+
+        assertEquals(2, result.getKey());
+        Expense e = result.getValue();
+        assertEquals(10.0, e.getAmount(), 1e-9);
+        assertEquals(ExpenseCategory.TRANSPORT, e.getCategory());
+        assertEquals(LocalDate.of(2025, 1, 2), e.getDate());
+        assertEquals(null, e.getDescription());
+    }
+
+    /**
+     * Tests 'modify-expense' parsing with invalid parameters.
+     * Expects an IllegalArgumentException for each case.
+     */
+    @Test
+    public void parseModifyExpense_invalidParams_throws() {
+        // Missing index
+        try {
+            Parser.parseModifyExpense(Ui.MODIFY_EXPENSE_COMMAND);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals(
+                "Missing parameters. Usage: modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD>",
+                e.getMessage()
+            );
+        }
+
+        // Invalid index
+        try {
+            Parser.parseModifyExpense(Ui.MODIFY_EXPENSE_COMMAND + " abc a/10 c/Food d/2025-10-01");
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Expense index must be a valid number.", e.getMessage());
+        }
+
+        // Negative index
+        try {
+            Parser.parseModifyExpense(Ui.MODIFY_EXPENSE_COMMAND + " -1 a/10 c/Food d/2025-10-01");
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Expense index must be a positive number.", e.getMessage());
+        }
+    }
+
+    /**
+     * Tests parsing of a valid 'modify-income' command with an optional description.
+     * Expects a correctly configured Map.Entry with index and Income object.
+     */
+    @Test
+    public void parseModifyIncome_valid_withDescription() {
+        String input = modifyIncome("1", "5000", "Salary", "2025-10-01", "Monthly pay");
+        var result = Parser.parseModifyIncome(input);
+        
+        assertEquals(1, result.getKey());
+        Income i = result.getValue();
+        assertEquals(5000.0, i.getAmount(), 1e-9);
+        assertEquals(IncomeCategory.SALARY, i.getCategory());
+        assertEquals(LocalDate.of(2025, 10, 1), i.getDate());
+        assertEquals("Monthly pay", i.getDescription());
+    }
+
+    /**
+     * Tests parsing of a valid 'modify-income' command without an optional description.
+     * Expects the description field to be null in the resulting Income object.
+     */
+    @Test
+    public void parseModifyIncome_validWithoutDescription_descriptionNull() {
+        String input = modifyIncome("2", "100", "Investment", "2025-01-02", null);
+        var result = Parser.parseModifyIncome(input);
+
+        assertEquals(2, result.getKey());
+        Income i = result.getValue();
+        assertEquals(100.0, i.getAmount(), 1e-9);
+        assertEquals(IncomeCategory.INVESTMENT, i.getCategory());
+        assertEquals(LocalDate.of(2025, 1, 2), i.getDate());
+        assertEquals(null, i.getDescription());
+    }
+
+    /**
+     * Tests 'modify-income' parsing with invalid parameters.
+     * Expects an IllegalArgumentException for each case.
+     */
+    @Test
+    public void parseModifyIncome_invalidParams_throws() {
+        // Missing index
+        try {
+            Parser.parseModifyIncome(Ui.MODIFY_INCOME_COMMAND);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals(
+                "Missing parameters. Usage: modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD>",
+                e.getMessage()
+            );
+        }
+
+        // Invalid index
+        try {
+            Parser.parseModifyIncome(Ui.MODIFY_INCOME_COMMAND + " abc a/10 c/Salary d/2025-10-01");
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Income index must be a valid number.", e.getMessage());
+        }
+
+        // Negative index
+        try {
+            Parser.parseModifyIncome(Ui.MODIFY_INCOME_COMMAND + " -1 a/10 c/Salary d/2025-10-01");
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Income index must be a positive number.", e.getMessage());
+        }
+    }
+
     @Test
     public void parseAddExpense_invalidAmount_throws() {
         String notNumber = addExpense("twelve", "Food", "2025-10-01", null);
