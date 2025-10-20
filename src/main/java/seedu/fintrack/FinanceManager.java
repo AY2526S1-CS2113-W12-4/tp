@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.logging.Logger;
 import java.util.logging.Level;
+import java.time.YearMonth;
+import java.util.Objects;
 
 import seedu.fintrack.model.ExpenseList;
 import seedu.fintrack.model.IncomeList;
@@ -13,6 +15,14 @@ import seedu.fintrack.model.ExpenseCategory;
 import seedu.fintrack.model.Income;
 import seedu.fintrack.model.Expense;
 
+/**
+ * Manages all financial data including incomes and expenses.
+ * <p>
+ * Provides core operations to add, delete, and retrieve transactions,
+ * compute totals and balances, and expose read-only views of stored data.
+ * Ensures that all financial records are maintained in reverse
+ * chronological order through {@code IncomeList} and {@code ExpenseList}.
+ */
 public class FinanceManager {
     private static final Logger LOGGER = Logger.getLogger(FinanceManager.class.getName());
     private final IncomeList incomes = new IncomeList();
@@ -151,6 +161,34 @@ public class FinanceManager {
         return totalIncome - totalExpense;
     }
 
+    /**
+     * Computes the balance (total income minus total expense) for a given month.
+     *
+     * <p>Derived from {@link #getIncomesViewForMonth(YearMonth)} and
+     * {@link #getExpensesViewForMonth(YearMonth)}, maintaining numeric
+     * consistency and logging at {@code INFO} level.</p>
+     *
+     * @param ym target month; must not be {@code null}.
+     * @return computed monthly balance.
+     * @throws NullPointerException if {@code ym} is {@code null}.
+     */
+    public double getBalanceForMonth(YearMonth ym) {
+        Objects.requireNonNull(ym, "Month (YearMonth) cannot be null");
+        LOGGER.log(Level.FINE, "Computing monthly balance for {0}", ym);
+
+        double totalIncome = getIncomesViewForMonth(ym).stream()
+                .mapToDouble(Income::getAmount).sum();
+        double totalExpense = getExpensesViewForMonth(ym).stream()
+                .mapToDouble(Expense::getAmount).sum();
+
+        double balance = totalIncome - totalExpense;
+        assert !Double.isNaN(balance) : "Computed monthly balance is NaN";
+
+        LOGGER.log(Level.INFO, "Balance for {0}: Income={1}, Expense={2}, Net={3}",
+                new Object[]{ym, totalIncome, totalExpense, balance});
+        return balance;
+    }
+
     /** Returns an unmodifiable newest-first view list of incomes for printing. */
     public List<Income> getIncomesView() {
         List<Income> incomeList = Collections.unmodifiableList(incomes);
@@ -158,11 +196,67 @@ public class FinanceManager {
         return incomeList;
     }
 
+    /**
+     * Returns an unmodifiable newest-first view of incomes for the given month.
+     *
+     * <p>Filters by year and month of {@code Income#getDate()}, preserving
+     * reverse-chronological order via {@link IncomeList} logic.</p>
+     *
+     * @param ym target month; must not be {@code null}.
+     * @return unmodifiable newest-first list of incomes for that month.
+     * @throws NullPointerException if {@code ym} is {@code null}.
+     */
+    public List<Income> getIncomesViewForMonth(YearMonth ym) {
+        Objects.requireNonNull(ym, "Month (YearMonth) cannot be null");
+        LOGGER.log(Level.FINE, "Filtering incomes for {0}", ym);
+
+        IncomeList monthlyIncomes = new IncomeList();
+        for (Income i : incomes.asUnmodifiableView()) {
+            if (i.getDate().getYear() == ym.getYear()
+                    && i.getDate().getMonthValue() == ym.getMonthValue()) {
+                monthlyIncomes.add(i);
+            }
+        }
+
+        assert monthlyIncomes != null : "IncomeList for month should not be null";
+        LOGGER.log(Level.FINE, "Found {0} incomes for {1}",
+                new Object[]{monthlyIncomes.size(), ym});
+        return monthlyIncomes.asUnmodifiableView();
+    }
+
     /** Returns an unmodifiable newest-first view list of expenses for printing. */
     public List<Expense> getExpensesView() {
         List<Expense> expenseList = expenses.asUnmodifiableView();
         assert expenseList != null : "Expense list should not be null.";
         return expenseList;
+    }
+
+    /**
+     * Returns an unmodifiable newest-first view of expenses for the given month.
+     *
+     * <p>Filters by year and month of {@code Expense#getDate()}, preserving
+     * reverse-chronological order via {@link ExpenseList} logic.</p>
+     *
+     * @param ym target month; must not be {@code null}.
+     * @return unmodifiable newest-first list of expenses for that month.
+     * @throws NullPointerException if {@code ym} is {@code null}.
+     */
+    public List<Expense> getExpensesViewForMonth(YearMonth ym) {
+        Objects.requireNonNull(ym, "Month (YearMonth) cannot be null");
+        LOGGER.log(Level.FINE, "Filtering expenses for {0}", ym);
+
+        ExpenseList monthlyExpenses = new ExpenseList();
+        for (Expense e : expenses.asUnmodifiableView()) {
+            if (e.getDate().getYear() == ym.getYear()
+                    && e.getDate().getMonthValue() == ym.getMonthValue()) {
+                monthlyExpenses.add(e);
+            }
+        }
+
+        assert monthlyExpenses != null : "ExpenseList for month should not be null";
+        LOGGER.log(Level.FINE, "Found {0} expenses for {1}",
+                new Object[]{monthlyExpenses.size(), ym});
+        return monthlyExpenses.asUnmodifiableView();
     }
 
     /**
