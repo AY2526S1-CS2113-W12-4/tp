@@ -212,4 +212,33 @@ public class FinanceManager {
                 "Removed income should have been the one at index - 1";
         return deletedIncome;
     }
+
+    /**
+     * Modifies an existing expense by replacing it with a new one.
+     * This is equivalent to deleting the old expense and adding the new one.
+     *
+     * @param index The 1-based index of the expense to modify
+     * @param newExpense The new expense data
+     * @return True if adding the new expense exceeds its category's budget
+     * @throws IndexOutOfBoundsException If the index is invalid
+     */
+    public boolean modifyExpense(int index, Expense newExpense) {
+        assert newExpense != null : "New expense cannot be null";
+        deleteExpense(index); // This will throw if index is invalid
+        return addExpense(newExpense);
+    }
+
+    /**
+     * Modifies an existing income by replacing it with a new one.
+     * This is equivalent to deleting the old income and adding the new one.
+     *
+     * @param index The 1-based index of the income to modify
+     * @param newIncome The new income data
+     * @throws IndexOutOfBoundsException If the index is invalid
+     */
+    public void modifyIncome(int index, Income newIncome) {
+        assert newIncome != null : "New income cannot be null";
+        deleteIncome(index); // This will throw if index is invalid
+        addIncome(newIncome);
+    }
 }
