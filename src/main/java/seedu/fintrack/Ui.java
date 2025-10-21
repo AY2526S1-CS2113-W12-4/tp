@@ -28,6 +28,8 @@ public class Ui {
     public static final String LIST_BUDGET_COMMAND = "list-budget";
     public static final String LIST_COMMAND = "list";
     public static final String LIST_INCOME_COMMAND = "list-income";
+    public static final String MODIFY_EXPENSE_COMMAND = "modify-expense";
+    public static final String MODIFY_INCOME_COMMAND = "modify-income";
     public static final String EXIT_COMMAND = "bye";
 
     // Parameter prefixes
@@ -190,6 +192,51 @@ public class Ui {
 
         System.out.println("Budget set for " + category + ": $" + String.format("%.2f", amount));
         LOGGER.fine("Printed budget set confirmation.");
+    }
+
+    /**
+     * Prints a warning that the user has exceeded their budget for a category.
+     *
+     * @param category The category for which the budget was exceeded.
+     */
+    static void printExpenseModified(Expense expense, int index) {
+        Objects.requireNonNull(expense, "expense cannot be null");
+        Objects.requireNonNull(expense.getCategory(), "expense category cannot be null");
+        Objects.requireNonNull(expense.getDate(), "expense date cannot be null");
+        assert Double.isFinite(expense.getAmount()) : "expense amount must be finite";
+
+        System.out.println("Expense at index " + index + " modified to:");
+        System.out.println("  Amount: " + String.format("%.2f", expense.getAmount()));
+        System.out.println("  Category: " + expense.getCategory());
+        System.out.println("  Date: " + expense.getDate());
+        if (expense.getDescription() != null && !expense.getDescription().isBlank()) {
+            System.out.println("  Description: " + expense.getDescription());
+        }
+        LOGGER.fine("Printed expense modified confirmation.");
+    }
+
+    /**
+     * Prints a confirmation block for a modified Income.
+     *
+     * @param income the modified income to summarize; must not be null.
+     * @param index the index of the modified income
+     * @throws NullPointerException if income, its category, or date is null.
+     * @throws AssertionError if the amount is not finite when assertions are enabled.
+     */
+    static void printIncomeModified(Income income, int index) {
+        Objects.requireNonNull(income, "income cannot be null");
+        Objects.requireNonNull(income.getCategory(), "income category cannot be null");
+        Objects.requireNonNull(income.getDate(), "income date cannot be null");
+        assert Double.isFinite(income.getAmount()) : "income amount must be finite";
+
+        System.out.println("Income at index " + index + " modified to:");
+        System.out.println("  Amount: " + String.format("%.2f", income.getAmount()));
+        System.out.println("  Category: " + income.getCategory());
+        System.out.println("  Date: " + income.getDate());
+        if (income.getDescription() != null && !income.getDescription().isBlank()) {
+            System.out.println("  Description: " + income.getDescription());
+        }
+        LOGGER.fine("Printed income modified confirmation.");
     }
 
     /**
