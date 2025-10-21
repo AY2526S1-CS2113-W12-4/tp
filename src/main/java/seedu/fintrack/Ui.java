@@ -195,9 +195,12 @@ public class Ui {
     }
 
     /**
-     * Prints a warning that the user has exceeded their budget for a category.
+     * Prints a confirmation block for a modified Expense.
      *
-     * @param category The category for which the budget was exceeded.
+     * @param expense the modified expense to summarize; must not be null.
+     * @param index the index of the modified expense
+     * @throws NullPointerException if expense, its category, or date is null.
+     * @throws AssertionError if the amount is not finite when assertions are enabled.
      */
     static void printExpenseModified(Expense expense, int index) {
         Objects.requireNonNull(expense, "expense cannot be null");
@@ -496,35 +499,50 @@ public class Ui {
         System.out.println();
         System.out.println("6. Delete an income:");
         System.out.println("   " + DELETE_INCOME_COMMAND + " <index>");
-        System.out.println("   Deletes the income shown at that index in 'list-income'.");
+        System.out.println("   Deletes the income shown at that index in 'list'.");
         System.out.println("   Example: delete-income 1");
 
         System.out.println();
-        System.out.println("7. View balance summary:");
+        System.out.println("7. Modify an expense:");
+        System.out.println("   "
+                + MODIFY_EXPENSE_COMMAND
+                + " <index> a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]");
+        System.out.println("   Modifies the expense shown at that index in 'list'.");
+        System.out.println("   Example: modify-expense 1 a/1300 c/Rent d/2024-01-01 desc/Monthly rent increased");
+
+        System.out.println();
+        System.out.println("8. Modify an income:");
+        System.out.println("   "
+                + MODIFY_INCOME_COMMAND
+                + " <index> a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]");
+        System.out.println("   Modifies the income shown at that index in 'list-income'.");
+        System.out.println("   Example: modify-income 3 a/250 c/Salary d/2024-01-15 desc/Extra performance bonus");
+
+        System.out.println();
+        System.out.println("9. View balance summary:");
         System.out.println("   " + BALANCE_COMMAND);
         System.out.println("   Shows total income, total expenses, and current balance.");
         System.out.println("   To view by month: " + BALANCE_COMMAND + " <YYYY-MM>");
         System.out.println("   Example: balance 2025-10");
 
-
         System.out.println();
-        System.out.println("8. Set budget for expense categories:");
-        System.out.println("   " + BUDGET_COMMAND);
-        System.out.println("   Available categories: " +
+        System.out.println("10. Set budget for expense categories:");
+        System.out.println("    " + BUDGET_COMMAND);
+        System.out.println("    Available categories: " +
                 "FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS");
 
         System.out.println();
-        System.out.println("9. List budgets for expense categories:");
-        System.out.println("   " + LIST_BUDGET_COMMAND);
-        System.out.println("   Example: list-budget");
+        System.out.println("11. List budgets for expense categories:");
+        System.out.println("    " + LIST_BUDGET_COMMAND);
+        System.out.println("    Example: list-budget");
 
         System.out.println();
-        System.out.println("10. Show this help menu:");
-        System.out.println("   " + HELP_COMMAND);
+        System.out.println("12. Show this help menu:");
+        System.out.println("    " + HELP_COMMAND);
 
         System.out.println();
-        System.out.println("11. Exit the program:");
-        System.out.println("   " + EXIT_COMMAND);
+        System.out.println("13. Exit the program:");
+        System.out.println("    " + EXIT_COMMAND);
 
         printHorizontalLine(80);
     }

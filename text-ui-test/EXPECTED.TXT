@@ -487,27 +487,37 @@ Description: Monthly salary
 
 6. Delete an income:
    delete-income <index>
-   Deletes the income shown at that index in 'list-income'.
+   Deletes the income shown at that index in 'list'.
    Example: delete-income 1
 
-7. View balance summary:
+7. Modify an expense:
+   modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]
+   Modifies the expense shown at that index in 'list'.
+   Example: modify-expense 1 a/1300 c/Rent d/2024-01-01 desc/Monthly rent increased
+
+8. Modify an income:
+   modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]
+   Modifies the income shown at that index in 'list-income'.
+   Example: modify-income 3 a/250 c/Salary d/2024-01-15 desc/Extra performance bonus
+
+9. View balance summary:
    balance
    Shows total income, total expenses, and current balance.
    To view by month: balance <YYYY-MM>
    Example: balance 2025-10
 
-8. Set budget for expense categories:
-   budget
-   Available categories: FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS
+10. Set budget for expense categories:
+    budget
+    Available categories: FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS
 
-9. List budgets for expense categories:
-   list-budget
-   Example: list-budget
+11. List budgets for expense categories:
+    list-budget
+    Example: list-budget
 
-10. Show this help menu:
-   help
+12. Show this help menu:
+    help
 
-11. Exit the program:
-   bye
+13. Exit the program:
+    bye
 --------------------------------------------------------------------------------
 > Bye. Hope to see you again soon!
