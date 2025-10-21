@@ -449,7 +449,7 @@ final class Parser {
 
     /**
      * Parses the export command input to extract the file path.
-     * Expected format: export <filepath>
+     * Expected format: export {@code <filepath>}
      *
      * @param input The full export command input
      * @return The Path object representing the export file path
@@ -482,7 +482,10 @@ final class Parser {
             if (parentDir != null && !java.nio.file.Files.exists(parentDir)) {
                 LOGGER.log(Level.WARNING, "Parent directory does not exist: {0}", parentDir);
                 throw new IllegalArgumentException(
-                    "The directory '" + parentDir + "' does not exist. Please create it first or choose a different location.");
+                        "The directory '" +
+                        parentDir +
+                        "' does not exist. Please create it first or choose a different location."
+                );
             }
 
             return path.toAbsolutePath().normalize();
@@ -491,7 +494,9 @@ final class Parser {
             throw new IllegalArgumentException("Invalid file path. Please provide a valid path for the CSV file.");
         } catch (SecurityException e) {
             LOGGER.log(Level.WARNING, "Security error accessing path: {0}", args);
-            throw new IllegalArgumentException("Access denied. Please choose a different location where you have write permission.");
+            throw new IllegalArgumentException(
+                    "Access denied. Please choose a different location where you have write permission."
+            );
         }
     }
 }
