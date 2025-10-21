@@ -161,34 +161,6 @@ public class FinanceManager {
         return totalIncome - totalExpense;
     }
 
-    /**
-     * Computes the balance (total income minus total expense) for a given month.
-     *
-     * <p>Derived from {@link #getIncomesViewForMonth(YearMonth)} and
-     * {@link #getExpensesViewForMonth(YearMonth)}, maintaining numeric
-     * consistency and logging at {@code INFO} level.</p>
-     *
-     * @param ym target month; must not be {@code null}.
-     * @return computed monthly balance.
-     * @throws NullPointerException if {@code ym} is {@code null}.
-     */
-    public double getBalanceForMonth(YearMonth ym) {
-        Objects.requireNonNull(ym, "Month (YearMonth) cannot be null");
-        LOGGER.log(Level.FINE, "Computing monthly balance for {0}", ym);
-
-        double totalIncome = getIncomesViewForMonth(ym).stream()
-                .mapToDouble(Income::getAmount).sum();
-        double totalExpense = getExpensesViewForMonth(ym).stream()
-                .mapToDouble(Expense::getAmount).sum();
-
-        double balance = totalIncome - totalExpense;
-        assert !Double.isNaN(balance) : "Computed monthly balance is NaN";
-
-        LOGGER.log(Level.INFO, "Balance for {0}: Income={1}, Expense={2}, Net={3}",
-                new Object[]{ym, totalIncome, totalExpense, balance});
-        return balance;
-    }
-
     /** Returns an unmodifiable newest-first view list of incomes for printing. */
     public List<Income> getIncomesView() {
         List<Income> incomeList = Collections.unmodifiableList(incomes);
