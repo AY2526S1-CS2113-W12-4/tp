@@ -260,6 +260,18 @@ public class FinanceManager {
         LOGGER.log(Level.INFO, "Exporting data to CSV: " + filePath);
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+        // Create parent directories if they don't exist
+        Path parentDir = filePath.getParent();
+        if (parentDir != null && !java.nio.file.Files.exists(parentDir)) {
+            try {
+                java.nio.file.Files.createDirectories(parentDir);
+                LOGGER.log(Level.INFO, "Created directory: " + parentDir);
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "Failed to create directory: " + parentDir, e);
+                throw new IOException("Could not create directory " + parentDir + ". Please check your permissions.");
+            }
+        }
+
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath.toFile()))) {
             // Write header for incomes
             writer.println("INCOMES");

@@ -181,8 +181,12 @@ public class FinTrack {
                     var exportPath = Parser.parseExport(input);
                     fm.exportToCSV(exportPath);
                     Ui.printExportSuccess(exportPath);
-                } catch (IllegalArgumentException | IOException e) {
+                } catch (SecurityException e) {
+                    Ui.printError("Permission denied. Please ensure you have access to write to this location.");
+                } catch (IllegalArgumentException e) {
                     Ui.printError(e.getMessage());
+                } catch (IOException e) {
+                    Ui.printError("Failed to write the file: " + e.getMessage());
                 }
                 break;
             default:
