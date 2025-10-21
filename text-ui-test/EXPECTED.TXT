@@ -11,6 +11,21 @@ Type 'help' for available commands.
   Amount: 200.00
   Category: SALARY
   Date: 2024-01-15
+> Income added:
+  Amount: 4800.00
+  Category: SALARY
+  Date: 2024-02-01
+  Description: Monthly salary
+> Income added:
+  Amount: 300.00
+  Category: SALARY
+  Date: 2024-02-20
+  Description: Logo commission
+> Income added:
+  Amount: 4900.00
+  Category: SALARY
+  Date: 2024-03-01
+  Description: Monthly salary
 > Expense added:
   Amount: 1200.00
   Category: RENT
@@ -25,6 +40,121 @@ Type 'help' for available commands.
   Category: TRANSPORT
   Date: 2024-01-03
   Description: Bus fare
+> Expense added:
+  Amount: 1300.00
+  Category: RENT
+  Date: 2024-02-01
+  Description: Monthly rent payment
+> Expense added:
+  Amount: 60.00
+  Category: FOOD
+  Date: 2024-02-10
+  Description: Lunch
+> Expense added:
+  Amount: 35.00
+  Category: TRANSPORT
+  Date: 2024-02-11
+> Expense added:
+  Amount: 1400.00
+  Category: RENT
+  Date: 2024-03-01
+  Description: Monthly rent payment
+> Expense added:
+  Amount: 55.00
+  Category: FOOD
+  Date: 2024-03-03
+> Expense added:
+  Amount: 20.00
+  Category: TRANSPORT
+  Date: 2024-03-05
+  Description: Taxi
+> Overall Balance: 11050.00
+  Total Income:  15200.00
+  Total Expense: 4150.00
+> Expenses (Newest first):
+--------------------------------------------------
+#1
+Date: 2024-03-05
+Amount: $20.00
+Category: TRANSPORT
+Description: Taxi
+--------------------------------------------------
+#2
+Date: 2024-03-03
+Amount: $55.00
+Category: FOOD
+--------------------------------------------------
+#3
+Date: 2024-03-01
+Amount: $1400.00
+Category: RENT
+Description: Monthly rent payment
+--------------------------------------------------
+#4
+Date: 2024-02-11
+Amount: $35.00
+Category: TRANSPORT
+--------------------------------------------------
+#5
+Date: 2024-02-10
+Amount: $60.00
+Category: FOOD
+Description: Lunch
+--------------------------------------------------
+#6
+Date: 2024-02-01
+Amount: $1300.00
+Category: RENT
+Description: Monthly rent payment
+--------------------------------------------------
+#7
+Date: 2024-01-03
+Amount: $30.00
+Category: TRANSPORT
+Description: Bus fare
+--------------------------------------------------
+#8
+Date: 2024-01-02
+Amount: $50.00
+Category: FOOD
+--------------------------------------------------
+#9
+Date: 2024-01-01
+Amount: $1200.00
+Category: RENT
+Description: Monthly rent payment
+--------------------------------------------------
+> Incomes (Newest first):
+--------------------------------------------------
+#1
+Date: 2024-03-01
+Amount: $4900.00
+Category: SALARY
+Description: Monthly salary
+--------------------------------------------------
+#2
+Date: 2024-02-20
+Amount: $300.00
+Category: SALARY
+Description: Logo commission
+--------------------------------------------------
+#3
+Date: 2024-02-01
+Amount: $4800.00
+Category: SALARY
+Description: Monthly salary
+--------------------------------------------------
+#4
+Date: 2024-01-15
+Amount: $200.00
+Category: SALARY
+--------------------------------------------------
+#5
+Date: 2024-01-01
+Amount: $5000.00
+Category: SALARY
+Description: Monthly salary
+--------------------------------------------------
 > Overall Balance: 3920.00
   Total Income:  5200.00
   Total Expense: 1280.00
@@ -60,18 +190,117 @@ Amount: $5000.00
 Category: SALARY
 Description: Monthly salary
 --------------------------------------------------
-> Expense deleted (index 2):
-  Amount: 50.00
-  Category: FOOD
-  Date: 2024-01-02
-> Income deleted (index 1):
-  Amount: 5000.00
+> Overall Balance: 3705.00
+  Total Income:  5100.00
+  Total Expense: 1395.00
+> Expenses (Newest first):
+--------------------------------------------------
+#1
+Date: 2024-02-11
+Amount: $35.00
+Category: TRANSPORT
+--------------------------------------------------
+#2
+Date: 2024-02-10
+Amount: $60.00
+Category: FOOD
+Description: Lunch
+--------------------------------------------------
+#3
+Date: 2024-02-01
+Amount: $1300.00
+Category: RENT
+Description: Monthly rent payment
+--------------------------------------------------
+> Incomes (Newest first):
+--------------------------------------------------
+#1
+Date: 2024-02-20
+Amount: $300.00
+Category: SALARY
+Description: Logo commission
+--------------------------------------------------
+#2
+Date: 2024-02-01
+Amount: $4800.00
+Category: SALARY
+Description: Monthly salary
+--------------------------------------------------
+> Overall Balance: 3425.00
+  Total Income:  4900.00
+  Total Expense: 1475.00
+> Expenses (Newest first):
+--------------------------------------------------
+#1
+Date: 2024-03-05
+Amount: $20.00
+Category: TRANSPORT
+Description: Taxi
+--------------------------------------------------
+#2
+Date: 2024-03-03
+Amount: $55.00
+Category: FOOD
+--------------------------------------------------
+#3
+Date: 2024-03-01
+Amount: $1400.00
+Category: RENT
+Description: Monthly rent payment
+--------------------------------------------------
+> Incomes (Newest first):
+--------------------------------------------------
+#1
+Date: 2024-03-01
+Amount: $4900.00
+Category: SALARY
+Description: Monthly salary
+--------------------------------------------------
+> Overall Balance: 0.00
+  Total Income:  0.00
+  Total Expense: 0.00
+> No expenses recorded.
+> No incomes recorded.
+> Error: Month must be in YYYY-MM format.
+> Error: Month must be in YYYY-MM format.
+> Error: Month must be in YYYY-MM format.
+> Expense deleted (index 1):
+  Amount: 20.00
+  Category: TRANSPORT
+  Date: 2024-03-05
+  Description: Taxi
+> Income deleted (index 2):
+  Amount: 300.00
   Category: SALARY
-  Date: 2024-01-01
-  Description: Monthly salary
-> Overall Balance: -1030.00
-  Total Income:  200.00
-  Total Expense: 1230.00
+  Date: 2024-02-20
+  Description: Logo commission
+> Overall Balance: 10770.00
+  Total Income:  14900.00
+  Total Expense: 4130.00
+> Overall Balance: 3445.00
+  Total Income:  4900.00
+  Total Expense: 1455.00
+> Expenses (Newest first):
+--------------------------------------------------
+#1
+Date: 2024-03-03
+Amount: $55.00
+Category: FOOD
+--------------------------------------------------
+#2
+Date: 2024-03-01
+Amount: $1400.00
+Category: RENT
+Description: Monthly rent payment
+--------------------------------------------------
+> Incomes (Newest first):
+--------------------------------------------------
+#1
+Date: 2024-03-01
+Amount: $4900.00
+Category: SALARY
+Description: Monthly salary
+--------------------------------------------------
 > === FinTrack Command Summary ===
 --------------------------------------------------------------------------------
 1. Add an expense:
@@ -86,9 +315,13 @@ Description: Monthly salary
 
 3. View all expenses (from latest to earliest date):
    list
+   To view by month: list <YYYY-MM>
+   Example: list 2025-10
 
 4. View all incomes (from latest to earliest date):
    list-income
+   To view by month: list-income <YYYY-MM>
+   Example: list-income 2025-10
 
 5. Delete an expense:
    delete-expense <index>
@@ -103,6 +336,8 @@ Description: Monthly salary
 7. View balance summary:
    balance
    Shows total income, total expenses, and current balance.
+   To view by month: balance <YYYY-MM>
+   Example: balance 2025-10
 
 8. Set budget for expense categories:
    budget

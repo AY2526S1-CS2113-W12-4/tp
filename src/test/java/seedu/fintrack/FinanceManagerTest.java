@@ -282,7 +282,7 @@ public class FinanceManagerTest {
     }
     
     @Test
-    void deleteMultipleItems_maintainsCorrectIndexing() {
+    void deleteMultipleExpenses_maintainsCorrectIndexing() {
         // Add expenses in chronological order
         Expense e1 = new Expense(100.0, ExpenseCategory.FOOD, LocalDate.parse("2025-01-01"), "First");
         Expense e2 = new Expense(200.0, ExpenseCategory.FOOD, LocalDate.parse("2025-01-02"), "Second");
@@ -307,5 +307,171 @@ public class FinanceManagerTest {
         assertEquals(2, view.size());
         assertEquals(e3, view.get(0)); // still index 1
         assertEquals(e1, view.get(1)); // now index 2
+    }
+
+    @Test
+    void deleteMultipleIncomes_maintainsCorrectIndexingAndTotals() {
+        // Add incomes in chronological order
+        Income i1 = new Income(
+                1000.0,
+                IncomeCategory.SALARY,
+                LocalDate.parse("2025-01-01"),
+                "January salary");
+        Income i2 = new Income(
+                1500.0,
+                IncomeCategory.SALARY,
+                LocalDate.parse("2025-01-10"),
+                "Mid-month bonus");
+        Income i3 = new Income(
+                2000.0,
+                IncomeCategory.SCHOLARSHIP,
+                LocalDate.parse("2025-01-20"),
+                "Scholarship disbursement");
+
+        fm.addIncome(i1);
+        fm.addIncome(i2);
+        fm.addIncome(i3);
+
+        // View should be: [i3 (newest), i2, i1 (oldest)]
+        List<Income> view = fm.getIncomesView();
+        assertEquals(3, view.size());
+        assertEquals(i3, view.get(0)); // index 1
+        assertEquals(i2, view.get(1)); // index 2
+        assertEquals(i1, view.get(2)); // index 3
+
+        // Check total before deletions
+        assertEquals(4500.0, fm.getTotalIncome(), 1e-9);
+
+        // Delete index 2 (i2 = mid-month bonus)
+        Income deleted = fm.deleteIncome(2);
+        assertEquals(i2, deleted);
+        assertEquals(3000.0, fm.getTotalIncome(), 1e-9); // 4500 - 1500
+
+        // Verify new order after deletion
+        view = fm.getIncomesView();
+        assertEquals(2, view.size());
+        assertEquals(i3, view.get(0)); // still newest
+        assertEquals(i1, view.get(1)); // now oldest
+
+        // Delete index 1 (i3 = newest)
+        deleted = fm.deleteIncome(1);
+        assertEquals(i3, deleted);
+        assertEquals(1000.0, fm.getTotalIncome(), 1e-9); // 3000 - 2000
+
+        // Final check: only oldest income remains
+        view = fm.getIncomesView();
+        assertEquals(1, view.size());
+        assertEquals(i1, view.get(0));
+
+        // Delete last remaining income
+        deleted = fm.deleteIncome(1);
+        assertEquals(i1, deleted);
+        assertEquals(0.0, fm.getTotalIncome(), 1e-9);
+        assertTrue(fm.getIncomesView().isEmpty());
+    }
+
+
+    @Test
+    void getExpensesViewForMonth_filtersAndOrdersNewestFirst_unmodifiable() {
+        // Jan expenses (3 items)
+        fm.addExpense(sampleExpense1); // 2025-01-01
+        fm.addExpense(sampleExpense2); // 2025-01-02
+        fm.addExpense(sampleExpense3); // 2025-01-03
+        // Add a Feb expense to ensure filtering works
+        Expense febRent = new Expense(1300.0, ExpenseCategory.RENT,
+                LocalDate.parse("2025-02-01"), "Feb rent");
+        fm.addExpense(febRent);
+
+        var viewJan = fm.getExpensesViewForMonth(java.time.YearMonth.of(2025, 1));
+
+        // Only Jan entries, newest-first
+        assertEquals(3, viewJan.size());
+        assertEquals(sampleExpense3, viewJan.get(0)); // 2025-01-03
+        assertEquals(sampleExpense2, viewJan.get(1)); // 2025-01-02
+        assertEquals(sampleExpense1, viewJan.get(2)); // 2025-01-01
+
+        // Unmodifiable
+        assertThrows(UnsupportedOperationException.class, () -> viewJan.add(sampleExpense1));
+    }
+
+    @Test
+    void getIncomesViewForMonth_filtersAndOrdersNewestFirst_unmodifiable() {
+        // Jan incomes (2 items)
+        fm.addIncome(sampleIncome1); // 2025-01-01
+        fm.addIncome(sampleIncome2); // 2025-01-15 (newest in Jan)
+        // Add a Feb income to ensure filtering works
+        Income febSalary = new Income(4800.0, IncomeCategory.SALARY,
+                LocalDate.parse("2025-02-01"), "Feb pay");
+        fm.addIncome(febSalary);
+
+        var viewJan = fm.getIncomesViewForMonth(java.time.YearMonth.of(2025, 1));
+
+        // Only Jan entries, newest-first
+        assertEquals(2, viewJan.size());
+        assertEquals(sampleIncome2, viewJan.get(0)); // 2025-01-15
+        assertEquals(sampleIncome1, viewJan.get(1)); // 2025-01-01
+
+        // Unmodifiable
+        assertThrows(UnsupportedOperationException.class, () -> viewJan.add(sampleIncome1));
+    }
+
+    @Test
+    void getExpensesViewForMonth_noData_returnsEmptyList() {
+        // Only add February data
+        Expense febRent = new Expense(1300.0, ExpenseCategory.RENT,
+                LocalDate.parse("2025-02-01"), "Feb rent");
+        fm.addExpense(febRent);
+
+        var viewMar = fm.getExpensesViewForMonth(java.time.YearMonth.of(2025, 3));
+        assertTrue(viewMar.isEmpty());
+    }
+
+    @Test
+    void getIncomesViewForMonth_noData_returnsEmptyList() {
+        // Only add March income
+        Income marSalary = new Income(4900.0, IncomeCategory.SALARY,
+                LocalDate.parse("2025-03-01"), "March pay");
+        fm.addIncome(marSalary);
+
+        var viewJan = fm.getIncomesViewForMonth(java.time.YearMonth.of(2025, 1));
+        assertTrue(viewJan.isEmpty());
+    }
+
+    @Test
+    void monthlyTotals_matchExpected_whenSummedFromMonthlyViews() {
+        // Jan
+        fm.addIncome(sampleIncome1); // 5000 on 2025-01-01
+        fm.addIncome(sampleIncome2); // 200 on 2025-01-15
+        fm.addExpense(sampleExpense1); // 1200 on 2025-01-01
+        fm.addExpense(sampleExpense2); // 50 on 2025-01-02
+        fm.addExpense(sampleExpense3); // 30 on 2025-01-03
+
+        // Feb
+        Income febIncome = new Income(300.0, IncomeCategory.GIFT,
+                LocalDate.parse("2025-02-10"), null);
+        Expense febRent = new Expense(1300.0, ExpenseCategory.RENT,
+                LocalDate.parse("2025-02-01"), "Feb rent");
+        fm.addIncome(febIncome);
+        fm.addExpense(febRent);
+
+        // Check Jan totals via monthly views
+        var jan = java.time.YearMonth.of(2025, 1);
+        double janIncome = fm.getIncomesViewForMonth(jan)
+                .stream().mapToDouble(Income::getAmount).sum();
+        double janExpense = fm.getExpensesViewForMonth(jan)
+                .stream().mapToDouble(Expense::getAmount).sum();
+
+        assertEquals(5200.0, janIncome, 1e-9);  // 5000 + 200
+        assertEquals(1280.0, janExpense, 1e-9); // 1200 + 50 + 30
+
+        // Check Feb totals
+        var feb = java.time.YearMonth.of(2025, 2);
+        double febIncomeSum = fm.getIncomesViewForMonth(feb)
+                .stream().mapToDouble(Income::getAmount).sum();
+        double febExpenseSum = fm.getExpensesViewForMonth(feb)
+                .stream().mapToDouble(Expense::getAmount).sum();
+
+        assertEquals(300.0, febIncomeSum, 1e-9);
+        assertEquals(1300.0, febExpenseSum, 1e-9);
     }
 }

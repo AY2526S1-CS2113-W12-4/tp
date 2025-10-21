@@ -431,13 +431,13 @@ public class Ui {
         System.out.println();
         System.out.println("3. View all expenses (from latest to earliest date):");
         System.out.println("   " + LIST_COMMAND);
-        System.out.println("   Append a month to filter: " + LIST_COMMAND + " <YYYY-MM>");
+        System.out.println("   To view by month: " + LIST_COMMAND + " <YYYY-MM>");
         System.out.println("   Example: list 2025-10");
 
         System.out.println();
         System.out.println("4. View all incomes (from latest to earliest date):");
         System.out.println("   " + LIST_INCOME_COMMAND);
-        System.out.println("   Append a month to filter: " + LIST_INCOME_COMMAND + " <YYYY-MM>");
+        System.out.println("   To view by month: " + LIST_INCOME_COMMAND + " <YYYY-MM>");
         System.out.println("   Example: list-income 2025-10");
 
         System.out.println();
@@ -456,7 +456,7 @@ public class Ui {
         System.out.println("7. View balance summary:");
         System.out.println("   " + BALANCE_COMMAND);
         System.out.println("   Shows total income, total expenses, and current balance.");
-        System.out.println("   Append a month to view monthly balance: " + BALANCE_COMMAND + " <YYYY-MM>");
+        System.out.println("   To view by month: " + BALANCE_COMMAND + " <YYYY-MM>");
         System.out.println("   Example: balance 2025-10");
 
 
