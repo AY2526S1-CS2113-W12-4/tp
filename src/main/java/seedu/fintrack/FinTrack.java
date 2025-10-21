@@ -20,6 +20,11 @@ import java.util.Optional;
  * </ul>
  */
 public class FinTrack {
+    private static final String INVALID_COMMAND_MESSAGE =
+            "Invalid command. Type 'help' for a list of available commands.";
+    private static final String NO_ARGUMENTS_MESSAGE_TEMPLATE =
+            "The '%s' command does not take additional arguments.";
+
     /*
      * Initialises java.util.logging from a classpath resource ('logging.properties') when no
      * logging configuration is provided via system properties. Falls back to JDK defaults if the
@@ -52,6 +57,10 @@ public class FinTrack {
             String input = Ui.waitForInput();
             String firstWord = Parser.returnFirstWord(input);
             if (firstWord.equals(Ui.EXIT_COMMAND)) {
+                if (hasUnexpectedArguments(input, Ui.EXIT_COMMAND)) {
+                    Ui.printError(formatNoArgumentsMessage(Ui.EXIT_COMMAND));
+                    continue;
+                }
                 break;
             }
             switch (firstWord) {
@@ -110,6 +119,10 @@ public class FinTrack {
                 }
                 break;
             case Ui.LIST_BUDGET_COMMAND:
+                if (hasUnexpectedArguments(input, Ui.LIST_BUDGET_COMMAND)) {
+                    Ui.printError(formatNoArgumentsMessage(Ui.LIST_BUDGET_COMMAND));
+                    break;
+                }
                 Ui.printBudgets(fm.getBudgetsView());
                 break;
             case Ui.DELETE_EXPENSE_COMMAND:
@@ -126,6 +139,33 @@ public class FinTrack {
                     int incomeIndex = Parser.parseDeleteIncome(input);
                     var deletedIncome = fm.deleteIncome(incomeIndex);
                     Ui.printIncomeDeleted(deletedIncome, incomeIndex);
+                } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
+                    Ui.printError(e.getMessage());
+                }
+                break;
+            case Ui.MODIFY_EXPENSE_COMMAND:
+                try {
+                    var parsed = Parser.parseModifyExpense(input);
+                    int index = parsed.getKey();
+                    var newExpense = parsed.getValue();
+                    boolean isOverBudget = fm.modifyExpense(index, newExpense);
+                    Ui.printExpenseModified(newExpense, index);
+                    if (isOverBudget) {
+                        double totalSpent = fm.getTotalExpenseForCategory(newExpense.getCategory());
+                        double budget = fm.getBudgetForCategory(newExpense.getCategory());
+                        Ui.printBudgetExceededWarning(newExpense.getCategory(), budget, totalSpent);
+                    }
+                } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
+                    Ui.printError(e.getMessage());
+                }
+                break;
+            case Ui.MODIFY_INCOME_COMMAND:
+                try {
+                    var parsed = Parser.parseModifyIncome(input);
+                    int index = parsed.getKey();
+                    var newIncome = parsed.getValue();
+                    fm.modifyIncome(index, newIncome);
+                    Ui.printIncomeModified(newIncome, index);
                 } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
                     Ui.printError(e.getMessage());
                 }
@@ -157,13 +197,32 @@ public class FinTrack {
                 }
                 break;
             case Ui.HELP_COMMAND:
+                if (hasUnexpectedArguments(input, Ui.HELP_COMMAND)) {
+                    Ui.printError(formatNoArgumentsMessage(Ui.HELP_COMMAND));
+                    break;
+                }
                 Ui.printHelp();
                 break;
             default:
-                Ui.printError("Invalid command. Type 'help' for a list of available commands.");
+                Ui.printError(INVALID_COMMAND_MESSAGE);
             }
         }
 
         Ui.printExit();
+    }
+
+    private static boolean hasUnexpectedArguments(String input, String commandWord) {
+        if (!input.startsWith(commandWord)) {
+            return false;
+        }
+        if (input.length() == commandWord.length()) {
+            return false;
+        }
+        String arguments = input.substring(commandWord.length()).trim();
+        return !arguments.isEmpty();
+    }
+
+    private static String formatNoArgumentsMessage(String commandWord) {
+        return String.format(NO_ARGUMENTS_MESSAGE_TEMPLATE, commandWord);
     }
 }
