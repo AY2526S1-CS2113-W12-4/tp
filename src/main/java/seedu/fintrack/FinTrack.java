@@ -176,6 +176,15 @@ public class FinTrack {
                 }
                 Ui.printHelp();
                 break;
+            case Ui.EXPORT_COMMAND:
+                try {
+                    var exportPath = Parser.parseExport(input);
+                    fm.exportToCSV(exportPath);
+                    Ui.printExportSuccess(exportPath);
+                } catch (IllegalArgumentException | IOException e) {
+                    Ui.printError(e.getMessage());
+                }
+                break;
             default:
                 Ui.printError(INVALID_COMMAND_MESSAGE);
             }
