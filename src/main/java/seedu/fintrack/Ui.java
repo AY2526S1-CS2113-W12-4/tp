@@ -520,8 +520,6 @@ public class Ui {
         System.out.println("11. Exit the program:");
         System.out.println("   " + EXIT_COMMAND);
 
-        printHorizontalLine(80);
-
         System.out.println();
         System.out.println("12. Export data to CSV file:");
         System.out.println("   " + EXPORT_COMMAND + " <filepath>");

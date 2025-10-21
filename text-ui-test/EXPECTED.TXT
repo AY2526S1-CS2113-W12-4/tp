@@ -168,5 +168,9 @@ Description: Extra performance bonus
 
 11. Exit the program:
    bye
+
+12. Export data to CSV file:
+   export <filepath>
+   Example: export financial_data.csv
 --------------------------------------------------------------------------------
 > Bye. Hope to see you again soon!
