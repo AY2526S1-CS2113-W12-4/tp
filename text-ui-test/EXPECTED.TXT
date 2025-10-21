@@ -264,6 +264,163 @@ Description: Monthly salary
 > Error: Month must be in YYYY-MM format.
 > Error: Month must be in YYYY-MM format.
 > Error: Month must be in YYYY-MM format.
+> Expense at index 9 modified to:
+  Amount: 1300.00
+  Category: RENT
+  Date: 2024-01-01
+  Description: Monthly rent increased
+> Expenses (Newest first):
+--------------------------------------------------
+#1
+Date: 2024-03-05
+Amount: $20.00
+Category: TRANSPORT
+Description: Taxi
+--------------------------------------------------
+#2
+Date: 2024-03-03
+Amount: $55.00
+Category: FOOD
+--------------------------------------------------
+#3
+Date: 2024-03-01
+Amount: $1400.00
+Category: RENT
+Description: Monthly rent payment
+--------------------------------------------------
+#4
+Date: 2024-02-11
+Amount: $35.00
+Category: TRANSPORT
+--------------------------------------------------
+#5
+Date: 2024-02-10
+Amount: $60.00
+Category: FOOD
+Description: Lunch
+--------------------------------------------------
+#6
+Date: 2024-02-01
+Amount: $1300.00
+Category: RENT
+Description: Monthly rent payment
+--------------------------------------------------
+#7
+Date: 2024-01-03
+Amount: $30.00
+Category: TRANSPORT
+Description: Bus fare
+--------------------------------------------------
+#8
+Date: 2024-01-02
+Amount: $50.00
+Category: FOOD
+--------------------------------------------------
+#9
+Date: 2024-01-01
+Amount: $1300.00
+Category: RENT
+Description: Monthly rent increased
+--------------------------------------------------
+> Expense at index 8 modified to:
+  Amount: 45.00
+  Category: FOOD
+  Date: 2024-01-02
+  Description: Updated food cost
+> Expenses (Newest first):
+--------------------------------------------------
+#1
+Date: 2024-03-05
+Amount: $20.00
+Category: TRANSPORT
+Description: Taxi
+--------------------------------------------------
+#2
+Date: 2024-03-03
+Amount: $55.00
+Category: FOOD
+--------------------------------------------------
+#3
+Date: 2024-03-01
+Amount: $1400.00
+Category: RENT
+Description: Monthly rent payment
+--------------------------------------------------
+#4
+Date: 2024-02-11
+Amount: $35.00
+Category: TRANSPORT
+--------------------------------------------------
+#5
+Date: 2024-02-10
+Amount: $60.00
+Category: FOOD
+Description: Lunch
+--------------------------------------------------
+#6
+Date: 2024-02-01
+Amount: $1300.00
+Category: RENT
+Description: Monthly rent payment
+--------------------------------------------------
+#7
+Date: 2024-01-03
+Amount: $30.00
+Category: TRANSPORT
+Description: Bus fare
+--------------------------------------------------
+#8
+Date: 2024-01-02
+Amount: $45.00
+Category: FOOD
+Description: Updated food cost
+--------------------------------------------------
+#9
+Date: 2024-01-01
+Amount: $1300.00
+Category: RENT
+Description: Monthly rent increased
+--------------------------------------------------
+> Income at index 4 modified to:
+  Amount: 250.00
+  Category: SALARY
+  Date: 2024-01-15
+  Description: Extra performance bonus
+> Incomes (Newest first):
+--------------------------------------------------
+#1
+Date: 2024-03-01
+Amount: $4900.00
+Category: SALARY
+Description: Monthly salary
+--------------------------------------------------
+#2
+Date: 2024-02-20
+Amount: $300.00
+Category: SALARY
+Description: Logo commission
+--------------------------------------------------
+#3
+Date: 2024-02-01
+Amount: $4800.00
+Category: SALARY
+Description: Monthly salary
+--------------------------------------------------
+#4
+Date: 2024-01-15
+Amount: $250.00
+Category: SALARY
+Description: Extra performance bonus
+--------------------------------------------------
+#5
+Date: 2024-01-01
+Amount: $5000.00
+Category: SALARY
+Description: Monthly salary
+--------------------------------------------------
+> Overall Balance: 11005.00
+  Total Income:  15250.00
+  Total Expense: 4245.00
 > Expense deleted (index 1):
   Amount: 20.00
   Category: TRANSPORT
@@ -274,9 +431,9 @@ Description: Monthly salary
   Category: SALARY
   Date: 2024-02-20
   Description: Logo commission
-> Overall Balance: 10770.00
-  Total Income:  14900.00
-  Total Expense: 4130.00
+> Overall Balance: 10725.00
+  Total Income:  14950.00
+  Total Expense: 4225.00
 > Overall Balance: 3445.00
   Total Income:  4900.00
   Total Expense: 1455.00

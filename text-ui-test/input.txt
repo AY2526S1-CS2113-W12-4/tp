@@ -31,6 +31,13 @@ list-income 2024-04
 balance 24-01
 list 2024/01
 list-income 202401
+modify-expense 9 a/1300 c/Rent d/2024-01-01 desc/Monthly rent increased
+list
+modify-expense 8 a/45 c/Food d/2024-01-02 desc/Updated food cost
+list
+modify-income 4 a/250 c/Salary d/2024-01-15 desc/Extra performance bonus
+list-income
+balance
 delete-expense 1
 delete-income 2
 balance
