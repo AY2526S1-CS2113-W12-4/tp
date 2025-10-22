@@ -519,5 +519,9 @@ Description: Monthly salary
 
 13. Exit the program:
     bye
+
+14. Export data to CSV file:
+    export <filepath>
+    Example: export financial_data.csv
 --------------------------------------------------------------------------------
 > Bye. Hope to see you again soon!

@@ -1,6 +1,10 @@
 package seedu.fintrack;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Map;
@@ -518,5 +522,58 @@ final class Parser {
         // Parse the new income data using existing add-income logic
         Income newIncome = parseAddIncome(Ui.ADD_INCOME_COMMAND + " " + remainingArgs);
         return Map.entry(index, newIncome);
+    }
+
+    /**
+     * Parses the export command input to extract the file path.
+     * Expected format: export {@code <filepath>}
+     *
+     * @param input The full export command input
+     * @return The Path object representing the export file path
+     * @throws IllegalArgumentException if the command format is invalid or path is invalid
+     */
+    public static Path parseExport(String input) {
+        assert input != null : "Input cannot be null.";
+        LOGGER.log(Level.FINER, "Parsing export command: ''{0}''.", input);
+
+        String args = input.substring(Ui.EXPORT_COMMAND.length()).trim();
+        if (args.isEmpty()) {
+            LOGGER.log(Level.WARNING, "Missing file path for export command.");
+            throw new IllegalArgumentException("Missing file path. Usage: export <filepath>");
+        }
+
+        try {
+            // Handle home directory expansion
+            if (args.startsWith("~" + java.io.File.separator) || args.equals("~")) {
+                String home = System.getProperty("user.home");
+                args = args.replace("~", home);
+            }
+
+            Path path = Paths.get(args);
+            if (!args.toLowerCase().endsWith(".csv")) {
+                path = Paths.get(args + ".csv");
+            }
+
+            // Ensure parent directory exists
+            Path parentDir = path.getParent();
+            if (parentDir != null && !java.nio.file.Files.exists(parentDir)) {
+                LOGGER.log(Level.WARNING, "Parent directory does not exist: {0}", parentDir);
+                throw new IllegalArgumentException(
+                        "The directory '" +
+                        parentDir +
+                        "' does not exist. Please create it first or choose a different location."
+                );
+            }
+
+            return path.toAbsolutePath().normalize();
+        } catch (InvalidPathException e) {
+            LOGGER.log(Level.WARNING, "Invalid file path provided: {0}", args);
+            throw new IllegalArgumentException("Invalid file path. Please provide a valid path for the CSV file.");
+        } catch (SecurityException e) {
+            LOGGER.log(Level.WARNING, "Security error accessing path: {0}", args);
+            throw new IllegalArgumentException(
+                    "Access denied. Please choose a different location where you have write permission."
+            );
+        }
     }
 }

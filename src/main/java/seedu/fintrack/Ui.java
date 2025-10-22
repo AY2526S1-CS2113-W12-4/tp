@@ -1,6 +1,7 @@
 // src/main/java/seedu/fintrack/Ui.java
 package seedu.fintrack;
 
+import java.nio.file.Path;
 import java.util.Scanner;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -30,6 +31,7 @@ public class Ui {
     public static final String LIST_INCOME_COMMAND = "list-income";
     public static final String MODIFY_EXPENSE_COMMAND = "modify-expense";
     public static final String MODIFY_INCOME_COMMAND = "modify-income";
+    public static final String EXPORT_COMMAND = "export";
     public static final String EXIT_COMMAND = "bye";
 
     // Parameter prefixes
@@ -544,6 +546,20 @@ public class Ui {
         System.out.println("13. Exit the program:");
         System.out.println("    " + EXIT_COMMAND);
 
+        System.out.println();
+        System.out.println("12. Export data to CSV file:");
+        System.out.println("   " + EXPORT_COMMAND + " <filepath>");
+        System.out.println("   Example: export financial_data.csv");
+
         printHorizontalLine(80);
+    }
+
+    /**
+     * Prints a success message after exporting data to a CSV file.
+     *
+     * @param path The path where the data was exported
+     */
+    static void printExportSuccess(Path path) {
+        System.out.println("Successfully exported data to: " + path.toAbsolutePath().normalize());
     }
 }
