@@ -6,6 +6,33 @@
 
 ## Design & implementation
 
+### FinTrack Module (`FinTrack.java`)
+`FinTrack` (`src/main/java/seedu/fintrack/FinTrack.java`) serves as the main entry point and the central controller of the application. It is responsible for managing the application's lifecycle and coordinating the interactions between the user interface (`Ui`), the business logic (`FinanceManager`), and the input processor (`Parser`). The `main` method executes a simple, continuous 'Read-Evaluate-Print' loop (REPL).
+
+How the `FinTrack` component works:
+1. The application starts by welcoming the user (via `Ui.printWelcome()`) and initialising the `FinanceManager`, which holds the application's state (all incomes, expenses and budgets).
+2. It waits for user input using `Ui.waitForInput()`.
+3. The input is parsed as follows:
+   - The command word (e.g. `add-expense`) is extracted using `Parser.returnFirstWord()`.
+   - A `switch` statement is used to route the command word to the appropriate logic block.
+   - For commands that take no arguments (like `list`, `help` and `bye`), it uses the `hasUnexpectedArguments()` helper to validate the input before executing.
+   - For commands that take arguments (like `add-expense`, `delete-income`, `budget`), it delegates the parsing of the entire input string to the `Parser` class (e.g. `Parser.parseAddExpense(input)`).
+4. The relevant command is executed as follows:
+   - If the `Parser` successfully returns a valid object (like an `Expense` or an `int`), `FinTrack` passes this object to the `FinanceManager` to perform the business logic (e.g. `fm.addExpense(expense)`).
+   - Based on the result from `FinanceManager`, it then calls the appropriate `Ui` method to show success (e.g. `Ui.printExpenseAdded(expense)`).
+   - Any `IllegalArgumentException` or `IndexOutOfBoundsException` (from `Parser` or `FinanceManager`) is caught within the loop. The error message is retrieved (`e.getMessage()`)
+ and printed to the user via `Ui.printError()`.
+5. The loop continues until the user enters the `bye` command (`Ui.EXIT_COMMAND`).
+
+The above flow is illustrated by the sequence diagram below, showing how the `add-expense` command is processed.
+
+![add_expense.png](images/add_expense.png)
+
+Why `FinTrack` was implemented this way:
+- The `FinTrack` class acts purely as a controller. It doesn't know how to parse data (`Parser`), how to store data (`FinanceManager`), or how to display information (`Ui`). This makes the code highly modular and easy to maintain.
+- By wrapping the command execution in a `try-catch` block, the application is resilient. A malformed command (which throws an `IllegalArgumentException` from `Parser`) doesn't crash the program; it simply prints an error and allows the user to try again.
+- A `switch` statement on the command word is the most direct and readable wait to implement a REPL for this set of commands.
+
 ### Ui Module (`Ui.java`)
 
 #### Console Facade Overview
@@ -47,6 +74,7 @@ When introducing new user flows:
 
 Because every method is static (most with package-private visibility), they can be invoked directly from tests within the same package without faking I/O streams. If a future feature requires richer presentation (e.g., table layout or different locales), the current structure allows the helper methods to be swapped for formatter objects while preserving the public surface area exposed to the rest of the application.
 
+### Parser Module
 
 ## Product scope
 ### Target user profile
