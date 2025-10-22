@@ -2,9 +2,12 @@ package seedu.fintrack;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
@@ -663,6 +666,97 @@ public class ParserTest {
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Income index must be a positive number.", e.getMessage());
+        }
+    }
+
+    /*
+     * Tests for parseOptionalMonthForBalance / ExpenseList / IncomeList
+     */
+
+    /**
+     * balance / balance YYYY-MM:
+     * - empty arg -> Optional.empty()
+     * - valid month -> parsed YearMonth
+     * - invalid month -> IllegalArgumentException
+     */
+    @Test
+    public void parseOptionalMonthForBalance_cases() {
+        // No month provided
+        Optional<YearMonth> empty = Parser.parseOptionalMonthForBalance(Ui.BALANCE_COMMAND);
+        assertTrue(empty.isEmpty());
+
+        // Extra spaces but still empty
+        Optional<YearMonth> empty2 = Parser.parseOptionalMonthForBalance(Ui.BALANCE_COMMAND + "   ");
+        assertTrue(empty2.isEmpty());
+
+        // Valid month
+        Optional<YearMonth> ok = Parser.parseOptionalMonthForBalance(Ui.BALANCE_COMMAND + " 2025-10");
+        assertEquals(YearMonth.of(2025, 10), ok.get());
+
+        // Invalid month formats
+        String[] bads = {Ui.BALANCE_COMMAND + " 25-10", "empty", "empty"};
+        bads[1] = Ui.BALANCE_COMMAND + " 2025/10";
+        bads[2] = Ui.BALANCE_COMMAND + " 202510";
+        for (String bad : bads) {
+            try {
+                Parser.parseOptionalMonthForBalance(bad);
+                fail();
+            } catch (IllegalArgumentException e) {
+                assertEquals("Month must be in YYYY-MM format.", e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * list / list YYYY-MM:
+     * - valid, invalid, trimming
+     */
+    @Test
+    public void parseOptionalMonthForExpenseList_cases() {
+        // Valid
+        Optional<YearMonth> ok = Parser.parseOptionalMonthForExpenseList(Ui.LIST_COMMAND + " 2024-01");
+        assertEquals(YearMonth.of(2024, 1), ok.get());
+
+        // Leading/trailing spaces
+        Optional<YearMonth> okSp = Parser.parseOptionalMonthForExpenseList(Ui.LIST_COMMAND + "   2024-12   ");
+        assertEquals(YearMonth.of(2024, 12), okSp.get());
+
+        // Empty -> Optional.empty()
+        Optional<YearMonth> none = Parser.parseOptionalMonthForExpenseList(Ui.LIST_COMMAND);
+        assertTrue(none.isEmpty());
+
+        // Invalid format
+        try {
+            Parser.parseOptionalMonthForExpenseList(Ui.LIST_COMMAND + " 2024/01");
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Month must be in YYYY-MM format.", e.getMessage());
+        }
+    }
+
+    /**
+     * list-income / list-income YYYY-MM:
+     * - valid month
+     * - empty
+     * - invalid month
+     */
+    @Test
+    public void parseOptionalMonthForIncomeList_cases() {
+        // Valid
+        Optional<YearMonth> ok = Parser.parseOptionalMonthForIncomeList(Ui.LIST_INCOME_COMMAND + " 2030-07");
+        assertEquals(YearMonth.of(2030, 7), ok.get());
+
+        // Empty -> Optional.empty()
+        Optional<YearMonth> none = Parser.parseOptionalMonthForIncomeList(Ui.LIST_INCOME_COMMAND + "   ");
+        assertTrue(none.isEmpty());
+
+        // Invalid
+        String bad = Ui.LIST_INCOME_COMMAND + " 2030-7"; // not zero-padded month
+        try {
+            Parser.parseOptionalMonthForIncomeList(bad);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Month must be in YYYY-MM format.", e.getMessage());
         }
     }
 }

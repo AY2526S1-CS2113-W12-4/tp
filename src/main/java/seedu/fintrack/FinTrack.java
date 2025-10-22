@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import java.time.YearMonth;
+import java.util.Optional;
 
 /**
  * Entry point of the FinTrack application.
@@ -87,12 +89,25 @@ public class FinTrack {
                 }
                 break;
             case Ui.BALANCE_COMMAND:
-                if (hasUnexpectedArguments(input, Ui.BALANCE_COMMAND)) {
-                    Ui.printError(formatNoArgumentsMessage(Ui.BALANCE_COMMAND));
-                    break;
+                try {
+                    Optional<YearMonth> ymOpt = Parser.parseOptionalMonthForBalance(input); // parses optional YYYY-MM
+                    if (ymOpt.isPresent()) {
+                        YearMonth ym = ymOpt.get();
+                        double monthlyIncome = fm.getIncomesViewForMonth(ym).stream()
+                                .mapToDouble(seedu.fintrack.model.Income::getAmount).sum();
+                        double monthlyExpense = fm.getExpensesViewForMonth(ym).stream()
+                                .mapToDouble(seedu.fintrack.model.Expense::getAmount).sum();
+                        Ui.printBalance(monthlyIncome - monthlyExpense, monthlyIncome, monthlyExpense);
+                    } else {
+                        Ui.printBalance(
+                                fm.getBalance(),
+                                fm.getTotalIncome(),
+                                fm.getTotalExpense()
+                        );
+                    }
+                } catch (IllegalArgumentException ex) {
+                    Ui.printError(ex.getMessage());
                 }
-                double balance = fm.getBalance();
-                Ui.printBalance(balance, fm.getTotalIncome(), fm.getTotalExpense());
                 break;
             case Ui.BUDGET_COMMAND:
                 try {
@@ -156,18 +171,30 @@ public class FinTrack {
                 }
                 break;
             case Ui.LIST_COMMAND:
-                if (hasUnexpectedArguments(input, Ui.LIST_COMMAND)) {
-                    Ui.printError(formatNoArgumentsMessage(Ui.LIST_COMMAND));
-                    break;
+                try {
+                    Optional<YearMonth> ymOpt = Parser.parseOptionalMonthForExpenseList(input);
+                    if (ymOpt.isPresent()) {
+                        YearMonth ym = ymOpt.get();
+                        Ui.printListOfExpenses(fm.getExpensesViewForMonth(ym));
+                    } else {
+                        Ui.printListOfExpenses(fm.getExpensesView());
+                    }
+                } catch (IllegalArgumentException ex) {
+                    Ui.printError(ex.getMessage());
                 }
-                Ui.printListOfExpenses(fm.getExpensesView());
                 break;
             case Ui.LIST_INCOME_COMMAND:
-                if (hasUnexpectedArguments(input, Ui.LIST_INCOME_COMMAND)) {
-                    Ui.printError(formatNoArgumentsMessage(Ui.LIST_INCOME_COMMAND));
-                    break;
+                try {
+                    Optional<YearMonth> ymOpt = Parser.parseOptionalMonthForIncomeList(input);
+                    if (ymOpt.isPresent()) {
+                        YearMonth ym = ymOpt.get();
+                        Ui.printListOfIncomes(fm.getIncomesViewForMonth(ym));
+                    } else {
+                        Ui.printListOfIncomes(fm.getIncomesView());
+                    }
+                } catch (IllegalArgumentException ex) {
+                    Ui.printError(ex.getMessage());
                 }
-                Ui.printListOfIncomes(fm.getIncomesView());
                 break;
             case Ui.HELP_COMMAND:
                 if (hasUnexpectedArguments(input, Ui.HELP_COMMAND)) {

@@ -1,4 +1,6 @@
 package seedu.fintrack;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -8,6 +10,7 @@ import java.time.format.DateTimeParseException;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Optional;
 
 import seedu.fintrack.model.Expense;
 import seedu.fintrack.model.ExpenseCategory;
@@ -20,6 +23,7 @@ import seedu.fintrack.model.IncomeCategory;
  */
 final class Parser {
     private static final Logger LOGGER = Logger.getLogger(Parser.class.getName());
+    private static final DateTimeFormatter YEAR_MONTH_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM");
 
     static {
         // Suppresses INFO and FINER log messages
@@ -347,6 +351,79 @@ final class Parser {
             LOGGER.log(Level.WARNING, "Invalid index for delete-income command: {0}", args);
             throw new IllegalArgumentException("Income index must be a valid number.");
         }
+    }
+
+    /**
+     * Parses an optional {@code YYYY-MM} after the given command literal.
+     * <p>If no argument is present, returns {@link Optional#empty()}.
+     * If present but invalid, throws {@link IllegalArgumentException}.</p>
+     *
+     * <p>Logs at {@code INFO} when parsing begins, {@code FINE} on success,
+     * and {@code WARNING} if parsing fails or input is missing.</p>
+     *
+     * @param input full user input (e.g., "balance 2025-10")
+     * @param commandLiteral the exact command prefix (e.g., {@code Ui.BALANCE_COMMAND})
+     * @return Optional of parsed {@link YearMonth}, or empty if not provided
+     * @throws IllegalArgumentException if a non-empty argument is not in {@code YYYY-MM} format
+     */
+    private static Optional<YearMonth> parseOptionalYearMonthAfterCommand(
+            String input, String commandLiteral) {
+
+        assert input != null : "input cannot be null";
+        assert commandLiteral != null : "commandLiteral cannot be null";
+        
+        // Guard: input must be exactly the command or the command followed by a space
+        if (!input.equals(commandLiteral) && !input.startsWith(commandLiteral + " ")) {
+            LOGGER.log(Level.WARNING, 
+                       "Input does not start with expected command literal: {0}", 
+                       commandLiteral);
+            throw new IllegalArgumentException("Invalid command. See 'help'.");
+        }
+
+        LOGGER.log(Level.INFO, "Parsing optional month after command: {0}", commandLiteral);
+
+        final String rest = input.length() >= commandLiteral.length()
+                ? input.substring(commandLiteral.length()).trim()
+                : "";
+
+        if (rest.isEmpty()) {
+            LOGGER.log(Level.FINE, "No month argument detected for {0}", commandLiteral);
+            return Optional.empty();
+        }
+        
+        // Disallow extra tokens after the month (enforce exactly one arg if present)
+        int sp = rest.indexOf(' ');
+        if (sp != -1) {
+            LOGGER.log(Level.WARNING, "Unexpected extra arguments after {0}: {1}",
+                    new Object[]{commandLiteral, rest});
+            throw new IllegalArgumentException("Usage: " + commandLiteral + " [YYYY-MM]");
+        }
+
+        try {
+            YearMonth parsed = YearMonth.parse(rest, YEAR_MONTH_FORMATTER);
+            LOGGER.log(Level.FINE, "Parsed YearMonth {0} for command {1}",
+                    new Object[]{parsed, commandLiteral});
+            return Optional.of(parsed);
+        } catch (DateTimeParseException ex) {
+            LOGGER.log(Level.WARNING, "Invalid month format after {0}: {1}",
+                    new Object[]{commandLiteral, rest});
+            throw new IllegalArgumentException("Month must be in YYYY-MM format.");
+        }
+    }
+
+    public static Optional<YearMonth> parseOptionalMonthForBalance(String input) {
+        LOGGER.fine("Entered parseOptionalMonthForBalance");
+        return parseOptionalYearMonthAfterCommand(input, Ui.BALANCE_COMMAND);
+    }
+
+    public static Optional<YearMonth> parseOptionalMonthForExpenseList(String input) {
+        LOGGER.fine("Entered parseOptionalMonthForExpenseList");
+        return parseOptionalYearMonthAfterCommand(input, Ui.LIST_COMMAND);
+    }
+
+    public static Optional<YearMonth> parseOptionalMonthForIncomeList(String input) {
+        LOGGER.fine("Entered parseOptionalMonthForIncomeList");
+        return parseOptionalYearMonthAfterCommand(input, Ui.LIST_INCOME_COMMAND);
     }
 
     /**

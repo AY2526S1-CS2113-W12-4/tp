@@ -20,11 +20,11 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 /**
- * Tests the responsibilities of ExpenseList (ordering, view, list-level validation, logging).
+ * Tests the responsibilities of IncomeList (ordering, view, list-level validation, logging).
  */
-public class ExpenseListTest {
+public class IncomeListTest {
 
-    /* ============== Logger tap for ExpenseList ============== */
+    /* ============== Logger tap for IncomeList ============== */
 
     private Logger listLogger;
     private TestLogHandler listHandler;
@@ -38,8 +38,8 @@ public class ExpenseListTest {
 
     @BeforeEach
     void setUpLoggerTap() {
-        // ExpenseList logger (subclass)
-        listLogger = Logger.getLogger(ExpenseList.class.getName());
+        // IncomeList logger (subclass)
+        listLogger = Logger.getLogger(IncomeList.class.getName());
         listHandler = new TestLogHandler();
 
         prevLevel = listLogger.getLevel();
@@ -63,7 +63,6 @@ public class ExpenseListTest {
         baseLogger.addHandler(baseHandler);
     }
 
-
     @AfterEach
     void tearDownLoggerTap() {
         // Remove handlers we attached
@@ -84,7 +83,6 @@ public class ExpenseListTest {
             baseLogger.setUseParentHandlers(prevBaseUseParent);
         }
     }
-
 
     private static class TestLogHandler extends Handler {
         private final List<LogRecord> records = new ArrayList<>();
@@ -112,42 +110,37 @@ public class ExpenseListTest {
 
     @Test
     void add_keepsSortedNewestFirst() {
-        ExpenseList list = new ExpenseList();
+        IncomeList list = new IncomeList();
 
-        Expense e1 = new Expense(10.0, ExpenseCategory.FOOD,
-                LocalDate.parse("2025-10-05"),
-                "Lunch");
-        Expense e2 = new Expense(20.0,
-                ExpenseCategory.TRANSPORT,
-                LocalDate.parse("2025-10-08"),
-                "Grab");
-        Expense e3 = new Expense(15.0,
-                ExpenseCategory.GROCERIES,
-                LocalDate.parse("2025-10-06"),
-                "NTUC");
+        Income i1 = new Income(1200.0, IncomeCategory.SALARY,
+                LocalDate.parse("2025-09-30"), "September salary");
+        Income i2 = new Income(500.0, IncomeCategory.INVESTMENT,
+                LocalDate.parse("2025-10-05"), "Stock dividends");
+        Income i3 = new Income(200.0, IncomeCategory.GIFT,
+                LocalDate.parse("2025-10-10"), "Birthday gift");
 
-        list.add(e1);
-        list.add(e2);
-        list.add(e3);
+        list.add(i1);
+        list.add(i2);
+        list.add(i3);
 
-        assertEquals(e2, list.get(0)); // 08
-        assertEquals(e3, list.get(1)); // 06
-        assertEquals(e1, list.get(2)); // 05
+        assertEquals(i3, list.get(0)); // 10 Oct
+        assertEquals(i2, list.get(1)); // 05 Oct
+        assertEquals(i1, list.get(2)); // 30 Sep
     }
 
     @Test
     void add_withIndex_stillSortedNewestFirst() {
-        ExpenseList list = new ExpenseList();
+        IncomeList list = new IncomeList();
 
-        Expense jan = new Expense(10.0,
-                ExpenseCategory.FOOD, LocalDate.parse("2025-01-01"),
+        Income jan = new Income(200.0,
+                IncomeCategory.SALARY, LocalDate.parse("2025-01-01"),
                 "");
-        Expense mar = new Expense(30.0,
-                ExpenseCategory.TRANSPORT,
+        Income mar = new Income(400.0,
+                IncomeCategory.INVESTMENT,
                 LocalDate.parse("2025-03-01"),
                 "");
-        Expense feb = new Expense(20.0,
-                ExpenseCategory.FOOD,
+        Income feb = new Income(300.0,
+                IncomeCategory.GIFT,
                 LocalDate.parse("2025-02-01"),
                 "");
 
@@ -162,44 +155,44 @@ public class ExpenseListTest {
 
     @Test
     void addAll_keepsSortedNewestFirst() {
-        ExpenseList list = new ExpenseList();
-        Expense e1 = new Expense(10.0,
-                ExpenseCategory.FOOD,
+        IncomeList list = new IncomeList();
+        Income i1 = new Income(100.0,
+                IncomeCategory.SALARY,
                 LocalDate.parse("2025-01-01"),
                 "");
-        Expense e3 = new Expense(30.0,
-                ExpenseCategory.FOOD,
+        Income i3 = new Income(300.0,
+                IncomeCategory.SALARY,
                 LocalDate.parse("2025-02-01"),
                 "");
-        Expense e2 = new Expense(20.0,
-                ExpenseCategory.FOOD,
+        Income i2 = new Income(200.0,
+                IncomeCategory.SALARY,
                 LocalDate.parse("2025-03-01"),
                 "");
 
-        list.addAll(List.of(e1, e2, e3));
+        list.addAll(List.of(i1, i2, i3));
 
-        assertEquals(e2, list.get(0)); // Mar
-        assertEquals(e3, list.get(1)); // Feb
-        assertEquals(e1, list.get(2)); // Jan
+        assertEquals(i2, list.get(0)); // Mar
+        assertEquals(i3, list.get(1)); // Feb
+        assertEquals(i1, list.get(2)); // Jan
     }
 
     @Test
     void addAll_withIndex_stillSortedNewestFirst() {
-        ExpenseList list = new ExpenseList();
-        Expense jan = new Expense(10.0,
-                ExpenseCategory.FOOD,
+        IncomeList list = new IncomeList();
+        Income jan = new Income(100.0,
+                IncomeCategory.SALARY,
                 LocalDate.parse("2025-01-01"),
                 "");
-        Expense mar = new Expense(30.0,
-                ExpenseCategory.FOOD,
+        Income mar = new Income(300.0,
+                IncomeCategory.INVESTMENT,
                 LocalDate.parse("2025-03-01"),
                 "");
-        Expense feb = new Expense(20.0,
-                ExpenseCategory.FOOD,
+        Income feb = new Income(200.0,
+                IncomeCategory.SALARY,
                 LocalDate.parse("2025-02-01"),
                 "");
 
-        list.addAll(0, List.of(jan, mar, feb)); // mixed order on insert
+        list.addAll(0, List.of(jan, mar, feb));
 
         assertEquals(mar, list.get(0));
         assertEquals(feb, list.get(1));
@@ -210,58 +203,58 @@ public class ExpenseListTest {
 
     @Test
     void asUnmodifiableView_cannotMutate() {
-        ExpenseList list = new ExpenseList();
-        Expense e = new Expense(10.0,
-                ExpenseCategory.FOOD,
+        IncomeList list = new IncomeList();
+        Income i = new Income(50.0,
+                IncomeCategory.GIFT,
                 LocalDate.parse("2025-01-01"),
                 "");
-        list.add(e);
+        list.add(i);
 
         var view = list.asUnmodifiableView();
         assertEquals(1, view.size());
-        assertThrows(UnsupportedOperationException.class, () -> view.add(e));
+        assertThrows(UnsupportedOperationException.class, () -> view.add(i));
     }
 
     /* ===================== List-level exceptions ===================== */
 
     @Test
-    void add_nullExpense_throwsNPEandLogsWarning() {
-        ExpenseList list = new ExpenseList();
+    void add_nullIncome_throwsNPEandLogsWarning() {
+        IncomeList list = new IncomeList();
         assertThrows(NullPointerException.class, () -> list.add(null));
-        assertTrue(listHandler.any(Level.WARNING, "Null expense"));
+        assertTrue(listHandler.any(Level.WARNING, "Null income"));
     }
 
     @Test
     void addAll_nullCollection_throwsNPEandLogsWarning() {
-        ExpenseList list = new ExpenseList();
+        IncomeList list = new IncomeList();
         assertThrows(NullPointerException.class, () -> list.addAll(null));
         assertTrue(listHandler.any(Level.WARNING, "null collection"));
     }
 
     @Test
     void addAll_collectionContainingNull_throwsNPEandLogsWarning() {
-        ExpenseList list = new ExpenseList();
-        Expense good = new Expense(10.0,
-                ExpenseCategory.FOOD,
+        IncomeList list = new IncomeList();
+        Income good = new Income(500.0,
+                IncomeCategory.SALARY,
                 LocalDate.parse("2025-01-01"),
                 "");
-        List<Expense> mixed = new ArrayList<>();
+        List<Income> mixed = new ArrayList<>();
         mixed.add(good);
         mixed.add(null); // triggers element validation in the list
         assertThrows(NullPointerException.class, () -> list.addAll(mixed));
-        assertTrue(listHandler.any(Level.WARNING, "Null expense"));
+        assertTrue(listHandler.any(Level.WARNING, "Null income"));
     }
 
     /* ===================== Logging (happy path) ===================== */
 
     @Test
     void add_logsFineOnSuccess() {
-        ExpenseList list = new ExpenseList();
-        Expense e = new Expense(10.0,
-                ExpenseCategory.FOOD,
-                LocalDate.parse("2025-10-10"),
+        IncomeList list = new IncomeList();
+        Income i = new Income(250.0,
+                IncomeCategory.SALARY,
+                LocalDate.parse("2025-10-15"),
                 "");
-        list.add(e);
+        list.add(i);
         assertTrue(anyFineContains("Added item dated"));
     }
 
@@ -270,15 +263,15 @@ public class ExpenseListTest {
     @Test
     void assertionsHook_runsWhenEaEnabled() throws Exception {
         // Only run if JVM was launched with -ea; otherwise this is a no-op.
-        assumeTrue(ExpenseList.class.desiredAssertionStatus());
+        assumeTrue(IncomeList.class.desiredAssertionStatus());
 
-        ExpenseList list = new ExpenseList();
-        list.add(new Expense(10.0,
-                ExpenseCategory.FOOD,
+        IncomeList list = new IncomeList();
+        list.add(new Income(10.0,
+                IncomeCategory.SALARY,
                 LocalDate.parse("2025-01-01"),
                 ""));
-        list.add(new Expense(20.0,
-                ExpenseCategory.FOOD,
+        list.add(new Income(20.0,
+                IncomeCategory.SALARY,
                 LocalDate.parse("2025-02-01"),
                 ""));
 

@@ -230,6 +230,89 @@ public class UiTest {
     }
 
     @Test
+    void printListOfIncomes_formatsOutputCorrectly() {
+        var i1 = new Income(200.0, IncomeCategory.SALARY,
+                LocalDate.parse("2025-01-15"), null);
+        var i2 = new Income(4800.0, IncomeCategory.SALARY,
+                LocalDate.parse("2025-02-01"), "Monthly salary");
+
+        Ui.printListOfIncomes(java.util.List.of(i1, i2));
+
+        String output = out();
+        assertTrue(output.contains("Incomes (Newest first):"));
+        assertTrue(output.contains("Amount: $200.00"));
+        assertTrue(output.contains("Category: SALARY"));
+        assertTrue(output.contains("Date: 2025-01-15"));
+        assertTrue(output.contains("#1")); // numbered output present
+    }
+
+    @Test
+    void printListOfIncomes_usesNewestFirstWhenProvidedFromModel() {
+        // Build a proper IncomeList so ordering is reverse-chronological.
+        var list = new seedu.fintrack.model.IncomeList();
+        var jan = new Income(200.0, IncomeCategory.SALARY,
+                LocalDate.parse("2025-01-15"), null);
+        var feb = new Income(4800.0, IncomeCategory.SALARY,
+                LocalDate.parse("2025-02-01"), "Monthly salary");
+        list.add(jan);
+        list.add(feb); // newer
+
+        Ui.printListOfIncomes(list.asUnmodifiableView());
+        String s = out();
+
+        int febPos = s.indexOf("Date: 2025-02-01");
+        int janPos = s.indexOf("Date: 2025-01-15");
+        assertTrue(febPos >= 0 && janPos >= 0 && febPos < janPos);
+        assertTrue(s.contains("Amount: $4800.00"));
+        assertTrue(s.contains("Description: Monthly salary"));
+    }
+
+    @Test
+    void printListOfIncomes_emptyList_showsNoIncomesMessage() {
+        Ui.printListOfIncomes(java.util.List.of());
+        assertTrue(out().contains("No incomes recorded."));
+    }
+
+    @Test
+    void printBudgets_empty_showsNoBudgetsMessage() {
+        Ui.printBudgets(java.util.Collections.emptyMap());
+        assertTrue(out().contains("No budgets have been set."));
+    }
+
+    @Test
+    void printBudgets_populated_printsDollarValues() {
+        java.util.Map<seedu.fintrack.model.ExpenseCategory, Double> budgets =
+                new java.util.HashMap<>();
+        budgets.put(seedu.fintrack.model.ExpenseCategory.RENT, 1500.0);
+        budgets.put(seedu.fintrack.model.ExpenseCategory.FOOD, 123.45);
+
+        Ui.printBudgets(budgets);
+        String s = out();
+        assertTrue(s.contains("Current Budgets:"));
+        assertTrue(s.contains("RENT"));
+        assertTrue(s.contains("$1500.00"));
+        assertTrue(s.contains("FOOD"));
+        assertTrue(s.contains("$123.45"));
+    }
+
+    @Test
+    void printBudgetExceededWarning_showsBannerAndNumbers() {
+        Ui.printBudgetExceededWarning(
+                ExpenseCategory.FOOD, 100.0, 150.0);
+        String s = out();
+        assertTrue(s.contains("BUDGET ALERT"));
+        assertTrue(s.contains("budget of $100.00"));
+        assertTrue(s.contains("spent a total of $150.00"));
+    }
+
+    @Test
+    void printHorizontalLine_printsExactCount() {
+        String ls = System.lineSeparator();
+        Ui.printHorizontalLine(5);
+        assertEquals("-----" + ls, out());
+    }
+
+    @Test
     void printHelp_containsAllMainCommands() {
         Ui.printHelp();
         String s = out();

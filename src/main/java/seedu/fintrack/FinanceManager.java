@@ -1,12 +1,13 @@
 package seedu.fintrack;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.logging.Logger;
 import java.util.logging.Level;
+import java.time.YearMonth;
+import java.util.Objects;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,13 +15,22 @@ import java.nio.file.Path;
 import java.time.format.DateTimeFormatter;
 
 import seedu.fintrack.model.ExpenseList;
+import seedu.fintrack.model.IncomeList;
 import seedu.fintrack.model.ExpenseCategory;
 import seedu.fintrack.model.Income;
 import seedu.fintrack.model.Expense;
 
+/**
+ * Manages all financial data including incomes and expenses.
+ * <p>
+ * Provides core operations to add, delete, and retrieve transactions,
+ * compute totals and balances, and expose read-only views of stored data.
+ * Ensures that all financial records are maintained in reverse
+ * chronological order through {@code IncomeList} and {@code ExpenseList}.
+ */
 public class FinanceManager {
     private static final Logger LOGGER = Logger.getLogger(FinanceManager.class.getName());
-    private final List<Income> incomes = new ArrayList<>();
+    private final IncomeList incomes = new IncomeList();
     private final ExpenseList expenses = new ExpenseList(); // always newest->oldest
     private final Map<ExpenseCategory, Double> budgets = new HashMap<>();
 
@@ -156,14 +166,42 @@ public class FinanceManager {
         return totalIncome - totalExpense;
     }
 
-    /** Returns an unmodifiable view of incomes in the order they were added. */
+    /** Returns an unmodifiable newest-first view list of incomes for printing. */
     public List<Income> getIncomesView() {
         List<Income> incomeList = Collections.unmodifiableList(incomes);
         assert incomeList != null : "Income list should not be null.";
         return incomeList;
     }
 
-    /** Returns an unmodifiable newest-first view for printing. */
+    /**
+     * Returns an unmodifiable newest-first view of incomes for the given month.
+     *
+     * <p>Filters by year and month of {@code Income#getDate()}, preserving
+     * reverse-chronological order via {@link IncomeList} logic.</p>
+     *
+     * @param yearMonth target month; must not be {@code null}.
+     * @return unmodifiable newest-first list of incomes for that month.
+     * @throws NullPointerException if {@code yearMonth} is {@code null}.
+     */
+    public List<Income> getIncomesViewForMonth(YearMonth yearMonth) {
+        Objects.requireNonNull(yearMonth, "Month (YearMonth) cannot be null");
+        LOGGER.log(Level.FINE, "Filtering incomes for {0}", yearMonth);
+
+        IncomeList monthlyIncomes = new IncomeList();
+        for (Income i : incomes.asUnmodifiableView()) {
+            if (i.getDate().getYear() == yearMonth.getYear()
+                    && i.getDate().getMonthValue() == yearMonth.getMonthValue()) {
+                monthlyIncomes.add(i);
+            }
+        }
+
+        assert monthlyIncomes != null : "IncomeList for month should not be null";
+        LOGGER.log(Level.FINE, "Found {0} incomes for {1}",
+                new Object[]{monthlyIncomes.size(), yearMonth});
+        return monthlyIncomes.asUnmodifiableView();
+    }
+
+    /** Returns an unmodifiable newest-first view list of expenses for printing. */
     public List<Expense> getExpensesView() {
         List<Expense> expenseList = expenses.asUnmodifiableView();
         assert expenseList != null : "Expense list should not be null.";
@@ -171,10 +209,38 @@ public class FinanceManager {
     }
 
     /**
+     * Returns an unmodifiable newest-first view of expenses for the given month.
+     *
+     * <p>Filters by year and month of {@code Expense#getDate()}, preserving
+     * reverse-chronological order via {@link ExpenseList} logic.</p>
+     *
+     * @param yearMonth target month; must not be {@code null}.
+     * @return unmodifiable newest-first list of expenses for that month.
+     * @throws NullPointerException if {@code yearMonth} is {@code null}.
+     */
+    public List<Expense> getExpensesViewForMonth(YearMonth yearMonth) {
+        Objects.requireNonNull(yearMonth, "Month (YearMonth) cannot be null");
+        LOGGER.log(Level.FINE, "Filtering expenses for {0}", yearMonth);
+
+        ExpenseList monthlyExpenses = new ExpenseList();
+        for (Expense e : expenses.asUnmodifiableView()) {
+            if (e.getDate().getYear() == yearMonth.getYear()
+                    && e.getDate().getMonthValue() == yearMonth.getMonthValue()) {
+                monthlyExpenses.add(e);
+            }
+        }
+
+        assert monthlyExpenses != null : "ExpenseList for month should not be null";
+        LOGGER.log(Level.FINE, "Found {0} expenses for {1}",
+                new Object[]{monthlyExpenses.size(), yearMonth});
+        return monthlyExpenses.asUnmodifiableView();
+    }
+
+    /**
      * Deletes the expense at the specified visible index in the newest-first view.
      *
      * <p>The index corresponds to the numbering shown in the printed expense list,
-     * where index 1 refers to the most recently added expense.</p>
+     * where index 1 refers to the chronologically latest expense.</p>
      *
      * @param index 1-based index of the expense to delete.
      * @return The deleted expense.
@@ -197,10 +263,14 @@ public class FinanceManager {
     }
 
     /**
-     * Deletes an income at the given index (1-based).
-     * @param index The 1-based index of the income to delete
-     * @return The deleted income
-     * @throws IndexOutOfBoundsException if index is invalid
+     * Deletes the income at the specified visible index in the newest-first view.
+     *
+     * <p>The index corresponds to the numbering shown in the printed income list,
+     * where index 1 refers to the chronologically latest income.</p>
+     *
+     * @param index 1-based index of the income to delete.
+     * @return The deleted income.
+     * @throws IndexOutOfBoundsException If the index is not within the valid range.
      */
     public Income deleteIncome(int index) {
         int oldIncomeSize = incomes.size();
