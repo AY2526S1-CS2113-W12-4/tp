@@ -1,0 +1,62 @@
+@startuml
+participant ":FinTrack" as FT
+participant ":Ui" as UI
+participant ":Parser" as P
+participant ":FinanceManager" as FM
+
+FT -> UI: printWelcome()
+activate FT
+
+create FM
+FT -> FM: new FinanceManager()
+
+loop until "bye" command
+    FT -> UI: waitForInput()
+    UI --> FT: "add-expense a/10.50 c/FOOD d/2025-01-15"
+
+    FT -> P: returnFirstWord(input)
+    P --> FT: "add-expense"
+
+    alt command is "bye"
+        note right of FT: Check for unexpected arguments
+        FT -> FT: hasUnexpectedArguments(input, "bye")
+
+        alt has arguments
+            FT -> UI: printError("bye does not take arguments")
+        else no arguments
+            note right of FT: Break loop
+        end
+
+    else command is not "bye"
+        FT -> FT: switch(commandWord)
+
+        note right of FT: Route to appropriate handler
+
+        alt "add-expense"
+            FT -> P: parseAddExpense(input)
+            P --> FT: expense
+
+            FT -> FM: addExpense(expense)
+            FM --> FT: isOverBudget
+
+            FT -> UI: printExpenseAdded(expense)
+
+            ' Using opt for a simple "if" check
+            opt isOverBudget
+                FT -> FM: getTotalExpenseForCategory(category)
+                FT -> FM: getBudgetForCategory(category)
+                FT -> UI: printBudgetExceededWarning(...)
+            end
+        else other commands
+            note right of FT: Similar pattern for each command
+        end
+
+        opt IllegalArgumentException
+            FT -> UI: printError(message)
+        end
+    end
+end
+
+FT -> UI: printExit()
+deactivate FT
+@enduml

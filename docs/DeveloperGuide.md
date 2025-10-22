@@ -6,6 +6,33 @@
 
 ## Design & implementation
 
+### FinTrack Module (`FinTrack.java`)
+`FinTrack` (`src/main/java/seedu/fintrack/FinTrack.java`) serves as the main entry point and the central controller of the application. It is responsible for managing the application's lifecycle and coordinating the interactions between the user interface (`Ui`), the business logic (`FinanceManager`), and the input processor (`Parser`). The `main` method executes a simple, continuous 'Read-Evaluate-Print' loop (REPL).
+
+How the `FinTrack` component works:
+1. The application starts by welcoming the user (via `Ui.printWelcome()`) and initialising the `FinanceManager`, which holds the application's state (all incomes, expenses and budgets).
+2. It waits for user input using `Ui.waitForInput()`.
+3. The input is parsed as follows:
+   - The command word (e.g. `add-expense`) is extracted using `Parser.returnFirstWord()`.
+   - A `switch` statement is used to route the command word to the appropriate logic block.
+   - For commands that take no arguments (like `list`, `help` and `bye`), it uses the `hasUnexpectedArguments()` helper to validate the input before executing.
+   - For commands that take arguments (like `add-expense`, `delete-income`, `budget`), it delegates the parsing of the entire input string to the `Parser` class (e.g. `Parser.parseAddExpense(input)`).
+4. The relevant command is executed as follows:
+   - If the `Parser` successfully returns a valid object (like an `Expense` or an `int`), `FinTrack` passes this object to the `FinanceManager` to perform the business logic (e.g. `fm.addExpense(expense)`).
+   - Based on the result from `FinanceManager`, it then calls the appropriate `Ui` method to show success (e.g. `Ui.printExpenseAdded(expense)`).
+   - Any `IllegalArgumentException` or `IndexOutOfBoundsException` (from `Parser` or `FinanceManager`) is caught within the loop. The error message is retrieved (`e.getMessage()`)
+ and printed to the user via `Ui.printError()`.
+5. The loop continues until the user enters the `bye` command (`Ui.EXIT_COMMAND`).
+
+The above flow is illustrated by the sequence diagram below, showing how the `add-expense` command is processed.
+
+![add_expense.png](images/add_expense.png)
+
+Why `FinTrack` was implemented this way:
+- **Separation of Concerns**: The `FinTrack` class acts purely as a controller. It doesn't know how to parse data (`Parser`), how to store data (`FinanceManager`), or how to display information (`Ui`). This makes the code highly modular and easy to maintain.
+- **Centralised Error Handling**: By wrapping the command execution in a `try-catch` block, the application is resilient. A malformed command (which throws an `IllegalArgumentException` from `Parser`) doesn't crash the program; it simply prints an error and allows the user to try again.
+- **Simplicity**: A `switch` statement on the command word is the most direct and readable wait to implement a REPL for this set of commands.
+
 ### Ui Module (`Ui.java`)
 
 #### Console Facade Overview
@@ -47,6 +74,34 @@ When introducing new user flows:
 
 Because every method is static (most with package-private visibility), they can be invoked directly from tests within the same package without faking I/O streams. If a future feature requires richer presentation (e.g., table layout or different locales), the current structure allows the helper methods to be swapped for formatter objects while preserving the public surface area exposed to the rest of the application.
 
+### Parser Module (`Parser.java`)
+`Parser` (`src/main/java/seedu/fintrack/Parser.java`) is a stateless utility class (marked `final` with a `private` constructor) responsible for transforming raw user `String` input into structured validated data objects.
+
+How the `Parser` component works:
+1. The private `getValue(String args, String prefix)` method is the core of the parser. It works by:
+    - Finding the start of a given prefix (e.g. `a/`).
+    - Finding the start of the next known prefix (e.g. `c/`) using the `findNextPrefixIndex()` helper.
+    - Extracting the substring between these two points as the value. This logic allows the user to provide arguments in any order (e.g. `c/food a/10` is the same as `a/10 c/food`).
+2. Methods like `parseAddExpense(input)` orchestrate the parsing process:
+    - The command word (e.g. `add-expense`) is stripped from the input string.
+    - `getValue()` is called for each required argument (e.g. `a/`, `c/`, `d/`). If any return `null`, an `IllegalArgumentException` is thrown.
+    - `getOptionalValue()` (a null-safe wrapper for `getValue()`) is called for optional arguments (e.g. `desc/`).
+    - Type conversion and validation is performed on the extracted string values (e.g. `Double.parseDouble()`, `LocalDate.parse()`, `ExpenseCategory.parse()`).
+    - If all validations pass, they construct and return the new data object (e.g. `new Expense(...)`). If any validation fails (e.g. `NumberFormatException`), it is caught and re-thrown as an `IllegalArgumentException` with a user-friendly message.
+3. Methods like `parseDeleteExpense(input)` are simpler. The command word is simply stripped and the remaining string is parsed as a positive integer.
+
+The internal logic for `parseAddExpense` is shown below:
+
+![parser.png](images/parser.png)
+
+Why `Parser` was implemented this way:
+- **Single Responsibility Principle (SRP)**: The `Parser` class is a good example of SRP, as it only knows how to parse strings. It has no knowledge of `FinanceManager`, storage, or how the `Ui` works. This makes it independently testable and reusable.
+- **Defensive Programming**: The `Parser` is the application's first line of defense against bad user input. It is designed to be extremely strict, throwing an `IllegalArgumentException` for any deviation from the expected format. This simplifies the rest of the application, as `FinTrack` and `FinanceManager` can trust that any object they receive from the `Parser` is valid.
+- **Stateless Utility**: By making the class `final` with a `private` constructor and all `static` methods, we enforce that it's a stateless utility. There is no need to create an instance of a `Parser`, which simplifies the design.
+
+Alternatives considered:
+- **Positional Parsing**: An alternative design would be to use positional parsing (e.g. `add-expense 10 food 2025-10-22`). This was rejected as it's rigid and not user-friendly; the user must remember the exact order of arguments. The chosen prefix-based system (`a/`, `c/`) is more flexible.
+- **Regex Parsing**: Another alternative was to use complex Regular Expressions (Regex) for each command. This was deemed harder to maintain and debug compared to the current prefix-scanning approach.
 
 ## Product scope
 ### Target user profile
