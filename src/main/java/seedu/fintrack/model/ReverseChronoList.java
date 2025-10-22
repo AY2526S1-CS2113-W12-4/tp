@@ -55,19 +55,19 @@ public abstract class ReverseChronoList<T> extends ArrayList<T> {
     /**
      * Adds an element and keeps the list newest first.
      *
-     * @param e element to add
+     * @param element element to add
      * @return {@code true} if the list changed
      * @throws NullPointerException     if {@code e} or its date (via extractor) is {@code null}
      * @throws IllegalArgumentException if subclass validation fails
      */
-    @Override public boolean add(T e) {
-        validateForUserInput(e, -1);
-        boolean changed = super.add(e);
+    @Override public boolean add(T element) {
+        validateForUserInput(element, -1);
+        boolean changed = super.add(element);
         if (changed) {
             sort(dateDesc());
             assertNewestFirst();
             LOGGER.log(Level.FINE, "Added item dated {0}; size={1}",
-                    new Object[]{dateExtractor.apply(e), size()});
+                    new Object[]{dateExtractor.apply(element), size()});
         }
         return changed;
     }
@@ -93,18 +93,18 @@ public abstract class ReverseChronoList<T> extends ArrayList<T> {
     /**
      * Adds all elements and keeps the list newest first.
      *
-     * @param c collection of elements to add
+     * @param collection collection of elements to add
      * @return {@code true} if the list changed
      * @throws NullPointerException     if {@code c} is {@code null} or contains {@code null} elements
      * @throws IllegalArgumentException if any element fails subclass validation
      */
-    @Override public boolean addAll(Collection<? extends T> c) {
-        validateCollectionForUserInput(c);
-        boolean changed = super.addAll(c);
+    @Override public boolean addAll(Collection<? extends T> collection) {
+        validateCollectionForUserInput(collection);
+        boolean changed = super.addAll(collection);
         if (changed) {
             sort(dateDesc());
             assertNewestFirst();
-            LOGGER.log(Level.FINE, "Added {0} items; size={1}", new Object[]{c.size(), size()});
+            LOGGER.log(Level.FINE, "Added {0} items; size={1}", new Object[]{collection.size(), size()});
         }
         return changed;
     }
@@ -114,19 +114,19 @@ public abstract class ReverseChronoList<T> extends ArrayList<T> {
      * The final positions are determined by the dates, not the provided index.
      *
      * @param index ignored for ordering; list will be sorted after insertions
-     * @param c     collection of elements to add
+     * @param collection     collection of elements to add
      * @return {@code true} if the list changed
      * @throws NullPointerException     if {@code c} is {@code null} or contains {@code null} elements
      * @throws IllegalArgumentException if any element fails subclass validation
      */
-    @Override public boolean addAll(int index, Collection<? extends T> c) {
-        validateCollectionForUserInput(c);
-        boolean changed = super.addAll(index, c);
+    @Override public boolean addAll(int index, Collection<? extends T> collection) {
+        validateCollectionForUserInput(collection);
+        boolean changed = super.addAll(index, collection);
         if (changed) {
             sort(dateDesc());
             assertNewestFirst();
             LOGGER.log(Level.FINE, "Inserted {0} items at index {1}; size={2}",
-                    new Object[]{c.size(), index, size()});
+                    new Object[]{collection.size(), index, size()});
         }
         return changed;
     }
@@ -180,9 +180,9 @@ public abstract class ReverseChronoList<T> extends ArrayList<T> {
      * @return {@code true} if each adjacent pair is ordered newest first; {@code false} otherwise
      */
     private boolean isNewestFirst() {
-        Comparator<T> cmp = dateDesc();
+        Comparator<T> comparator = dateDesc();
         for (int i = 1; i < size(); i++) {
-            if (cmp.compare(get(i - 1), get(i)) > 0) {
+            if (comparator.compare(get(i - 1), get(i)) > 0) {
                 return false;
             }
         }
