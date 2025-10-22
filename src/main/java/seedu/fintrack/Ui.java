@@ -547,9 +547,9 @@ public class Ui {
         System.out.println("    " + EXIT_COMMAND);
 
         System.out.println();
-        System.out.println("12. Export data to CSV file:");
-        System.out.println("   " + EXPORT_COMMAND + " <filepath>");
-        System.out.println("   Example: export financial_data.csv");
+        System.out.println("14. Export data to CSV file:");
+        System.out.println("    " + EXPORT_COMMAND + " <filepath>");
+        System.out.println("    Example: export financial_data.csv");
 
         printHorizontalLine(80);
     }
