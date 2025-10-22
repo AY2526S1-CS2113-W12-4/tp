@@ -179,25 +179,25 @@ public class FinanceManager {
      * <p>Filters by year and month of {@code Income#getDate()}, preserving
      * reverse-chronological order via {@link IncomeList} logic.</p>
      *
-     * @param ym target month; must not be {@code null}.
+     * @param yearMonth target month; must not be {@code null}.
      * @return unmodifiable newest-first list of incomes for that month.
-     * @throws NullPointerException if {@code ym} is {@code null}.
+     * @throws NullPointerException if {@code yearMonth} is {@code null}.
      */
-    public List<Income> getIncomesViewForMonth(YearMonth ym) {
-        Objects.requireNonNull(ym, "Month (YearMonth) cannot be null");
-        LOGGER.log(Level.FINE, "Filtering incomes for {0}", ym);
+    public List<Income> getIncomesViewForMonth(YearMonth yearMonth) {
+        Objects.requireNonNull(yearMonth, "Month (YearMonth) cannot be null");
+        LOGGER.log(Level.FINE, "Filtering incomes for {0}", yearMonth);
 
         IncomeList monthlyIncomes = new IncomeList();
         for (Income i : incomes.asUnmodifiableView()) {
-            if (i.getDate().getYear() == ym.getYear()
-                    && i.getDate().getMonthValue() == ym.getMonthValue()) {
+            if (i.getDate().getYear() == yearMonth.getYear()
+                    && i.getDate().getMonthValue() == yearMonth.getMonthValue()) {
                 monthlyIncomes.add(i);
             }
         }
 
         assert monthlyIncomes != null : "IncomeList for month should not be null";
         LOGGER.log(Level.FINE, "Found {0} incomes for {1}",
-                new Object[]{monthlyIncomes.size(), ym});
+                new Object[]{monthlyIncomes.size(), yearMonth});
         return monthlyIncomes.asUnmodifiableView();
     }
 
@@ -214,25 +214,25 @@ public class FinanceManager {
      * <p>Filters by year and month of {@code Expense#getDate()}, preserving
      * reverse-chronological order via {@link ExpenseList} logic.</p>
      *
-     * @param ym target month; must not be {@code null}.
+     * @param yearMonth target month; must not be {@code null}.
      * @return unmodifiable newest-first list of expenses for that month.
-     * @throws NullPointerException if {@code ym} is {@code null}.
+     * @throws NullPointerException if {@code yearMonth} is {@code null}.
      */
-    public List<Expense> getExpensesViewForMonth(YearMonth ym) {
-        Objects.requireNonNull(ym, "Month (YearMonth) cannot be null");
-        LOGGER.log(Level.FINE, "Filtering expenses for {0}", ym);
+    public List<Expense> getExpensesViewForMonth(YearMonth yearMonth) {
+        Objects.requireNonNull(yearMonth, "Month (YearMonth) cannot be null");
+        LOGGER.log(Level.FINE, "Filtering expenses for {0}", yearMonth);
 
         ExpenseList monthlyExpenses = new ExpenseList();
         for (Expense e : expenses.asUnmodifiableView()) {
-            if (e.getDate().getYear() == ym.getYear()
-                    && e.getDate().getMonthValue() == ym.getMonthValue()) {
+            if (e.getDate().getYear() == yearMonth.getYear()
+                    && e.getDate().getMonthValue() == yearMonth.getMonthValue()) {
                 monthlyExpenses.add(e);
             }
         }
 
         assert monthlyExpenses != null : "ExpenseList for month should not be null";
         LOGGER.log(Level.FINE, "Found {0} expenses for {1}",
-                new Object[]{monthlyExpenses.size(), ym});
+                new Object[]{monthlyExpenses.size(), yearMonth});
         return monthlyExpenses.asUnmodifiableView();
     }
 

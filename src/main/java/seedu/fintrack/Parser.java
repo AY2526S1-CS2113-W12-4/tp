@@ -23,7 +23,7 @@ import seedu.fintrack.model.IncomeCategory;
  */
 final class Parser {
     private static final Logger LOGGER = Logger.getLogger(Parser.class.getName());
-    private static final DateTimeFormatter YM_FMT = DateTimeFormatter.ofPattern("yyyy-MM");
+    private static final DateTimeFormatter YEAR_MONTH_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM");
 
     static {
         // Suppresses INFO and FINER log messages
@@ -400,7 +400,7 @@ final class Parser {
         }
 
         try {
-            YearMonth parsed = YearMonth.parse(rest, YM_FMT);
+            YearMonth parsed = YearMonth.parse(rest, YEAR_MONTH_FORMATTER);
             LOGGER.log(Level.FINE, "Parsed YearMonth {0} for command {1}",
                     new Object[]{parsed, commandLiteral});
             return Optional.of(parsed);

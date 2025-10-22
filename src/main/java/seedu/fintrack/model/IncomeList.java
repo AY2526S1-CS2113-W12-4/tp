@@ -62,19 +62,19 @@ public class IncomeList extends ReverseChronoList<Income> {
      * Validates a collection of incomes as user input and logs at {@code WARNING} before throwing.
      * Each element is validated via {@link #validateForUserInput(Income, int)}.
      *
-     * @param c the collection to validate; may be {@code null}
+     * @param collection the collection to validate; may be {@code null}
      * @throws NullPointerException if {@code c} is {@code null} or contains a {@code null} element,
      *                              or if any element has {@code null} date
      * @throws IllegalArgumentException if any element has a non-finite/&lt;0 amount
      */
     @Override
-    protected void validateCollectionForUserInput(Collection<? extends Income> c) {
-        if (c == null) {
+    protected void validateCollectionForUserInput(Collection<? extends Income> collection) {
+        if (collection == null) {
             LOGGER.warning("Attempted to addAll from null collection.");
             throw new NullPointerException("Collection cannot be null");
         }
         int i = 0;
-        for (Income income : c) {
+        for (Income income : collection) {
             validateForUserInput(income, i++);
         }
     }

@@ -139,28 +139,28 @@ public abstract class ReverseChronoList<T> extends ArrayList<T> {
      * <p>
      * Subclasses must implement this method to enforce domain-specific invariants.
      *
-     * @param e             element to validate; may be {@code null}
+     * @param element             element to validate; may be {@code null}
      * @param positionHint  an index or position context for logging (use {@code -1} when not applicable)
      * @throws NullPointerException     if {@code e} or its date (via extractor) is {@code null}
      * @throws IllegalArgumentException if subclass validation fails
      */
-    protected abstract void validateForUserInput(T e, int positionHint);
+    protected abstract void validateForUserInput(T element, int positionHint);
 
     /**
      * Validates a collection of elements as user input and logs at {@code WARNING} before throwing.
      * Each element is validated via {@link #validateForUserInput(Object, int)}.
      *
-     * @param c the collection to validate; may be {@code null}
+     * @param collection the collection to validate; may be {@code null}
      * @throws NullPointerException     if {@code c} is {@code null} or contains {@code null} elements
      * @throws IllegalArgumentException if any element fails subclass validation
      */
-    protected void validateCollectionForUserInput(Collection<? extends T> c) {
-        if (c == null) {
+    protected void validateCollectionForUserInput(Collection<? extends T> collection) {
+        if (collection == null) {
             LOGGER.warning("Attempted to addAll from null collection.");
             throw new NullPointerException("Collection cannot be null");
         }
         int i = 0;
-        for (T e : c) {
+        for (T e : collection) {
             validateForUserInput(e, i++);
         }
     }

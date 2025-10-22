@@ -37,22 +37,22 @@ public class ExpenseList extends ReverseChronoList<Expense> {
      * Validates a single expense as user input and logs at {@code WARNING} before throwing.
      * This method is for <b>user-facing validation</b> (exceptions), not for internal assertions.
      *
-     * @param e the expense to validate; may be {@code null}
+     * @param expense the expense to validate; may be {@code null}
      * @param positionHint an index or position context for logging (use {@code -1} when not applicable)
      * @throws NullPointerException if {@code e} is {@code null} or if its date/category is {@code null}
      * @throws IllegalArgumentException if the amount is not finite or &lt; 0
      */
     @Override
-    protected void validateForUserInput(Expense e, int positionHint) {
-        if (e == null) {
+    protected void validateForUserInput(Expense expense, int positionHint) {
+        if (expense == null) {
             LOGGER.log(Level.WARNING, "Null expense encountered (pos={0})", positionHint);
             throw new NullPointerException("Expense cannot be null");
         }
 
-        Objects.requireNonNull(e.getDate(), "Expense date cannot be null");
-        Objects.requireNonNull(e.getCategory(), "Expense category cannot be null");
+        Objects.requireNonNull(expense.getDate(), "Expense date cannot be null");
+        Objects.requireNonNull(expense.getCategory(), "Expense category cannot be null");
 
-        double amount = e.getAmount();
+        double amount = expense.getAmount();
         if (!Double.isFinite(amount) || amount < 0.0) {
             LOGGER.log(Level.WARNING, "Invalid amount {0} for expense at pos={1}",
                     new Object[]{amount, positionHint});
@@ -64,19 +64,19 @@ public class ExpenseList extends ReverseChronoList<Expense> {
      * Validates a collection of expenses as user input and logs at {@code WARNING} before throwing.
      * Each element is validated via {@link #validateForUserInput(Expense, int)}.
      *
-     * @param c the collection to validate; may be {@code null}
+     * @param collection the collection to validate; may be {@code null}
      * @throws NullPointerException if {@code c} is {@code null} or contains a {@code null} element,
      *                              or if any element has {@code null} date/category
      * @throws IllegalArgumentException if any element has a non-finite/&lt;0 amount
      */
     @Override
-    protected void validateCollectionForUserInput(Collection<? extends Expense> c) {
-        if (c == null) {
+    protected void validateCollectionForUserInput(Collection<? extends Expense> collection) {
+        if (collection == null) {
             LOGGER.warning("Attempted to addAll from null collection.");
             throw new NullPointerException("Collection cannot be null");
         }
         int i = 0;
-        for (Expense e : c) {
+        for (Expense e : collection) {
             validateForUserInput(e, i++);
         }
     }
