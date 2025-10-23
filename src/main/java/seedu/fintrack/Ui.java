@@ -27,7 +27,7 @@ public class Ui {
     public static final String BALANCE_COMMAND = "balance";
     public static final String BUDGET_COMMAND = "budget";
     public static final String LIST_BUDGET_COMMAND = "list-budget";
-    public static final String LIST_COMMAND = "list";
+    public static final String LIST_EXPENSE_COMMAND = "list-expense";
     public static final String LIST_INCOME_COMMAND = "list-income";
     public static final String MODIFY_EXPENSE_COMMAND = "modify-expense";
     public static final String MODIFY_INCOME_COMMAND = "modify-income";
@@ -482,26 +482,26 @@ public class Ui {
 
         System.out.println();
         System.out.println("3. View all expenses (from latest to earliest date):");
-        System.out.println("   " + LIST_COMMAND);
-        System.out.println("   To view by month: " + LIST_COMMAND + " <YYYY-MM>");
-        System.out.println("   Example: list 2025-10");
+        System.out.println("   " + LIST_EXPENSE_COMMAND);
+        System.out.println("   To view by month: " + LIST_EXPENSE_COMMAND + " d/<YYYY-MM>");
+        System.out.println("   Example: list-expense d/2025-10");
 
         System.out.println();
         System.out.println("4. View all incomes (from latest to earliest date):");
         System.out.println("   " + LIST_INCOME_COMMAND);
-        System.out.println("   To view by month: " + LIST_INCOME_COMMAND + " <YYYY-MM>");
-        System.out.println("   Example: list-income 2025-10");
+        System.out.println("   To view by month: " + LIST_INCOME_COMMAND + " d/<YYYY-MM>");
+        System.out.println("   Example: list-income d/2025-10");
 
         System.out.println();
         System.out.println("5. Delete an expense:");
         System.out.println("   " + DELETE_EXPENSE_COMMAND + " <index>");
-        System.out.println("   Deletes the expense shown at that index in 'list'.");
+        System.out.println("   Deletes the expense shown at that index in 'list-expense'.");
         System.out.println("   Example: delete-expense 1");
 
         System.out.println();
         System.out.println("6. Delete an income:");
         System.out.println("   " + DELETE_INCOME_COMMAND + " <index>");
-        System.out.println("   Deletes the income shown at that index in 'list'.");
+        System.out.println("   Deletes the income shown at that index in 'list-income'.");
         System.out.println("   Example: delete-income 1");
 
         System.out.println();
@@ -509,7 +509,7 @@ public class Ui {
         System.out.println("   "
                 + MODIFY_EXPENSE_COMMAND
                 + " <index> a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]");
-        System.out.println("   Modifies the expense shown at that index in 'list'.");
+        System.out.println("   Modifies the expense shown at that index in 'list-expense'.");
         System.out.println("   Example: modify-expense 1 a/1300 c/Rent d/2024-01-01 desc/Monthly rent increased");
 
         System.out.println();
@@ -524,8 +524,8 @@ public class Ui {
         System.out.println("9. View balance summary:");
         System.out.println("   " + BALANCE_COMMAND);
         System.out.println("   Shows total income, total expenses, and current balance.");
-        System.out.println("   To view by month: " + BALANCE_COMMAND + " <YYYY-MM>");
-        System.out.println("   Example: balance 2025-10");
+        System.out.println("   To view by month: " + BALANCE_COMMAND + " d/<YYYY-MM>");
+        System.out.println("   Example: balance d/2025-10");
 
         System.out.println();
         System.out.println("10. Set budget for expense categories:");
