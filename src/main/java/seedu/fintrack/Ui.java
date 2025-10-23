@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import seedu.fintrack.model.Expense;
 import seedu.fintrack.model.ExpenseCategory;
 import seedu.fintrack.model.Income;
+import seedu.fintrack.model.IncomeCategory;
 
 /**
  * Handles all user interaction for FinTrack.
@@ -31,6 +32,8 @@ public class Ui {
     public static final String LIST_INCOME_COMMAND = "list-income";
     public static final String MODIFY_EXPENSE_COMMAND = "modify-expense";
     public static final String MODIFY_INCOME_COMMAND = "modify-income";
+    public static final String SUMMARY_EXPENSE_COMMAND = "summary-expense";
+    public static final String SUMMARY_INCOME_COMMAND = "summary-income";
     public static final String EXPORT_COMMAND = "export";
     public static final String EXIT_COMMAND = "bye";
 
@@ -115,6 +118,13 @@ public class Ui {
     }
 
     /**
+     * Prints next line character.
+     */
+    static void printNextLine() {
+        System.out.println();
+    }
+
+    /**
      * Prints a confirmation block for a newly added {@link Income}.
      *
      * @param income the persisted income to summarize; must not be {@code null}.
@@ -177,8 +187,8 @@ public class Ui {
         assert Double.isFinite(totalExpense) : "totalExpense must be finite";
 
         System.out.println("Overall Balance: " + String.format("%.2f", balance));
-        System.out.println("  Total Income:  " + String.format("%.2f", totalIncome));
-        System.out.println("  Total Expense: " + String.format("%.2f", totalExpense));
+        System.out.println("Total Income: " + String.format("%.2f", totalIncome));
+        System.out.println("Total Expense: " + String.format("%.2f", totalExpense));
         LOGGER.fine("Printed balance summary.");
     }
 
@@ -276,12 +286,12 @@ public class Ui {
         }
 
         System.out.println("Current Budgets:");
-        printHorizontalLine(40);
+        printHorizontalLine(80);
         budgets.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .forEach(entry ->
                         System.out.printf("%-20s: $%.2f%n", entry.getKey(), entry.getValue()));
-        printHorizontalLine(40);
+        printHorizontalLine(80);
         LOGGER.fine("Finished printing budgets list (count=" + budgets.size() + ").");
     }
 
@@ -390,7 +400,7 @@ public class Ui {
                 Objects.requireNonNull(income.getDate(), "income date cannot be null");
                 assert Double.isFinite(income.getAmount()) : "income amount must be finite";
 
-                printHorizontalLine(50);
+                printHorizontalLine(80);
                 System.out.println("#" + idx);
                 System.out.println("Date: " + income.getDate().format(fmt));
                 System.out.println("Amount: $" + String.format("%.2f", income.getAmount()));
@@ -403,7 +413,7 @@ public class Ui {
                         new Object[]{i, ex.toString()});
             }
         }
-        printHorizontalLine(50);
+        printHorizontalLine(80);
         LOGGER.fine("Finished printing incomes list (count=" + incomesView.size() + ").");
     }
 
@@ -437,7 +447,7 @@ public class Ui {
                 Objects.requireNonNull(e.getDate(), "expense date cannot be null");
                 assert Double.isFinite(e.getAmount()) : "expense amount must be finite";
 
-                printHorizontalLine(50);
+                printHorizontalLine(80);
                 System.out.println("#" + idx);
                 System.out.println("Date: " + e.getDate().format(fmt));
                 System.out.println("Amount: $" + String.format("%.2f", e.getAmount()));
@@ -451,8 +461,131 @@ public class Ui {
                         new Object[]{i, ex.toString()});
             }
         }
-        printHorizontalLine(50);
+        printHorizontalLine(80);
         LOGGER.fine("Finished printing expenses list (count=" + expensesView.size() + ").");
+    }
+
+    /**
+     * Prints a breakdown of expenses by category and the top-spend category.
+     *
+     * @param totalExpense      total amount spent (used to compute percentages)
+     * @param expenseByCategory map of each category to its total amount
+     */
+
+    static void printExpenseByCategory(Double totalExpense, Map<ExpenseCategory, Double> expenseByCategory) {
+        if (totalExpense < 0 || expenseByCategory.isEmpty()) {
+            System.out.println("You have not spent anything yet!");
+            return;
+        }
+
+        ExpenseCategory topCategory = null;
+        double topAmount = Double.NEGATIVE_INFINITY;
+
+        for (Map.Entry<ExpenseCategory, Double> mapEntry : expenseByCategory.entrySet()) {
+            ExpenseCategory category = mapEntry.getKey();
+            double amount = (mapEntry.getValue());
+            double percentOfTotal = (amount/totalExpense) * 100.0;
+            System.out.printf("%s: %.2f (%.2f%%)%n", category, amount, percentOfTotal);
+
+            if (amount > topAmount) {
+                topAmount = amount;
+                topCategory = category;
+            }
+        }
+
+        printNextLine();
+        System.out.print("Your most spent on category is: ");
+        System.out.println(topCategory);
+    }
+
+    /**
+     * Prints an overall summary of expenses to the console.
+     *
+     * <p>The summary includes:
+     * <li>The total expense amount</li>
+     * <li>A category-by-category breakdown (via printExpenseByCategory)</li>
+     *
+     * @param totalExpense        the total amount spent across all expenses
+     * @param expenseByCategory   a map of each ExpenseCategory to its aggregated amount
+     * @throws NullPointerException if totalExpense or expenseByCategory is null
+     */
+    static void printSummaryExpense(Double totalExpense, Map<ExpenseCategory, Double> expenseByCategory) {
+        try {
+            printHorizontalLine(80);
+            System.out.println("Here is an overall summary of your expenses!");
+            System.out.print("Total Expense: ");
+            System.out.println(totalExpense);
+            printNextLine();
+            System.out.println("Here is a breakdown of your expense:");
+            printExpenseByCategory(totalExpense, expenseByCategory);
+            printNextLine();
+            printHorizontalLine(80);
+            LOGGER.log(Level.INFO, "summary-expense called successfully.");
+        } catch (NullPointerException e) {
+            LOGGER.log(Level.WARNING, "totalExpense or expenseByCategory should not be null.");
+            printError(e.getMessage());
+        }
+    }
+
+    /**
+     * Prints a breakdown of income by category and the top-earn category.
+     *
+     * @param totalIncome      total amount spent (used to compute percentages)
+     * @param incomeByCategory map of each category to its total amount
+     */
+    static void printIncomeByCategory(Double totalIncome, Map<IncomeCategory, Double> incomeByCategory) {
+        if (totalIncome < 0 || incomeByCategory.isEmpty()) {
+            System.out.println("You have not recorded any income yet!");
+            return;
+        }
+
+        IncomeCategory topCategory = null;
+        double topAmount = Double.NEGATIVE_INFINITY;
+
+        for (Map.Entry<IncomeCategory, Double> mapEntry : incomeByCategory.entrySet()) {
+            IncomeCategory category = mapEntry.getKey();
+            double amount = (mapEntry.getValue());
+            double percentOfTotal = (amount/totalIncome) * 100.0;
+            System.out.printf("%s: %.2f (%.2f%%)%n", category, amount, percentOfTotal);
+
+            if (amount > topAmount) {
+                topAmount = amount;
+                topCategory = category;
+            }
+        }
+
+        printNextLine();
+        System.out.print("Your highest source of income is: ");
+        System.out.println(topCategory);
+    }
+
+    /**
+     * Prints an overall summary of incomes to the console.
+     *
+     * <p>The summary includes:
+     * <li>The total income amount</li>
+     * <li>A category-by-category breakdown (via printIncomeByCategory)</li>
+     *
+     * @param totalIncome        the total amount spent across all expenses
+     * @param incomeByCategory   a map of each IncomeCategory to its aggregated amount
+     * @throws NullPointerException if totalIncome or incomeByCategory is null
+     */
+    static void printSummaryIncome(double totalIncome, Map<IncomeCategory, Double> incomeByCategory) {
+        try {
+            printHorizontalLine(80);
+            System.out.println("Here is an overall summary of your income!");
+            System.out.print("Total Income: ");
+            System.out.println(totalIncome);
+            printNextLine();
+            System.out.println("Here is a breakdown of your expense:");
+            printIncomeByCategory(totalIncome, incomeByCategory);
+            printNextLine();
+            printHorizontalLine(80);
+            LOGGER.log(Level.INFO, "summary-income called successfully.");
+        } catch (NullPointerException e) {
+            LOGGER.log(Level.WARNING, "totalIncome or incomeByCategory should not be null.");
+            printError(e.getMessage());
+        }
     }
 
     /**
@@ -530,6 +663,7 @@ public class Ui {
         System.out.println();
         System.out.println("10. Set budget for expense categories:");
         System.out.println("    " + BUDGET_COMMAND);
+        System.out.println("    Example: budget c/FOOD a/1000");
         System.out.println("    Available categories: " +
                 "FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS");
 
@@ -538,16 +672,30 @@ public class Ui {
         System.out.println("    " + LIST_BUDGET_COMMAND);
         System.out.println("    Example: list-budget");
 
+
         System.out.println();
-        System.out.println("12. Show this help menu:");
+        System.out.println("12. Show a summary of your total expenses:");
+        System.out.println("    " + SUMMARY_EXPENSE_COMMAND);
+        System.out.println("    Example: summary-expense");
+
+        System.out.println();
+        System.out.println("13. Show a summary of your total income:");
+        System.out.println("    " + SUMMARY_INCOME_COMMAND);
+        System.out.println("    Example: summary-income");
+
+
+        System.out.println();
+        System.out.println("13. Show this help menu:");
         System.out.println("    " + HELP_COMMAND);
+        System.out.println("    Example: help");
 
         System.out.println();
-        System.out.println("13. Exit the program:");
+        System.out.println("14. Exit the program:");
         System.out.println("    " + EXIT_COMMAND);
+        System.out.println("    Example: bye");
 
         System.out.println();
-        System.out.println("14. Export data to CSV file:");
+        System.out.println("15. Export data to CSV file:");
         System.out.println("    " + EXPORT_COMMAND + " <filepath>");
         System.out.println("    Example: export financial_data.csv");
 

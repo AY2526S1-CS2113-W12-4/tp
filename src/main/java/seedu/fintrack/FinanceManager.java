@@ -17,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 import seedu.fintrack.model.ExpenseList;
 import seedu.fintrack.model.IncomeList;
 import seedu.fintrack.model.ExpenseCategory;
+import seedu.fintrack.model.IncomeCategory;
 import seedu.fintrack.model.Income;
 import seedu.fintrack.model.Expense;
 
@@ -315,6 +316,53 @@ public class FinanceManager {
         assert newIncome != null : "New income cannot be null";
         deleteIncome(index); // This will throw if index is invalid
         addIncome(newIncome);
+    }
+
+    /**
+     * Computes the total amount spent in each ExpenseCategory.
+     *
+     * <p>Iterates over all recorded expenses and sums their amounts by category.
+     * The resulting map contains each category as a key and the aggregated amount as
+     * the value.
+     *
+     * @return a map from expense category to the total amount spent in that category
+     */
+
+    public Map<ExpenseCategory, Double> getExpenseByCategory() {
+        Map<ExpenseCategory, Double> expenseByCategory = new HashMap<>();
+
+        for (Expense expense: expenses) {
+            ExpenseCategory category = expense.getCategory();
+            double currentAmount = expense.getAmount();
+            double currentTotalAmount = expenseByCategory.getOrDefault(category, 0.0);
+            expenseByCategory.put(category, currentTotalAmount + currentAmount);
+        }
+
+        LOGGER.log(Level.INFO, "Expense for each Category calculated successfully.");
+        return expenseByCategory;
+    }
+
+    /**
+     * Computes the total amount earn in each ExpenseCategory.
+     *
+     * <p>Iterates over all recorded incomes and sums their amounts by category.
+     * The resulting map contains each category as a key and the aggregated amount as
+     * the value.
+     *
+     * @return a map from income category to the total amount earn in that category
+     */
+    public Map<IncomeCategory, Double> getIncomeByCategory() {
+        Map<IncomeCategory, Double> incomeByCategory = new HashMap<>();
+
+        for (Income income: incomes) {
+            IncomeCategory category = income.getCategory();
+            double currentAmount = income.getAmount();
+            double currentTotalAmount = incomeByCategory.getOrDefault(category, 0.0);
+            incomeByCategory.put(category, currentTotalAmount + currentAmount);
+        }
+
+        LOGGER.log(Level.INFO, "Expense for each Category calculated successfully.");
+        return incomeByCategory;
     }
 
     /**
