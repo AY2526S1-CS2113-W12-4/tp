@@ -307,7 +307,6 @@ public class FinanceManager {
      * @throws IndexOutOfBoundsException If the index is invalid
      */
     public boolean modifyExpense(int index, Expense newExpense) {
-        assert newExpense != null : "New expense cannot be null";
         Expense oldExpense;
         try {
             oldExpense = deleteExpense(index); // This will throw if index is invalid
@@ -336,7 +335,6 @@ public class FinanceManager {
      * @throws IndexOutOfBoundsException If the index is invalid
      */
     public void modifyIncome(int index, Income newIncome) {
-        assert newIncome != null : "New income cannot be null";
         Income oldIncome;
         try {
             oldIncome = deleteIncome(index); // This will throw if index is invalid
