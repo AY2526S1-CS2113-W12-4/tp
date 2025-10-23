@@ -8,11 +8,6 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 import java.time.YearMonth;
 import java.util.Objects;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.Path;
-import java.time.format.DateTimeFormatter;
 
 import seedu.fintrack.model.ExpenseList;
 import seedu.fintrack.model.IncomeList;
@@ -363,72 +358,5 @@ public class FinanceManager {
 
         LOGGER.log(Level.INFO, "Expense for each Category calculated successfully.");
         return incomeByCategory;
-    }
-
-    /**
-     * Exports all financial data (incomes and expenses) to a CSV file.
-     * The CSV will contain two sections:
-     * 1. Incomes: date, amount, category, description
-     * 2. Expenses: date, amount, category, description
-     *
-     * @param filePath The path where the CSV file should be saved
-     * @throws IOException If there is an error writing to the file
-     */
-    public void exportToCSV(Path filePath) throws IOException {
-        LOGGER.log(Level.INFO, "Exporting data to CSV: " + filePath);
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-        // Create parent directories if they don't exist
-        Path parentDir = filePath.getParent();
-        if (parentDir != null && !java.nio.file.Files.exists(parentDir)) {
-            try {
-                java.nio.file.Files.createDirectories(parentDir);
-                LOGGER.log(Level.INFO, "Created directory: " + parentDir);
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "Failed to create directory: " + parentDir, e);
-                throw new IOException("Could not create directory " + parentDir + ". Please check your permissions.");
-            }
-        }
-
-        try (PrintWriter writer = new PrintWriter(new FileWriter(filePath.toFile()))) {
-            // Write header for incomes
-            writer.println("INCOMES");
-            writer.println("Date,Amount,Category,Description");
-            
-            // Write income data
-            for (Income income : incomes) {
-                writer.printf("%s,%.2f,%s,%s%n",
-                    income.getDate().format(dateFormatter),
-                    income.getAmount(),
-                    income.getCategory(),
-                    income.getDescription() != null ? income.getDescription().replace(",", ";") : "");
-            }
-            
-            // Write header for expenses
-            writer.println(); // blank line separator
-            writer.println("EXPENSES");
-            writer.println("Date,Amount,Category,Description");
-            
-            // Write expense data
-            for (Expense expense : expenses) {
-                writer.printf("%s,%.2f,%s,%s%n",
-                    expense.getDate().format(dateFormatter),
-                    expense.getAmount(),
-                    expense.getCategory(),
-                    expense.getDescription() != null ? expense.getDescription().replace(",", ";") : "");
-            }
-
-            // Write summary section
-            writer.println();
-            writer.println("SUMMARY");
-            writer.printf("Total Income,%.2f%n", getTotalIncome());
-            writer.printf("Total Expenses,%.2f%n", getTotalExpense());
-            writer.printf("Balance,%.2f%n", getBalance());
-
-            LOGGER.log(Level.INFO, "Successfully exported data to CSV");
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Failed to export data to CSV", e);
-            throw e;
-        }
     }
 }
