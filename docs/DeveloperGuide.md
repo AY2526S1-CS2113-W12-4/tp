@@ -4,7 +4,8 @@
 
 {list here sources of all reused/adapted ideas, code, documentation, and third-party libraries -- include links to the original source as well}
 
-## Design & implementation
+## Design
+This section describes the overall architecture and explores the core classes of FinTrack.
 
 ### FinTrack Module (`FinTrack.java`)
 `FinTrack` (`src/main/java/seedu/fintrack/FinTrack.java`) serves as the main entry point and the central controller of the application. It is responsible for managing the application's lifecycle and coordinating the interactions between the user interface (`Ui`), the business logic (`FinanceManager`), and the input processor (`Parser`). The `main` method executes a simple, continuous 'Read-Evaluate-Print' loop (REPL).
@@ -13,15 +14,15 @@ How the `FinTrack` component works:
 1. The application starts by welcoming the user (via `Ui.printWelcome()`) and initialising the `FinanceManager`, which holds the application's state (all incomes, expenses and budgets).
 2. It waits for user input using `Ui.waitForInput()`.
 3. The input is parsed as follows:
-   - The command word (e.g. `add-expense`) is extracted using `Parser.returnFirstWord()`.
-   - A `switch` statement is used to route the command word to the appropriate logic block.
-   - For commands that take no arguments (like `list`, `help` and `bye`), it uses the `hasUnexpectedArguments()` helper to validate the input before executing.
-   - For commands that take arguments (like `add-expense`, `delete-income`, `budget`), it delegates the parsing of the entire input string to the `Parser` class (e.g. `Parser.parseAddExpense(input)`).
+    - The command word (e.g. `add-expense`) is extracted using `Parser.returnFirstWord()`.
+    - A `switch` statement is used to route the command word to the appropriate logic block.
+    - For commands that take no arguments (like `list`, `help` and `bye`), it uses the `hasUnexpectedArguments()` helper to validate the input before executing.
+    - For commands that take arguments (like `add-expense`, `delete-income`, `budget`), it delegates the parsing of the entire input string to the `Parser` class (e.g. `Parser.parseAddExpense(input)`).
 4. The relevant command is executed as follows:
-   - If the `Parser` successfully returns a valid object (like an `Expense` or an `int`), `FinTrack` passes this object to the `FinanceManager` to perform the business logic (e.g. `fm.addExpense(expense)`).
-   - Based on the result from `FinanceManager`, it then calls the appropriate `Ui` method to show success (e.g. `Ui.printExpenseAdded(expense)`).
-   - Any `IllegalArgumentException` or `IndexOutOfBoundsException` (from `Parser` or `FinanceManager`) is caught within the loop. The error message is retrieved (`e.getMessage()`)
- and printed to the user via `Ui.printError()`.
+    - If the `Parser` successfully returns a valid object (like an `Expense` or an `int`), `FinTrack` passes this object to the `FinanceManager` to perform the business logic (e.g. `fm.addExpense(expense)`).
+    - Based on the result from `FinanceManager`, it then calls the appropriate `Ui` method to show success (e.g. `Ui.printExpenseAdded(expense)`).
+    - Any `IllegalArgumentException` or `IndexOutOfBoundsException` (from `Parser` or `FinanceManager`) is caught within the loop. The error message is retrieved (`e.getMessage()`)
+      and printed to the user via `Ui.printError()`.
 5. The loop continues until the user enters the `bye` command (`Ui.EXIT_COMMAND`).
 
 The above flow is illustrated by the sequence diagram below, showing how the `add-expense` command is processed.
@@ -102,6 +103,53 @@ Why `Parser` was implemented this way:
 Alternatives considered:
 - **Positional Parsing**: An alternative design would be to use positional parsing (e.g. `add-expense 10 food 2025-10-22`). This was rejected as it's rigid and not user-friendly; the user must remember the exact order of arguments. The chosen prefix-based system (`a/`, `c/`) is more flexible.
 - **Regex Parsing**: Another alternative was to use complex Regular Expressions (Regex) for each command. This was deemed harder to maintain and debug compared to the current prefix-scanning approach.
+
+
+## Implementation
+This section describes some noteworthy details of how certain features are implemented.
+
+### Budget (`budget and list-budget`)
+The budget feature allows us to set budgets for our expenses which lets us set a budget for a certain category. When we set a budget using `budget c/{ExpenseCategory} a/{amount}`, we get warned when any expense using `add-expense` we make exceeds our budget. Finally, we can see all the budgets we have set through `list-budget`.
+
+Here is how `budget` and `list-budget` works:
+1. In `FinTrack`, `Parser` first handles our input by recognising the budget function and then parsing the input into `ExpenseCategory` and budget amount.
+2. To store all our budgets, we create a HashMap called `budgets` which has `ExpenseCategory` as the key and the budget amount as the value.
+3. A function `setBudget` is then called to set the budget for the input category. Finally, `Ui` calls `printBudgetSet()` to indicate budget has been set.
+4. Now, when `addExpense()` is called during `add-expense`, a boolean called `budgetExceeded` checks for if the added expense exceeds the budget set for that category. If so, a warning is printed by `printBudgetExceededWarning()` in `Ui`.
+5. When `list-budget` is called, `Ui` prints a list of the budgets by calling `printBudgets` which receives a printable version of all the budgets which we get from `getBudgetsView()`.
+
+Below is the sequence diagram of an instance of `budget` and `add-expense`:
+![budget.png](images/budget.png)
+
+#### Design Considerations:
+- We considered alternative ways to hold our budgets such as arrays, however, for the sake of readability and simplicity, we went with a HashMap
+
+### Summary (`summary-expense and summary-income`)
+The summary feature comes in two forms:
+- `summary-expense`: gives a brief summary of overall expense
+- `summary-income`: gives a brief summary of overall income
+
+A summary consists of the following details:
+- **Overall expense/income**
+- **Breakdown by category**
+- **Top Category**
+
+Here is how `summary-expense` works:
+1. We first consider what was needed in our summary. The main things we needed
+   were total expenditure, a breakdown of expenditure and the top category in expenditure
+2. To get total expense, we can get total expense from calling `getTotalExpense()` from `FinanceManager`.
+3. To see how much the user has spent on each category, a function in `FinanceManager` called `getExpenseByCategory()` is implemented to return a HashMap which has `ExpenseCategory` as the key and the accumulated amount of that category as the value.
+4. To create this hashmap, `getExpenseByCategory()` loops through all expenses in the `expenses` list and adds up the total amount for each `ExpenseCategory`.
+5. `totalExpense` and `expenseByCategory` is then fed into a function in `Ui` called `printSummaryExpense` to print the summary.
+
+Below is a sequence diagram to illustrate how summary-expense works:
+![summary_expense.png](images/summary_expense.png)
+
+`summary-income` is implemented in a similar way.
+
+#### Design Considerations
+- One thing we considered was how to implement this as simply as possible. While we recognise that the current implementation has a data-hungry implementation in a HashMap, it was also the simplest solution.
+- This solution also helps to reduce coupling and improve testing of the implementation.
 
 ## Product scope
 ### Target user profile

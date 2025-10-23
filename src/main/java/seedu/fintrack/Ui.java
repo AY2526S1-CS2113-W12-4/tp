@@ -685,17 +685,17 @@ public class Ui {
 
 
         System.out.println();
-        System.out.println("13. Show this help menu:");
+        System.out.println("14. Show this help menu:");
         System.out.println("    " + HELP_COMMAND);
         System.out.println("    Example: help");
 
         System.out.println();
-        System.out.println("14. Exit the program:");
+        System.out.println("15. Exit the program:");
         System.out.println("    " + EXIT_COMMAND);
         System.out.println("    Example: bye");
 
         System.out.println();
-        System.out.println("15. Export data to CSV file:");
+        System.out.println("16. Export data to CSV file:");
         System.out.println("    " + EXPORT_COMMAND + " <filepath>");
         System.out.println("    Example: export financial_data.csv");
 
