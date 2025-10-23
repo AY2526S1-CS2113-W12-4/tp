@@ -104,6 +104,52 @@ Alternatives considered:
 - **Positional Parsing**: An alternative design would be to use positional parsing (e.g. `add-expense 10 food 2025-10-22`). This was rejected as it's rigid and not user-friendly; the user must remember the exact order of arguments. The chosen prefix-based system (`a/`, `c/`) is more flexible.
 - **Regex Parsing**: Another alternative was to use complex Regular Expressions (Regex) for each command. This was deemed harder to maintain and debug compared to the current prefix-scanning approach.
 
+### FinanceManager Module (`FinanceManager.java`)
+
+`FinanceManager` (`src/main/java/seedu/fintrack/FinanceManager.java`) is the central component that manages all financial data in FinTrack.  
+It handles the core logic for adding, deleting, and retrieving transactions, tracking budgets, and calculating summaries such as total income, total expense, and overall balance.
+
+#### How the `FinanceManager` component works:
+1. **State management**  
+   The class maintains three key data structures:
+    - `IncomeList` — stores all incomes in reverse-chronological order
+    - `ExpenseList` — stores all expenses in reverse-chronological order
+    - `HashMap<ExpenseCategory, Double>` — stores budgets for each expense category  
+      These are kept private to prevent external modification. Public “view” methods return unmodifiable copies of the data.
+
+2. **Adding new records**
+    - `addIncome(Income)` adds a new income to `IncomeList` after validation.
+    - `addExpense(Expense)` adds a new expense and checks if it exceeds its category’s budget for the first time.  
+      Both methods log the operation and assert data integrity before completing.
+
+3. **Deleting and modifying records**
+    - `deleteExpense(int)` and `deleteIncome(int)` remove entries by 1-based visible index (newest-first).
+    - `modifyExpense(...)` and `modifyIncome(...)` replace old records by deleting and re-adding the updated one.  
+      These operations throw clear exceptions if invalid indices are provided.
+
+4. **Budgets**
+    - `setBudget(ExpenseCategory, double)` sets or updates a budget for a given category.
+    - `getBudgetsView()` returns an unmodifiable map of all budgets.
+    - During each `addExpense`, the method compares the category’s total spending against its budget and signals when it is first exceeded.
+
+5. **Calculations and summaries**
+    - `getTotalIncome()`, `getTotalExpense()`, and `getBalance()` compute aggregate values for display.
+    - `getExpenseByCategory()` and `getIncomeByCategory()` provide category-wise breakdowns for the summary commands.
+    - Filtering by month is supported through `getIncomesViewForMonth(YearMonth)` and `getExpensesViewForMonth(YearMonth)`.
+
+6. **Data export**  
+   The method `exportToCSV(Path)` outputs all incomes, expenses, and a summary section into a CSV file.  
+   It automatically creates directories if they do not exist and logs each step of the export process.
+
+The sequence diagram below shows how `FinTrack` delegates an expense addition to `FinanceManager`, and how it performs budget checks and interacts with `ExpenseList`.
+![FinanceManager_add-expense_DG.png](images/FinanceManager_add-expense_DG.png)
+
+#### Why `FinanceManager` was implemented this way:
+- **Encapsulation and safety** – `FinanceManager` hides internal data structures and only exposes read-only views, ensuring all state changes happen through validated methods.
+- **Separation of concerns** – `FinanceManager` focuses solely on business logic. Input parsing and user interaction are handled by `Parser` and `Ui` respectively, reducing coupling.
+- **Defensive programming** – Assertions, null checks, and exception handling prevent data corruption and simplify debugging.
+- **Testability** – Because `FinanceManager` performs no console I/O, its methods can be easily tested using mock `Expense` and `Income` objects.
+
 
 ## Implementation
 This section describes some noteworthy details of how certain features are implemented.
