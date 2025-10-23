@@ -23,12 +23,11 @@ public class CsvStorage implements Storage {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     /**
-     * Exports financial data to a CSV file.
+     * Exports financial data to a CSV file in proper CSV format.
      * <p>
-     * The CSV will contain three sections:
-     * 1. INCOMES: date, amount, category, description
-     * 2. EXPENSES: date, amount, category, description
-     * 3. SUMMARY: total income, total expenses, balance
+     * The CSV will contain all transactions in a single table with:
+     * Type, Date, Amount, Category, Description columns.
+     * Summary statistics are appended at the end after a blank line.
      *
      * @param filePath The path where the CSV file should be saved
      * @param incomes List of income entries to export
@@ -57,52 +56,34 @@ public class CsvStorage implements Storage {
         }
 
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath.toFile()))) {
-            writeIncomeSection(writer, incomes);
-            writeExpenseSection(writer, expenses);
+            // Write CSV header
+            writer.println("Type,Date,Amount,Category,Description");
+            
+            // Write all income entries
+            for (Income income : incomes) {
+                writer.printf("INCOME,%s,%.2f,%s,%s%n",
+                    income.getDate().format(DATE_FORMATTER),
+                    income.getAmount(),
+                    income.getCategory(),
+                    escapeCommas(income.getDescription()));
+            }
+            
+            // Write all expense entries
+            for (Expense expense : expenses) {
+                writer.printf("EXPENSE,%s,%.2f,%s,%s%n",
+                    expense.getDate().format(DATE_FORMATTER),
+                    expense.getAmount(),
+                    expense.getCategory(),
+                    escapeCommas(expense.getDescription()));
+            }
+            
+            // Write summary section
             writeSummarySection(writer, totalIncome, totalExpense, balance);
+            
             LOGGER.log(Level.INFO, "Successfully exported data to CSV");
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Failed to export data to CSV", e);
             throw e;
-        }
-    }
-
-    /**
-     * Writes the income section to the CSV file.
-     *
-     * @param writer The PrintWriter to write to
-     * @param incomes List of income entries
-     */
-    private void writeIncomeSection(PrintWriter writer, List<Income> incomes) {
-        writer.println("INCOMES");
-        writer.println("Date,Amount,Category,Description");
-        
-        for (Income income : incomes) {
-            writer.printf("%s,%.2f,%s,%s%n",
-                income.getDate().format(DATE_FORMATTER),
-                income.getAmount(),
-                income.getCategory(),
-                escapeCommas(income.getDescription()));
-        }
-    }
-
-    /**
-     * Writes the expense section to the CSV file.
-     *
-     * @param writer The PrintWriter to write to
-     * @param expenses List of expense entries
-     */
-    private void writeExpenseSection(PrintWriter writer, List<Expense> expenses) {
-        writer.println(); // blank line separator
-        writer.println("EXPENSES");
-        writer.println("Date,Amount,Category,Description");
-        
-        for (Expense expense : expenses) {
-            writer.printf("%s,%.2f,%s,%s%n",
-                expense.getDate().format(DATE_FORMATTER),
-                expense.getAmount(),
-                expense.getCategory(),
-                escapeCommas(expense.getDescription()));
         }
     }
 
