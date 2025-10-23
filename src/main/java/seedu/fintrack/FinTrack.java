@@ -1,5 +1,8 @@
 package seedu.fintrack;
 
+import seedu.fintrack.model.ExpenseCategory;
+import seedu.fintrack.model.IncomeCategory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
@@ -7,6 +10,7 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.time.YearMonth;
 import java.util.Optional;
+import java.util.Map;
 
 /**
  * Entry point of the FinTrack application.
@@ -214,6 +218,34 @@ public class FinTrack {
                     Ui.printError(e.getMessage());
                 } catch (IOException e) {
                     Ui.printError("Failed to write the file: " + e.getMessage());
+                }
+                break;
+            case Ui.SUMMARY_EXPENSE_COMMAND:
+                try {
+                    if (hasUnexpectedArguments(input, Ui.SUMMARY_EXPENSE_COMMAND)) {
+                        Ui.printError(formatNoArgumentsMessage(Ui.SUMMARY_EXPENSE_COMMAND));
+                        break;
+                    }
+
+                    Map<ExpenseCategory, Double> expenseByCategory = fm.getExpenseByCategory();
+                    double totalExpense = fm.getTotalExpense();
+                    Ui.printSummaryExpense(totalExpense, expenseByCategory);
+                } catch (IllegalArgumentException e) {
+                    Ui.printError(e.getMessage());
+                }
+                break;
+            case Ui.SUMMARY_INCOME_COMMAND:
+                try {
+                    if (hasUnexpectedArguments(input, Ui.SUMMARY_INCOME_COMMAND)) {
+                        Ui.printError(formatNoArgumentsMessage(Ui.SUMMARY_INCOME_COMMAND));
+                        break;
+                    }
+
+                    Map<IncomeCategory, Double> incomeByCategory = fm.getIncomeByCategory();
+                    double totalIncome = fm.getTotalIncome();
+                    Ui.printSummaryIncome(totalIncome, incomeByCategory);
+                } catch (IllegalArgumentException e) {
+                    Ui.printError(e.getMessage());
                 }
                 break;
             default:
