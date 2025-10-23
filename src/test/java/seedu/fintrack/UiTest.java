@@ -87,7 +87,7 @@ public class UiTest {
         assertEquals("delete-expense", Ui.DELETE_EXPENSE_COMMAND);
         assertEquals("delete-income", Ui.DELETE_INCOME_COMMAND);
         assertEquals("balance", Ui.BALANCE_COMMAND);
-        assertEquals("list", Ui.LIST_COMMAND);
+        assertEquals("list-expense", Ui.LIST_EXPENSE_COMMAND);
         assertEquals("bye", Ui.EXIT_COMMAND);
     }
 
@@ -320,7 +320,7 @@ public class UiTest {
         assertTrue(s.contains(Ui.ADD_EXPENSE_COMMAND));
         assertTrue(s.contains(Ui.ADD_INCOME_COMMAND));
         assertTrue(s.contains(Ui.DELETE_EXPENSE_COMMAND));
-        assertTrue(s.contains(Ui.LIST_COMMAND));
+        assertTrue(s.contains(Ui.LIST_EXPENSE_COMMAND));
         assertTrue(s.contains(Ui.BALANCE_COMMAND));
         assertTrue(s.contains(Ui.EXIT_COMMAND));
     }

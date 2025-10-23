@@ -14,35 +14,35 @@ add-expense a/1400 c/Rent d/2024-03-01 desc/Monthly rent payment
 add-expense a/55 c/Food d/2024-03-03
 add-expense a/20 c/Transport d/2024-03-05 desc/Taxi
 balance
-list
+list-expense
 list-income
-balance 2024-01
-list 2024-01
-list-income 2024-01
-balance 2024-02
-list 2024-02
-list-income 2024-02
-balance 2024-03
-list 2024-03
-list-income 2024-03
-balance 2024-04
-list 2024-04
-list-income 2024-04
-balance 24-01
-list 2024/01
-list-income 202401
+balance d/2024-01
+list-expense d/2024-01
+list-income d/2024-01
+balance d/2024-02
+list-expense d/2024-02
+list-income d/2024-02
+balance d/2024-03
+list-expense d/2024-03
+list-income d/2024-03
+balance d/2024-04
+list-expense d/2024-04
+list-income d/2024-04
+balance d/24-01
+list-expense d/2024/01
+list-income d/202401
 modify-expense 9 a/1300 c/Rent d/2024-01-01 desc/Monthly rent increased
-list
+list-expense
 modify-expense 8 a/45 c/Food d/2024-01-02 desc/Updated food cost
-list
+list-expense
 modify-income 4 a/250 c/Salary d/2024-01-15 desc/Extra performance bonus
 list-income
 balance
 delete-expense 1
 delete-income 2
 balance
-balance 2024-03
-list 2024-03
-list-income 2024-03
+balance d/2024-03
+list-expense d/2024-03
+list-income d/2024-03
 help
 bye

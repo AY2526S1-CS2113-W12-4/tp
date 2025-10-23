@@ -170,7 +170,7 @@ public class FinTrack {
                     Ui.printError(e.getMessage());
                 }
                 break;
-            case Ui.LIST_COMMAND:
+            case Ui.LIST_EXPENSE_COMMAND:
                 try {
                     Optional<YearMonth> ymOpt = Parser.parseOptionalMonthForExpenseList(input);
                     if (ymOpt.isPresent()) {

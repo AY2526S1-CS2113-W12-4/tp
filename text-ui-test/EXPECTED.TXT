@@ -471,28 +471,28 @@ Description: Monthly salary
    Available categories: SALARY, SCHOLARSHIP, INVESTMENT, GIFT
 
 3. View all expenses (from latest to earliest date):
-   list
-   To view by month: list <YYYY-MM>
-   Example: list 2025-10
+   list-expense
+   To view by month: list-expense d/<YYYY-MM>
+   Example: list-expense d/2025-10
 
 4. View all incomes (from latest to earliest date):
    list-income
-   To view by month: list-income <YYYY-MM>
-   Example: list-income 2025-10
+   To view by month: list-income d/<YYYY-MM>
+   Example: list-income d/2025-10
 
 5. Delete an expense:
    delete-expense <index>
-   Deletes the expense shown at that index in 'list'.
+   Deletes the expense shown at that index in 'list-expense'.
    Example: delete-expense 1
 
 6. Delete an income:
    delete-income <index>
-   Deletes the income shown at that index in 'list'.
+   Deletes the income shown at that index in 'list-income'.
    Example: delete-income 1
 
 7. Modify an expense:
    modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]
-   Modifies the expense shown at that index in 'list'.
+   Modifies the expense shown at that index in 'list-expense'.
    Example: modify-expense 1 a/1300 c/Rent d/2024-01-01 desc/Monthly rent increased
 
 8. Modify an income:
@@ -503,8 +503,8 @@ Description: Monthly salary
 9. View balance summary:
    balance
    Shows total income, total expenses, and current balance.
-   To view by month: balance <YYYY-MM>
-   Example: balance 2025-10
+   To view by month: balance d/<YYYY-MM>
+   Example: balance d/2025-10
 
 10. Set budget for expense categories:
     budget

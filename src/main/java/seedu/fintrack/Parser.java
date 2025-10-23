@@ -390,23 +390,32 @@ final class Parser {
             LOGGER.log(Level.FINE, "No month argument detected for {0}", commandLiteral);
             return Optional.empty();
         }
-        
-        // Disallow extra tokens after the month (enforce exactly one arg if present)
-        int sp = rest.indexOf(' ');
-        if (sp != -1) {
+
+        if (!rest.startsWith(Ui.DATE_PREFIX)) {
+            LOGGER.log(Level.WARNING, "Missing d/ prefix for month after {0}: {1}",
+                    new Object[]{commandLiteral, rest});
+            throw new IllegalArgumentException("Usage: " + commandLiteral + " [" + Ui.DATE_PREFIX + "YYYY-MM]");
+        }
+
+        String monthToken = rest.substring(Ui.DATE_PREFIX.length()).trim();
+        if (monthToken.isEmpty()) {
+            LOGGER.log(Level.WARNING, "Month missing after d/ for command {0}", commandLiteral);
+            throw new IllegalArgumentException("Month must follow d/ in YYYY-MM format.");
+        }
+        if (monthToken.contains(" ")) {
             LOGGER.log(Level.WARNING, "Unexpected extra arguments after {0}: {1}",
                     new Object[]{commandLiteral, rest});
-            throw new IllegalArgumentException("Usage: " + commandLiteral + " [YYYY-MM]");
+            throw new IllegalArgumentException("Usage: " + commandLiteral + " [" + Ui.DATE_PREFIX + "YYYY-MM]");
         }
 
         try {
-            YearMonth parsed = YearMonth.parse(rest, YEAR_MONTH_FORMATTER);
+            YearMonth parsed = YearMonth.parse(monthToken, YEAR_MONTH_FORMATTER);
             LOGGER.log(Level.FINE, "Parsed YearMonth {0} for command {1}",
                     new Object[]{parsed, commandLiteral});
             return Optional.of(parsed);
         } catch (DateTimeParseException ex) {
             LOGGER.log(Level.WARNING, "Invalid month format after {0}: {1}",
-                    new Object[]{commandLiteral, rest});
+                    new Object[]{commandLiteral, monthToken});
             throw new IllegalArgumentException("Month must be in YYYY-MM format.");
         }
     }
@@ -418,7 +427,7 @@ final class Parser {
 
     public static Optional<YearMonth> parseOptionalMonthForExpenseList(String input) {
         LOGGER.fine("Entered parseOptionalMonthForExpenseList");
-        return parseOptionalYearMonthAfterCommand(input, Ui.LIST_COMMAND);
+        return parseOptionalYearMonthAfterCommand(input, Ui.LIST_EXPENSE_COMMAND);
     }
 
     public static Optional<YearMonth> parseOptionalMonthForIncomeList(String input) {
