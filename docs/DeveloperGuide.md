@@ -151,6 +151,46 @@ Below is a sequence diagram to illustrate how summary-expense works:
 - One thing we considered was how to implement this as simply as possible. While we recognise that the current implementation has a data-hungry implementation in a HashMap, it was also the simplest solution.
 - This solution also helps to reduce coupling and improve testing of the implementation.
 
+### Export (`export`)
+The export feature allows users to export all their financial data (incomes and expenses) to a CSV file for backup, analysis in spreadsheet applications, or record-keeping purposes.
+
+Here is how `export` works:
+1. In `FinTrack`, `Parser` handles the input by recognising the export command and parsing the file path using `parseExport(input)`.
+2. A new `CsvStorage` instance is created to handle the file I/O operations (following the Single Responsibility Principle by keeping storage concerns separate from business logic).
+3. `FinTrack` retrieves all necessary data from `FinanceManager`:
+   - `getIncomesView()` - Returns an unmodifiable list of all incomes
+   - `getExpensesView()` - Returns an unmodifiable list of all expenses
+   - `getTotalIncome()`, `getTotalExpense()`, `getBalance()` - Summary statistics
+4. The `CsvStorage.export()` method writes the data to a CSV file in proper CSV format:
+   - Single header row: `Type,Date,Amount,Category,Description`
+   - All incomes and expenses in one unified table with a `Type` column distinguishing between "INCOME" and "EXPENSE"
+   - Summary section at the end with total income, total expenses, and balance
+5. If successful, `Ui` calls `printExportSuccess()` to confirm the export. Any errors (IOException, SecurityException, IllegalArgumentException) are caught and displayed to the user via `printError()`.
+
+Below is a sequence diagram to illustrate how the export command works:
+![export.png](images/export.png)
+
+#### Design Considerations:
+**Separation of Concerns via Storage Layer:**
+- **Why we created a separate Storage layer**: Initially, export functionality was in `FinanceManager`, which violated the Single Responsibility Principle. `FinanceManager` should manage financial data and business logic, not handle file I/O.
+- **Alternative considered**: Keeping `exportToCSV()` in `FinanceManager` - This was rejected because:
+  - It mixed business logic with persistence concerns
+  - It would make `FinanceManager` harder to test
+  - Adding new export formats (JSON, XML) would bloat the class
+- **Why this approach is better**: 
+  - `Storage` interface allows for multiple implementations (CSV, JSON, etc.)
+  - Follows the same stateless pattern as `Parser` and `Ui`
+  - Makes the code more maintainable and testable
+  - Sets foundation for future features like auto-save and data import
+
+**CSV Format Choice:**
+- **Single-table format with Type column**: We chose to have all transactions in one table with a "Type" column (INCOME/EXPENSE) rather than separate sections
+- **Alternative considered**: Separate INCOMES and EXPENSES sections - This was rejected because:
+  - Not standard CSV format
+  - Harder to import into spreadsheet applications
+  - Cannot be easily sorted or filtered as a unified dataset
+- **Why single-table is better**: Proper CSV format that works seamlessly with Excel, Google Sheets, and data analysis tools
+
 ## Product scope
 ### Target user profile
 
