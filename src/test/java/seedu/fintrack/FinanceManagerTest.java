@@ -205,7 +205,7 @@ public class FinanceManagerTest {
         IndexOutOfBoundsException exception = assertThrows(IndexOutOfBoundsException.class, () -> {
             fm.deleteExpense(1);
         });
-        assertEquals("Expense index out of range. Valid range: 1 to 0", exception.getMessage());
+        assertEquals("Cannot delete expense: The expense list is empty", exception.getMessage());
     }
     
     @Test
@@ -251,7 +251,7 @@ public class FinanceManagerTest {
         IndexOutOfBoundsException exception = assertThrows(IndexOutOfBoundsException.class, () -> {
             fm.deleteIncome(1);
         });
-        assertEquals("Income index out of range. Valid range: 1 to 0", exception.getMessage());
+        assertEquals("Cannot delete income: The income list is empty", exception.getMessage());
     }
     
     @Test
@@ -473,5 +473,453 @@ public class FinanceManagerTest {
 
         assertEquals(300.0, febIncomeSum, 1e-9);
         assertEquals(1300.0, febExpenseSum, 1e-9);
+    }
+
+    // ============ Tests for modifyExpense ============
+
+    @Test
+    void modifyExpense_validIndex_replacesExpenseSuccessfully() {
+        fm.addExpense(sampleExpense1); // 1200 RENT on 2025-01-01
+        fm.addExpense(sampleExpense2); // 50 FOOD on 2025-01-02
+        fm.addExpense(sampleExpense3); // 30 TRANSPORT on 2025-01-03
+
+        // Modify the newest expense (index 1 = sampleExpense3)
+        Expense newExpense = new Expense(100.0, ExpenseCategory.FOOD,
+                LocalDate.parse("2025-01-05"), "Modified expense");
+        
+        boolean isOverBudget = fm.modifyExpense(1, newExpense);
+
+        // Verify the expense was replaced
+        List<Expense> expenses = fm.getExpensesView();
+        assertEquals(3, expenses.size());
+        
+        // The new expense should now be the newest (2025-01-05)
+        assertEquals(newExpense, expenses.get(0));
+        assertEquals(100.0, newExpense.getAmount());
+        assertEquals(ExpenseCategory.FOOD, newExpense.getCategory());
+        assertEquals("Modified expense", newExpense.getDescription());
+
+        // Verify total expense updated: 1200 + 50 + 100 = 1350 (old 30 was deleted)
+        assertEquals(1350.0, fm.getTotalExpense());
+    }
+
+    @Test
+    void modifyExpense_emptyList_throwsException() {
+        IndexOutOfBoundsException exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+            Expense newExpense = new Expense(100.0, ExpenseCategory.FOOD,
+                    LocalDate.now(), "Test");
+            fm.modifyExpense(1, newExpense);
+        });
+        assertEquals("Cannot modify expense: The expense list is empty", exception.getMessage());
+    }
+
+    @Test
+    void modifyExpense_indexTooLow_throwsException() {
+        fm.addExpense(sampleExpense1);
+
+        IndexOutOfBoundsException exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+            Expense newExpense = new Expense(100.0, ExpenseCategory.FOOD,
+                    LocalDate.now(), "Test");
+            fm.modifyExpense(0, newExpense);
+        });
+        assertEquals("Expense index out of range. Valid range: 1 to 1", exception.getMessage());
+
+        // Verify original expense is unchanged
+        assertEquals(1, fm.getExpensesView().size());
+        assertEquals(sampleExpense1, fm.getExpensesView().get(0));
+    }
+
+    @Test
+    void modifyExpense_indexTooHigh_throwsException() {
+        fm.addExpense(sampleExpense1);
+
+        IndexOutOfBoundsException exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+            Expense newExpense = new Expense(100.0, ExpenseCategory.FOOD,
+                    LocalDate.now(), "Test");
+            fm.modifyExpense(2, newExpense);
+        });
+        assertEquals("Expense index out of range. Valid range: 1 to 1", exception.getMessage());
+
+        // Verify original expense is unchanged
+        assertEquals(1, fm.getExpensesView().size());
+        assertEquals(sampleExpense1, fm.getExpensesView().get(0));
+    }
+
+    @Test
+    void modifyExpense_exceedsBudget_returnsTrueAndShowsWarning() {
+        // Set a budget for FOOD category
+        fm.setBudget(ExpenseCategory.FOOD, 100.0);
+
+        // Add an initial FOOD expense below budget
+        fm.addExpense(new Expense(50.0, ExpenseCategory.FOOD,
+                LocalDate.parse("2025-01-01"), "First food"));
+
+        // Modify to exceed budget
+        Expense newExpense = new Expense(200.0, ExpenseCategory.FOOD,
+                LocalDate.parse("2025-01-02"), "Expensive meal");
+        
+        boolean isOverBudget = fm.modifyExpense(1, newExpense);
+
+        assertTrue(isOverBudget);
+        assertEquals(200.0, fm.getTotalExpenseForCategory(ExpenseCategory.FOOD));
+    }
+
+    @Test
+    void modifyExpense_withinBudget_returnsFalse() {
+        // Set a budget for FOOD category
+        fm.setBudget(ExpenseCategory.FOOD, 200.0);
+
+        // Add an initial FOOD expense
+        fm.addExpense(new Expense(50.0, ExpenseCategory.FOOD,
+                LocalDate.parse("2025-01-01"), "First food"));
+
+        // Modify but stay within budget
+        Expense newExpense = new Expense(100.0, ExpenseCategory.FOOD,
+                LocalDate.parse("2025-01-02"), "Regular meal");
+        
+        boolean isOverBudget = fm.modifyExpense(1, newExpense);
+
+        assertEquals(false, isOverBudget);
+        assertEquals(100.0, fm.getTotalExpenseForCategory(ExpenseCategory.FOOD));
+    }
+
+    @Test
+    void modifyExpense_multipleModifications_maintainsCorrectOrder() {
+        // Add expenses in chronological order
+        Expense e1 = new Expense(100.0, ExpenseCategory.FOOD,
+                LocalDate.parse("2025-01-01"), "First");
+        Expense e2 = new Expense(200.0, ExpenseCategory.FOOD,
+                LocalDate.parse("2025-01-02"), "Second");
+        Expense e3 = new Expense(300.0, ExpenseCategory.FOOD,
+                LocalDate.parse("2025-01-03"), "Third");
+
+        fm.addExpense(e1);
+        fm.addExpense(e2);
+        fm.addExpense(e3);
+
+        // View should be: [e3(newest), e2, e1(oldest)]
+        List<Expense> view = fm.getExpensesView();
+        assertEquals(e3, view.get(0)); // index 1
+        assertEquals(e2, view.get(1)); // index 2
+        assertEquals(e1, view.get(2)); // index 3
+
+        // Modify index 2 (e2) with a newer date
+        Expense modified = new Expense(250.0, ExpenseCategory.TRANSPORT,
+                LocalDate.parse("2025-01-05"), "Modified second");
+        fm.modifyExpense(2, modified);
+
+        // New view should have modified expense as newest
+        view = fm.getExpensesView();
+        assertEquals(3, view.size());
+        assertEquals(modified, view.get(0)); // Now newest (2025-01-05)
+        assertEquals(e3, view.get(1)); // 2025-01-03
+        assertEquals(e1, view.get(2)); // 2025-01-01 (still oldest)
+
+        // Verify total: 100 + 300 + 250 = 650 (old e2=200 was deleted)
+        assertEquals(650.0, fm.getTotalExpense());
+    }
+
+    // ============ Tests for modifyIncome ============
+
+    @Test
+    void modifyIncome_validIndex_replacesIncomeSuccessfully() {
+        fm.addIncome(sampleIncome1); // 5000 SALARY on 2025-01-01
+        fm.addIncome(sampleIncome2); // 200 SCHOLARSHIP on 2025-01-15
+
+        // Modify the newest income (index 1 = sampleIncome2)
+        Income newIncome = new Income(500.0, IncomeCategory.INVESTMENT,
+                LocalDate.parse("2025-01-20"), "Modified income");
+        
+        fm.modifyIncome(1, newIncome);
+
+        // Verify the income was replaced
+        List<Income> incomes = fm.getIncomesView();
+        assertEquals(2, incomes.size());
+        
+        // The new income should now be the newest (2025-01-20)
+        assertEquals(newIncome, incomes.get(0));
+        assertEquals(500.0, newIncome.getAmount());
+        assertEquals(IncomeCategory.INVESTMENT, newIncome.getCategory());
+        assertEquals("Modified income", newIncome.getDescription());
+
+        // Verify total income updated: 5000 + 500 = 5500 (old 200 was deleted)
+        assertEquals(5500.0, fm.getTotalIncome());
+    }
+
+    @Test
+    void modifyIncome_emptyList_throwsException() {
+        IndexOutOfBoundsException exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+            Income newIncome = new Income(1000.0, IncomeCategory.SALARY,
+                    LocalDate.now(), "Test");
+            fm.modifyIncome(1, newIncome);
+        });
+        assertEquals("Cannot modify income: The income list is empty", exception.getMessage());
+    }
+
+    @Test
+    void modifyIncome_indexTooLow_throwsException() {
+        fm.addIncome(sampleIncome1);
+
+        IndexOutOfBoundsException exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+            Income newIncome = new Income(1000.0, IncomeCategory.SALARY,
+                    LocalDate.now(), "Test");
+            fm.modifyIncome(0, newIncome);
+        });
+        assertEquals("Income index out of range. Valid range: 1 to 1", exception.getMessage());
+
+        // Verify original income is unchanged
+        assertEquals(1, fm.getIncomesView().size());
+        assertEquals(sampleIncome1, fm.getIncomesView().get(0));
+    }
+
+    @Test
+    void modifyIncome_indexTooHigh_throwsException() {
+        fm.addIncome(sampleIncome1);
+
+        IndexOutOfBoundsException exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+            Income newIncome = new Income(1000.0, IncomeCategory.SALARY,
+                    LocalDate.now(), "Test");
+            fm.modifyIncome(2, newIncome);
+        });
+        assertEquals("Income index out of range. Valid range: 1 to 1", exception.getMessage());
+
+        // Verify original income is unchanged
+        assertEquals(1, fm.getIncomesView().size());
+        assertEquals(sampleIncome1, fm.getIncomesView().get(0));
+    }
+
+    @Test
+    void modifyIncome_multipleModifications_maintainsCorrectOrder() {
+        // Add incomes in chronological order
+        Income i1 = new Income(1000.0, IncomeCategory.SALARY,
+                LocalDate.parse("2025-01-01"), "First");
+        Income i2 = new Income(2000.0, IncomeCategory.SALARY,
+                LocalDate.parse("2025-01-10"), "Second");
+        Income i3 = new Income(3000.0, IncomeCategory.SCHOLARSHIP,
+                LocalDate.parse("2025-01-20"), "Third");
+
+        fm.addIncome(i1);
+        fm.addIncome(i2);
+        fm.addIncome(i3);
+
+        // View should be: [i3(newest), i2, i1(oldest)]
+        List<Income> view = fm.getIncomesView();
+        assertEquals(i3, view.get(0)); // index 1
+        assertEquals(i2, view.get(1)); // index 2
+        assertEquals(i1, view.get(2)); // index 3
+
+        // Modify index 2 (i2) with a newer date
+        Income modified = new Income(2500.0, IncomeCategory.INVESTMENT,
+                LocalDate.parse("2025-01-25"), "Modified second");
+        fm.modifyIncome(2, modified);
+
+        // New view should have modified income as newest
+        view = fm.getIncomesView();
+        assertEquals(3, view.size());
+        assertEquals(modified, view.get(0)); // Now newest (2025-01-25)
+        assertEquals(i3, view.get(1)); // 2025-01-20
+        assertEquals(i1, view.get(2)); // 2025-01-01 (still oldest)
+
+        // Verify total: 1000 + 3000 + 2500 = 6500 (old i2=2000 was deleted)
+        assertEquals(6500.0, fm.getTotalIncome());
+    }
+
+    @Test
+    void modifyIncome_changesCategory_updatesCorrectly() {
+        fm.addIncome(sampleIncome1); // SALARY
+
+        // Modify category
+        Income newIncome = new Income(5000.0, IncomeCategory.INVESTMENT,
+                LocalDate.parse("2025-01-01"), "Changed to investment");
+        fm.modifyIncome(1, newIncome);
+
+        List<Income> incomes = fm.getIncomesView();
+        assertEquals(1, incomes.size());
+        assertEquals(IncomeCategory.INVESTMENT, incomes.get(0).getCategory());
+    }
+
+    @Test
+    void modifyExpense_changesCategory_updatesCorrectly() {
+        fm.addExpense(sampleExpense1); // RENT
+
+        // Modify category
+        Expense newExpense = new Expense(1200.0, ExpenseCategory.FOOD,
+                LocalDate.parse("2025-01-01"), "Changed to food");
+        fm.modifyExpense(1, newExpense);
+
+        List<Expense> expenses = fm.getExpensesView();
+        assertEquals(1, expenses.size());
+        assertEquals(ExpenseCategory.FOOD, expenses.get(0).getCategory());
+    }
+
+    // ============ Tests for atomic modify operations (rollback) ============
+
+    @Test
+    void modifyExpense_addFailsWithNull_revertsToOriginal() {
+        fm.addExpense(sampleExpense1); // 1200 RENT on 2025-01-01
+        fm.addExpense(sampleExpense2); // 50 FOOD on 2025-01-02
+
+        // Verify initial state
+        assertEquals(2, fm.getExpensesView().size());
+        assertEquals(1250.0, fm.getTotalExpense());
+
+        // Try to modify with null expense (should fail and revert)
+        assertThrows(IllegalArgumentException.class, () -> {
+            fm.modifyExpense(1, null);
+        });
+
+        // Verify the list is unchanged (rolled back)
+        List<Expense> expenses = fm.getExpensesView();
+        assertEquals(2, expenses.size());
+        assertEquals(1250.0, fm.getTotalExpense());
+        assertEquals(sampleExpense2, expenses.get(0)); // Still the newest
+        assertEquals(sampleExpense1, expenses.get(1)); // Still the oldest
+    }
+
+    @Test
+    void modifyExpense_addFailsWithInvalidData_revertsToOriginal() {
+        fm.addExpense(sampleExpense1); // 1200 RENT on 2025-01-01
+        fm.addExpense(sampleExpense2); // 50 FOOD on 2025-01-02
+        fm.addExpense(sampleExpense3); // 30 TRANSPORT on 2025-01-03
+
+        // Verify initial state
+        assertEquals(3, fm.getExpensesView().size());
+        double initialTotal = fm.getTotalExpense();
+        assertEquals(1280.0, initialTotal);
+
+        // Try to modify with invalid expense (negative amount should fail validation)
+        // Note: We need to create an expense that passes the constructor but fails on add
+        // Since the Expense constructor itself validates, we'll test with null
+        assertThrows(IllegalArgumentException.class, () -> {
+            fm.modifyExpense(2, null);
+        });
+
+        // Verify the list is unchanged (rolled back)
+        List<Expense> expenses = fm.getExpensesView();
+        assertEquals(3, expenses.size());
+        assertEquals(initialTotal, fm.getTotalExpense());
+        // Verify order is preserved
+        assertEquals(sampleExpense3, expenses.get(0)); // Newest
+        assertEquals(sampleExpense2, expenses.get(1)); // Middle
+        assertEquals(sampleExpense1, expenses.get(2)); // Oldest
+    }
+
+    @Test
+    void modifyIncome_addFailsWithNull_revertsToOriginal() {
+        fm.addIncome(sampleIncome1); // 5000 SALARY on 2025-01-01
+        fm.addIncome(sampleIncome2); // 200 SCHOLARSHIP on 2025-01-15
+
+        // Verify initial state
+        assertEquals(2, fm.getIncomesView().size());
+        assertEquals(5200.0, fm.getTotalIncome());
+
+        // Try to modify with null income (should fail and revert)
+        assertThrows(IllegalArgumentException.class, () -> {
+            fm.modifyIncome(1, null);
+        });
+
+        // Verify the list is unchanged (rolled back)
+        List<Income> incomes = fm.getIncomesView();
+        assertEquals(2, incomes.size());
+        assertEquals(5200.0, fm.getTotalIncome());
+        assertEquals(sampleIncome2, incomes.get(0)); // Still the newest
+        assertEquals(sampleIncome1, incomes.get(1)); // Still the oldest
+    }
+
+    @Test
+    void modifyIncome_addFailsWithInvalidData_revertsToOriginal() {
+        fm.addIncome(sampleIncome1); // 5000 SALARY on 2025-01-01
+        fm.addIncome(sampleIncome2); // 200 SCHOLARSHIP on 2025-01-15
+
+        Income extraIncome = new Income(1000.0, IncomeCategory.INVESTMENT,
+                LocalDate.parse("2025-01-10"), "Extra");
+        fm.addIncome(extraIncome);
+
+        // Verify initial state
+        assertEquals(3, fm.getIncomesView().size());
+        double initialTotal = fm.getTotalIncome();
+        assertEquals(6200.0, initialTotal);
+
+        // Try to modify with null income (should fail and revert)
+        assertThrows(IllegalArgumentException.class, () -> {
+            fm.modifyIncome(2, null);
+        });
+
+        // Verify the list is unchanged (rolled back)
+        List<Income> incomes = fm.getIncomesView();
+        assertEquals(3, incomes.size());
+        assertEquals(initialTotal, fm.getTotalIncome());
+        // Verify order is preserved
+        assertEquals(sampleIncome2, incomes.get(0)); // Newest (2025-01-15)
+        assertEquals(extraIncome, incomes.get(1));   // Middle (2025-01-10)
+        assertEquals(sampleIncome1, incomes.get(2)); // Oldest (2025-01-01)
+    }
+
+    @Test
+    void modifyExpense_rollbackMaintainsCorrectOrder() {
+        // Create expenses with specific dates
+        Expense e1 = new Expense(100.0, ExpenseCategory.FOOD,
+                LocalDate.parse("2025-01-01"), "First");
+        Expense e2 = new Expense(200.0, ExpenseCategory.TRANSPORT,
+                LocalDate.parse("2025-01-05"), "Second");
+        Expense e3 = new Expense(300.0, ExpenseCategory.RENT,
+                LocalDate.parse("2025-01-10"), "Third");
+
+        fm.addExpense(e1);
+        fm.addExpense(e2);
+        fm.addExpense(e3);
+
+        // Initial order: [e3 (Jan-10), e2 (Jan-05), e1 (Jan-01)]
+        List<Expense> initial = fm.getExpensesView();
+        assertEquals(e3, initial.get(0));
+        assertEquals(e2, initial.get(1));
+        assertEquals(e1, initial.get(2));
+
+        // Try to modify e2 with null (should fail and rollback)
+        assertThrows(IllegalArgumentException.class, () -> {
+            fm.modifyExpense(2, null); // Index 2 is e2
+        });
+
+        // Verify order is maintained after rollback
+        List<Expense> afterRollback = fm.getExpensesView();
+        assertEquals(3, afterRollback.size());
+        assertEquals(e3, afterRollback.get(0)); // Still newest
+        assertEquals(e2, afterRollback.get(1)); // Still middle (not deleted!)
+        assertEquals(e1, afterRollback.get(2)); // Still oldest
+        assertEquals(600.0, fm.getTotalExpense()); // Total unchanged
+    }
+
+    @Test
+    void modifyIncome_rollbackMaintainsCorrectOrder() {
+        // Create incomes with specific dates
+        Income i1 = new Income(1000.0, IncomeCategory.SALARY,
+                LocalDate.parse("2025-01-01"), "First");
+        Income i2 = new Income(2000.0, IncomeCategory.INVESTMENT,
+                LocalDate.parse("2025-01-05"), "Second");
+        Income i3 = new Income(3000.0, IncomeCategory.SCHOLARSHIP,
+                LocalDate.parse("2025-01-10"), "Third");
+
+        fm.addIncome(i1);
+        fm.addIncome(i2);
+        fm.addIncome(i3);
+
+        // Initial order: [i3 (Jan-10), i2 (Jan-05), i1 (Jan-01)]
+        List<Income> initial = fm.getIncomesView();
+        assertEquals(i3, initial.get(0));
+        assertEquals(i2, initial.get(1));
+        assertEquals(i1, initial.get(2));
+
+        // Try to modify i2 with null (should fail and rollback)
+        assertThrows(IllegalArgumentException.class, () -> {
+            fm.modifyIncome(2, null); // Index 2 is i2
+        });
+
+        // Verify order is maintained after rollback
+        List<Income> afterRollback = fm.getIncomesView();
+        assertEquals(3, afterRollback.size());
+        assertEquals(i3, afterRollback.get(0)); // Still newest
+        assertEquals(i2, afterRollback.get(1)); // Still middle (not deleted!)
+        assertEquals(i1, afterRollback.get(2)); // Still oldest
+        assertEquals(6000.0, fm.getTotalIncome()); // Total unchanged
     }
 }

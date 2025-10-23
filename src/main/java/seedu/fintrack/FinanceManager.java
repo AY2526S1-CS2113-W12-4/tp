@@ -249,6 +249,10 @@ public class FinanceManager {
      */
     public Expense deleteExpense(int index) {
         int oldExpensesSize = expenses.size();
+        if (expenses.size() == 0) {
+            LOGGER.log(Level.WARNING, "deleteExpense called on empty expense list");
+            throw new IndexOutOfBoundsException("Cannot delete expense: The expense list is empty");
+        }
         if (index < 1 || index > expenses.size()) {
             LOGGER.log(Level.WARNING, "deleteExpense called with out of range index");
             throw new IndexOutOfBoundsException("Expense index out of range. Valid range: 1 to " + expenses.size());
@@ -275,8 +279,12 @@ public class FinanceManager {
      */
     public Income deleteIncome(int index) {
         int oldIncomeSize = incomes.size();
+        if (incomes.size() == 0) {
+            LOGGER.log(Level.WARNING, "deleteIncome called on empty income list");
+            throw new IndexOutOfBoundsException("Cannot delete income: The income list is empty");
+        }
         if (index < 1 || index > incomes.size()) {
-            LOGGER.log(Level.WARNING, "deleteIncome called with out of range index.");
+            LOGGER.log(Level.WARNING, "deleteIncome called with out of range index");
             throw new IndexOutOfBoundsException("Income index out of range. Valid range: 1 to " + incomes.size());
         }
 
@@ -299,9 +307,23 @@ public class FinanceManager {
      * @throws IndexOutOfBoundsException If the index is invalid
      */
     public boolean modifyExpense(int index, Expense newExpense) {
-        assert newExpense != null : "New expense cannot be null";
-        deleteExpense(index); // This will throw if index is invalid
-        return addExpense(newExpense);
+        Expense oldExpense;
+        try {
+            oldExpense = deleteExpense(index); // This will throw if index is invalid
+        } catch (IndexOutOfBoundsException e) {
+            if (expenses.size() == 0) {
+                throw new IndexOutOfBoundsException("Cannot modify expense: The expense list is empty");
+            }
+            throw new IndexOutOfBoundsException("Expense index out of range. Valid range: 1 to " + expenses.size());
+        }
+        
+        try {
+            return addExpense(newExpense);
+        } catch (Exception e) {
+            // Restore the old expense if adding the new one fails
+            expenses.add(oldExpense);
+            throw e;
+        }
     }
 
     /**
@@ -313,9 +335,23 @@ public class FinanceManager {
      * @throws IndexOutOfBoundsException If the index is invalid
      */
     public void modifyIncome(int index, Income newIncome) {
-        assert newIncome != null : "New income cannot be null";
-        deleteIncome(index); // This will throw if index is invalid
-        addIncome(newIncome);
+        Income oldIncome;
+        try {
+            oldIncome = deleteIncome(index); // This will throw if index is invalid
+        } catch (IndexOutOfBoundsException e) {
+            if (incomes.size() == 0) {
+                throw new IndexOutOfBoundsException("Cannot modify income: The income list is empty");
+            }
+            throw new IndexOutOfBoundsException("Income index out of range. Valid range: 1 to " + incomes.size());
+        }
+        
+        try {
+            addIncome(newIncome);
+        } catch (Exception e) {
+            // Restore the old income if adding the new one fails
+            incomes.add(oldIncome);
+            throw e;
+        }
     }
 
     /**
