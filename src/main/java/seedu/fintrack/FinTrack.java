@@ -2,6 +2,8 @@ package seedu.fintrack;
 
 import seedu.fintrack.model.ExpenseCategory;
 import seedu.fintrack.model.IncomeCategory;
+import seedu.fintrack.storage.CsvStorage;
+import seedu.fintrack.storage.Storage;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -210,7 +212,13 @@ public class FinTrack {
             case Ui.EXPORT_COMMAND:
                 try {
                     var exportPath = Parser.parseExport(input);
-                    fm.exportToCSV(exportPath);
+                    Storage storage = new CsvStorage();
+                    storage.export(exportPath, 
+                                 fm.getIncomesView(), 
+                                 fm.getExpensesView(),
+                                 fm.getTotalIncome(),
+                                 fm.getTotalExpense(),
+                                 fm.getBalance());
                     Ui.printExportSuccess(exportPath);
                 } catch (SecurityException e) {
                     Ui.printError("Permission denied. Please ensure you have access to write to this location.");
