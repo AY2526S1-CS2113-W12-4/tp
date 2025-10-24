@@ -257,17 +257,17 @@ public class FinTrack {
                 }
                 break;
             case Ui.TIPS_COMMAND:
-                    try {
-                        if (hasUnexpectedArguments(input, Ui.TIPS_COMMAND)) {
-                            Ui.printError(formatNoArgumentsMessage(Ui.TIPS_COMMAND));
-                            break;
-                        }
-
-                        Ui.printTip();
-                    } catch (IllegalArgumentException e) {
-                        Ui.printError(e.getMessage());
+                try {
+                    if (hasUnexpectedArguments(input, Ui.TIPS_COMMAND)) {
+                        Ui.printError(formatNoArgumentsMessage(Ui.TIPS_COMMAND));
+                        break;
                     }
-                    break;
+
+                    Ui.printTip();
+                } catch (IllegalArgumentException e) {
+                    Ui.printError(e.getMessage());
+                }
+                break;
             default:
                 Ui.printError(INVALID_COMMAND_MESSAGE);
             }
