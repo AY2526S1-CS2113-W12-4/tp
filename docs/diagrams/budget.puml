@@ -1,0 +1,32 @@
+@startuml
+title Set Budget, then Add Expense (Sequence)
+
+actor User
+participant Ui
+participant FinTrack
+participant Parser
+participant "FinanceManager" as FM
+
+== Set Budget ==
+User -> Ui: enter "budget c/<CATEGORY> a/<AMOUNT>"
+Ui --> FinTrack: onInput(command)
+FinTrack -> Parser: parseSetBudget(command)
+Parser --> FinTrack: (category, amount)
+FinTrack -> FM: setBudget(category, amount)
+FM --> FinTrack: ok
+FinTrack -> Ui: printBudgetSet(category, amount)
+
+== Add Expense ==
+User -> Ui: enter "add-expense d/<DATE> c/<CATEGORY> a/<AMOUNT> ..."
+Ui --> FinTrack: onInput(command)
+FinTrack -> Parser: parseAddExpense(command)
+Parser --> FinTrack: Expense
+FinTrack -> FM: addExpense(expense)
+FM --> FinTrack: (added, spentInCategory, budgetForCategory)
+FinTrack -> Ui: printExpenseAdded(expense)
+
+alt spentInCategory > budgetForCategory
+  FinTrack -> Ui: printBudgetExceededWarning(expense.category, budgetForCategory, spentInCategory)
+end
+
+@enduml
