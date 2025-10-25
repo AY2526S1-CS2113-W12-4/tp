@@ -17,6 +17,8 @@ Given below are my contributions to the project:
 - **New Feature**: Added the ability to list budgets.
   - What it does: allows the user to see their budgets set for expense categories with an existing budget. Otherwise, it lets the user know that they have no set a budget for any expense category.
   - Justification: This feature improves the product significantly as the user can know have a bird's-eye view of their budgets for relevant categories, allowing them to better plan their finances.
+- **Enhancements to existing features**:
+  - Wrote additional tests for existing features to increase coverage from 80% to 86% (FinanceManager from 58% to 100%, Parser from 85% to 100%): [#106](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/106)
 - **Documentation**: 
   - User Guide: 
     - Wrote instructions on how to use the `budget` command.
