@@ -23,9 +23,7 @@ import seedu.fintrack.model.IncomeCategory;
  */
 public class ParserTest {
 
-    /*
-     * Helper builders for command strings
-     */
+    // ============ Helpers for command strings ============
 
     /**
      * Constructs a valid 'add-expense' command string for testing.
@@ -69,9 +67,20 @@ public class ParserTest {
         return base;
     }
 
-    /*
-     * Tests for returnFirstWord & getFirstSpaceIndex
+    /**
+     * Constructs a 'budget' command string for testing.
+     *
+     * @param category The category for the budget.
+     * @param amount The amount for the budget.
+     * @return A formatted 'budget' command string.
      */
+    private static String setBudget(String category, String amount) {
+        return Ui.BUDGET_COMMAND + " "
+                + Ui.CATEGORY_PREFIX + category + " "
+                + Ui.AMOUNT_PREFIX + amount;
+    }
+
+    /// ============ Tests for returnFirstWord and getFirstSpaceIndex ============
 
     /**
      * Tests {@code returnFirstWord} with a standard command string without leading spaces.
@@ -117,9 +126,7 @@ public class ParserTest {
         assertEquals(0, Parser.getFirstSpaceIndex(" x"));       // leading space
     }
 
-    /*
-     * Test input handling for parseAddExpense
-     */
+    // ============ Test input handling for parseAddExpense ============
 
     /**
      * Tests parsing of a valid 'add-expense' command with an optional description.
@@ -192,6 +199,44 @@ public class ParserTest {
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Required fields: a/<amount> c/<category> d/<YYYY-MM-DD>.", e.getMessage());
+        }
+    }
+
+    /**
+     * Tests 'add-expense' parsing when required prefixes are present but their values are empty.
+     * This tests the behavior of the underlying {@code getValue} method.
+     * Expects an {@link IllegalArgumentException} for each case.
+     */
+    @Test
+    public void parseAddExpense_emptyParams_throws() {
+        // Missing amount value
+        String input1 = Ui.ADD_EXPENSE_COMMAND + " a/ c/Food d/2025-10-10";
+        // Missing category value
+        String input2 = Ui.ADD_EXPENSE_COMMAND + " a/10 c/ d/2025-10-10";
+        // Missing date value
+        String input3 = Ui.ADD_EXPENSE_COMMAND + " a/10 c/Food d/";
+
+        String expectedMsg = "Required fields: a/<amount> c/<category> d/<YYYY-MM-DD>.";
+
+        try {
+            Parser.parseAddExpense(input1);
+            fail("Should have failed due to empty amount");
+        } catch (IllegalArgumentException e) {
+            assertEquals(expectedMsg, e.getMessage());
+        }
+
+        try {
+            Parser.parseAddExpense(input2);
+            fail("Should have failed due to empty category");
+        } catch (IllegalArgumentException e) {
+            assertEquals(expectedMsg, e.getMessage());
+        }
+
+        try {
+            Parser.parseAddExpense(input3);
+            fail("Should have failed due to empty date");
+        } catch (IllegalArgumentException e) {
+            assertEquals(expectedMsg, e.getMessage());
         }
     }
 
@@ -782,6 +827,160 @@ public class ParserTest {
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Usage: list-income [d/YYYY-MM]", e.getMessage());
+        }
+    }
+
+    // ============ Tests for parseSetBudget ============
+
+    /**
+     * Tests parsing of a valid 'budget' command.
+     */
+    @Test
+    public void parseSetBudget_valid_ok() {
+        String input = setBudget("food", "500.75");
+        var result = Parser.parseSetBudget(input);
+        assertEquals(ExpenseCategory.FOOD, result.getKey());
+        assertEquals(500.75, result.getValue(), 1e-9);
+    }
+
+    /**
+     * Tests parsing of a valid 'budget' command with parameters in reverse order.
+     */
+    @Test
+    public void parseSetBudget_paramsReversed_ok() {
+        String input = Ui.BUDGET_COMMAND + " "
+                + Ui.AMOUNT_PREFIX + "150" + " "
+                + Ui.CATEGORY_PREFIX + "transport";
+        var result = Parser.parseSetBudget(input);
+        assertEquals(ExpenseCategory.TRANSPORT, result.getKey());
+        assertEquals(150.0, result.getValue(), 1e-9);
+    }
+
+    /**
+     * Tests 'budget' parsing with missing parameters.
+     * Expects an {@link IllegalArgumentException} for each case.
+     */
+    @Test
+    public void parseSetBudget_missingParams_throws() {
+        String usageMsg = "Usage: budget c/<category> a/<amount>";
+
+        // Missing all parameters
+        try {
+            Parser.parseSetBudget(Ui.BUDGET_COMMAND);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().startsWith("Missing parameters for budget command."));
+        }
+
+        // Missing amount
+        try {
+            Parser.parseSetBudget(Ui.BUDGET_COMMAND + " " + Ui.CATEGORY_PREFIX + "food");
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals(usageMsg, e.getMessage());
+        }
+
+        // Missing category
+        try {
+            Parser.parseSetBudget(Ui.BUDGET_COMMAND + " " + Ui.AMOUNT_PREFIX + "100");
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals(usageMsg, e.getMessage());
+        }
+    }
+
+    /**
+     * Tests 'budget' parsing with invalid amount (non-numeric, negative).
+     * Expects an {@link IllegalArgumentException} for each case.
+     */
+    @Test
+    public void parseSetBudget_invalidAmount_throws() {
+        // Non-numeric amount
+        try {
+            Parser.parseSetBudget(setBudget("food", "abc"));
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Amount must be a valid number.", e.getMessage());
+        }
+
+        // Negative amount
+        try {
+            Parser.parseSetBudget(setBudget("food", "-100"));
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Amount must be non-negative.", e.getMessage());
+        }
+    }
+
+    /**
+     * Tests 'budget' parsing with an invalid expense category.
+     * Expects an {@link IllegalArgumentException}.
+     */
+    @Test
+    public void parseSetBudget_invalidCategory_throws() {
+        try {
+            Parser.parseSetBudget(setBudget("invalidCategory", "100"));
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Unknown expense category!" +
+                            "\nAvailable categories: [FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS]",
+                    e.getMessage());
+        }
+    }
+
+    // ============ Tests for parseExport ============
+
+    @Test
+    public void parseExport_validPath_ok() {
+        String input = Ui.EXPORT_COMMAND + " data.csv";
+        java.nio.file.Path path = Parser.parseExport(input);
+        assertTrue(path.endsWith("data.csv"));
+    }
+
+    @Test
+    public void parseExport_validPathNoExtension_appendsCsv() {
+        String input = Ui.EXPORT_COMMAND + " myDataFile";
+        java.nio.file.Path path = Parser.parseExport(input);
+        assertTrue(path.endsWith("myDataFile.csv"));
+    }
+
+    @Test
+    public void parseExport_missingPath_throws() {
+        try {
+            Parser.parseExport(Ui.EXPORT_COMMAND);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Missing file path. Usage: export <filepath>", e.getMessage());
+        }
+
+        try {
+            Parser.parseExport(Ui.EXPORT_COMMAND + "   ");
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Missing file path. Usage: export <filepath>", e.getMessage());
+        }
+    }
+
+    @Test
+    public void parseExport_homeShortcut_expands() {
+        String homeDir = System.getProperty("user.home");
+        String input = Ui.EXPORT_COMMAND + " ~/mydata.csv";
+        java.nio.file.Path path = Parser.parseExport(input);
+
+        assertTrue(path.startsWith(homeDir));
+        assertTrue(path.endsWith("mydata.csv"));
+        assertTrue(path.isAbsolute());
+    }
+
+    @Test
+    public void parseExport_invalidPathChars_throws() {
+        // Using a null character, which is invalid in most filesystems
+        String input = Ui.EXPORT_COMMAND + " data\0.csv";
+        try {
+            Parser.parseExport(input);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Invalid file path. Please provide a valid path for the CSV file.", e.getMessage());
         }
     }
 }
