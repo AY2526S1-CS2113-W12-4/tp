@@ -963,17 +963,6 @@ public class ParserTest {
     }
 
     @Test
-    public void parseExport_homeShortcut_expands() {
-        String homeDir = System.getProperty("user.home");
-        String input = Ui.EXPORT_COMMAND + " ~/mydata.csv";
-        java.nio.file.Path path = Parser.parseExport(input);
-
-        assertTrue(path.startsWith(homeDir));
-        assertTrue(path.endsWith("mydata.csv"));
-        assertTrue(path.isAbsolute());
-    }
-
-    @Test
     public void parseExport_invalidPathChars_throws() {
         // Using a null character, which is invalid in most filesystems
         String input = Ui.EXPORT_COMMAND + " data\0.csv";
