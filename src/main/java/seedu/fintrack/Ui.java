@@ -1,4 +1,3 @@
-// src/main/java/seedu/fintrack/Ui.java
 package seedu.fintrack;
 
 import java.nio.file.Path;
@@ -45,9 +44,29 @@ public class Ui {
     public static final String DATE_PREFIX = "d/";
     public static final String DESCRIPTION_PREFIX = "desc/"; // optional
 
+    private static Scanner uiScanner = new Scanner(System.in);
+
     private static final Logger LOGGER = Logger.getLogger(Ui.class.getName());
-    private static final Scanner SCANNER = new Scanner(System.in);
     private static final TipsStorage TIPS = new TipsStorage();
+
+    /**
+     * Reassigns the {@link #uiScanner} used by {@link Ui#waitForInput()} to a new {@link java.util.Scanner}.
+     * <p>
+     * This method is intended <strong>only for automated testing</strong>, where {@code System.in} is replaced
+     * with a scripted {@link java.io.InputStream}. Calling this method ensures that {@code Ui} reads input from
+     * the test-provided stream instead of the original standard input.
+     * </p>
+     * <p>
+     * In normal program execution, {@link #uiScanner} remains bound to {@code System.in} and should not be changed.
+     * </p>
+     *
+     * @param scanner the new {@link java.util.Scanner} to assign; ignored if {@code null}
+     */
+    static void test_setScanner(Scanner scanner) {
+        if (scanner != null) {
+            uiScanner = scanner;
+        }
+    }
 
     /**
      * Prints the welcome banner and a hint to show available commands.
@@ -80,7 +99,7 @@ public class Ui {
     public static String waitForInput() {
         System.out.print("> ");
         try {
-            String line = SCANNER.nextLine();
+            String line = uiScanner.nextLine();
             return line == null ? "" : line.trim();
         } catch (NoSuchElementException | IllegalStateException e) {
             // stdin closed or scanner unusable — log and signal upstream to exit cleanly.
