@@ -4,10 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import java.util.Collections;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -575,26 +573,26 @@ public class FinanceManagerTest {
     }
 
     @Test
-    void addExpense_budgetSet_staysUnder_returnsFalse() {
+    void addExpense_budgetSetStaysUnder_returnsFalse() {
         fm.setBudget(ExpenseCategory.FOOD, 100.0);
-        boolean overBudget1 = fm.addExpense(sampleExpense2); // 50 FOOD
-        assertFalse(overBudget1);
-        boolean overBudget2 = fm.addExpense(new Expense(30.0, ExpenseCategory.FOOD, LocalDate.now(), "Snack"));
-        assertFalse(overBudget2);
+        boolean isOverBudget1 = fm.addExpense(sampleExpense2); // 50 FOOD
+        assertFalse(isOverBudget1);
+        boolean isOverBudget2 = fm.addExpense(new Expense(30.0, ExpenseCategory.FOOD, LocalDate.now(), "Snack"));
+        assertFalse(isOverBudget2);
         assertEquals(80.0, fm.getTotalExpenseForCategory(ExpenseCategory.FOOD));
     }
 
     @Test
-    void addExpense_budgetSet_hitsExactly_returnsFalse() {
+    void addExpense_budgetSetHitsExactly_returnsFalse() {
         fm.setBudget(ExpenseCategory.FOOD, 100.0);
         fm.addExpense(sampleExpense2); // 50 FOOD
-        boolean overBudget = fm.addExpense(new Expense(50.0, ExpenseCategory.FOOD, LocalDate.now(), "Dinner"));
-        assertFalse(overBudget);
+        boolean isOverBudget = fm.addExpense(new Expense(50.0, ExpenseCategory.FOOD, LocalDate.now(), "Dinner"));
+        assertFalse(isOverBudget);
         assertEquals(100.0, fm.getTotalExpenseForCategory(ExpenseCategory.FOOD));
     }
 
     @Test
-    void addExpense_budgetSet_crossesThreshold_returnsTrue() {
+    void addExpense_budgetSetCrossesThreshold_returnsTrue() {
         fm.setBudget(ExpenseCategory.FOOD, 100.0);
         fm.addExpense(sampleExpense2); // 50 FOOD
         // This expense (80) will push the total (50+80=130) over the 100 budget
@@ -604,7 +602,7 @@ public class FinanceManagerTest {
     }
 
     @Test
-    void addExpense_budgetSet_crossesThresholdFromZero_returnsTrue() {
+    void addExpense_budgetSetCrossesThresholdFromZero_returnsTrue() {
         fm.setBudget(ExpenseCategory.FOOD, 100.0);
         // This expense (101) will push the total (0+101=101) over the 100 budget
         boolean overBudget = fm.addExpense(new Expense(101.0, ExpenseCategory.FOOD, LocalDate.now(), "Big meal"));
@@ -613,7 +611,7 @@ public class FinanceManagerTest {
     }
 
     @Test
-    void addExpense_budgetSet_alreadyExceeded_returnsFalse() {
+    void addExpense_budgetSetAlreadyExceeded_returnsFalse() {
         fm.setBudget(ExpenseCategory.FOOD, 100.0);
         // 1. Cross the budget
         boolean overBudget1 = fm.addExpense(new Expense(110.0, ExpenseCategory.FOOD, LocalDate.now(), "Big meal"));
@@ -628,7 +626,7 @@ public class FinanceManagerTest {
     }
 
     @Test
-    void addExpense_budgetSet_unrelatedCategory_returnsFalse() {
+    void addExpense_budgetSetUnrelatedCategory_returnsFalse() {
         fm.setBudget(ExpenseCategory.FOOD, 100.0);
         // Add an expense for a different category
         boolean overBudget = fm.addExpense(sampleExpense1); // 1200 RENT

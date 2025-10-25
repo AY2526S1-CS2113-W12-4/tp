@@ -923,7 +923,8 @@ public class ParserTest {
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Unknown expense category!" +
-                            "\nAvailable categories: [FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS]",
+                            "\nAvailable categories:" +
+                                " [FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS]",
                     e.getMessage());
         }
     }
