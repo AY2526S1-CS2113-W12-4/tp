@@ -580,7 +580,7 @@ public class Ui {
             System.out.print("Total Income: ");
             System.out.println(totalIncome);
             printNextLine();
-            System.out.println("Here is a breakdown of your expense:");
+            System.out.println("Here is a breakdown of your income:");
             printIncomeByCategory(totalIncome, incomeByCategory);
             printNextLine();
             printHorizontalLine(80);

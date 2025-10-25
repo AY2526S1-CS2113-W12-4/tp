@@ -19,7 +19,6 @@ public class TipsStorage {
                 "The Deck banmian is less than $4!",
                 "You can spend the pass royale money on better food ._."
         );
-
     }
 
     public String returnTip() {

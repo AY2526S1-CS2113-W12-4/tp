@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -921,5 +922,48 @@ public class FinanceManagerTest {
         assertEquals(i2, afterRollback.get(1)); // Still middle (not deleted!)
         assertEquals(i1, afterRollback.get(2)); // Still oldest
         assertEquals(6000.0, fm.getTotalIncome()); // Total unchanged
+    }
+
+    // ============ Tests for summary ============
+    @Test
+    void getExpenseByCategory_empty_returnEmptyMap() {
+        Map<ExpenseCategory, Double> testMap = fm.getExpenseByCategory();
+        assertTrue(testMap.isEmpty());
+    }
+
+    @Test
+    void getExpenseByCategory_accumulatesAmountsPerCategory() {
+        fm.addExpense(new Expense(10.00, ExpenseCategory.FOOD, LocalDate.of(2025, 10, 1), "Lunch"));
+        fm.addExpense(new Expense(5.00, ExpenseCategory.TRANSPORT, LocalDate.of(2025, 10, 2), "Bus"));
+        fm.addExpense(new Expense(2.50, ExpenseCategory.FOOD, LocalDate.of(2025, 10, 3), "Snack"));
+
+        Map<ExpenseCategory, Double> testMap = fm.getExpenseByCategory();
+
+        // Only the categories used should appear
+        assertEquals(2, testMap.size());
+        // Totals per category
+        assertEquals(12.50, testMap.get(ExpenseCategory.FOOD));
+        assertEquals(5.00, testMap.get(ExpenseCategory.TRANSPORT));
+    }
+
+    @Test
+    void getIncomeByCategory_empty_returnsEmptyMap() {
+        Map<IncomeCategory, Double> testMap = fm.getIncomeByCategory();
+        assertTrue(testMap.isEmpty());
+    }
+
+    @Test
+    void getIncomeByCategory_accumulatesAmountsPerCategory() {
+        fm.addIncome(new Income(1000.00, IncomeCategory.SALARY, LocalDate.of(2025, 10, 5), "Monies"));
+        fm.addIncome(new Income(50.50, IncomeCategory.INVESTMENT, LocalDate.of(2025, 10, 6), "AMD"));
+        fm.addIncome(new Income(500.00, IncomeCategory.SALARY, LocalDate.of(2025, 10, 20), "Bonus"));
+
+        Map<IncomeCategory, Double> byCat = fm.getIncomeByCategory();
+
+        // Only the categories used should appear
+        assertEquals(2, byCat.size());
+        // Totals per category
+        assertEquals(1500.00, byCat.get(IncomeCategory.SALARY));
+        assertEquals(50.50, byCat.get(IncomeCategory.INVESTMENT));
     }
 }

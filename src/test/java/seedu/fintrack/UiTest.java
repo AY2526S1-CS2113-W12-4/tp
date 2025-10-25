@@ -8,6 +8,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDate;
 import java.util.Locale;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -315,13 +317,177 @@ public class UiTest {
     @Test
     void printHelp_containsAllMainCommands() {
         Ui.printHelp();
-        String s = out();
-        assertTrue(s.contains("FinTrack Command Summary"));
-        assertTrue(s.contains(Ui.ADD_EXPENSE_COMMAND));
-        assertTrue(s.contains(Ui.ADD_INCOME_COMMAND));
-        assertTrue(s.contains(Ui.DELETE_EXPENSE_COMMAND));
-        assertTrue(s.contains(Ui.LIST_EXPENSE_COMMAND));
-        assertTrue(s.contains(Ui.BALANCE_COMMAND));
-        assertTrue(s.contains(Ui.EXIT_COMMAND));
+        String out = out();
+        assertTrue(out.contains("FinTrack Command Summary"));
+        assertTrue(out.contains(Ui.ADD_EXPENSE_COMMAND));
+        assertTrue(out.contains(Ui.LIST_EXPENSE_COMMAND));
+        assertTrue(out.contains(Ui.ADD_INCOME_COMMAND));
+        assertTrue(out.contains(Ui.LIST_INCOME_COMMAND));
+        assertTrue(out.contains(Ui.DELETE_EXPENSE_COMMAND));
+        assertTrue(out.contains(Ui.DELETE_INCOME_COMMAND));
+        assertTrue(out.contains(Ui.BALANCE_COMMAND));
+        assertTrue(out.contains(Ui.MODIFY_EXPENSE_COMMAND));
+        assertTrue(out.contains(Ui.MODIFY_INCOME_COMMAND));
+        assertTrue(out.contains(Ui.BUDGET_COMMAND));
+        assertTrue(out.contains(Ui.LIST_BUDGET_COMMAND));
+        assertTrue(out.contains(Ui.SUMMARY_EXPENSE_COMMAND));
+        assertTrue(out.contains(Ui.SUMMARY_INCOME_COMMAND));
+        assertTrue(out.contains(Ui.TIPS_COMMAND));
+        assertTrue(out.contains(Ui.HELP_COMMAND));
+        assertTrue(out.contains(Ui.EXPORT_COMMAND));
+        assertTrue(out.contains(Ui.EXIT_COMMAND));
+    }
+
+    @Test
+    void printExpenseByCategory_normalCase_printsLinesAndTopCategory() {
+        double totalExpense = 17.50; // 12.50 + 5.00
+        Map<ExpenseCategory, Double> testMap = new HashMap<>();
+        testMap.put(ExpenseCategory.FOOD, 12.50);
+        testMap.put(ExpenseCategory.TRANSPORT, 5.00);
+
+        Ui.printExpenseByCategory(totalExpense, testMap);
+        String out = out();
+
+        assertTrue(out.contains("FOOD: 12.50 (71.43%)"));
+        assertTrue(out.contains("TRANSPORT: 5.00 (28.57%)"));
+        assertTrue(out.contains("Your most spent on category is: FOOD"));
+    }
+
+    @Test
+    void printExpenseByCategory_emptyOrNegative_printsMessage() {
+        Ui.printExpenseByCategory(0.0, Map.of());
+        String out1 = out();
+        assertTrue(out1.contains("You have not spent anything yet!"));
+
+        Ui.printExpenseByCategory(-1.0, Map.of(ExpenseCategory.FOOD, 10.0));
+        String out2 = out();
+        assertTrue(out2.contains("You have not spent anything yet!"));
+    }
+
+    @Test
+    void printSummaryExpense_printsHeaderTotalBreakdownAndFooter() {
+        double totalExpense = 17.50;
+        Map<ExpenseCategory, Double> testMap = new HashMap<>();
+        testMap.put(ExpenseCategory.FOOD, 12.50);
+        testMap.put(ExpenseCategory.TRANSPORT, 5.00);
+
+        Ui.printSummaryExpense(totalExpense, testMap);
+        String out = out();
+
+        assertTrue(out.contains("Here is an overall summary of your expenses!"));
+        assertTrue(out.contains("Total Expense: 17.5"));
+
+        assertTrue(out.contains("Here is a breakdown of your expense:"));
+        assertTrue(out.contains("FOOD: 12.50 (71.43%)"));
+        assertTrue(out.contains("TRANSPORT: 5.00 (28.57%)"));
+        assertTrue(out.contains("Your most spent on category is: FOOD"));
+    }
+
+    @Test
+    void printSummaryExpense_printsHeaderToNoExpenseMessage() {
+        Map<ExpenseCategory, Double> testMap = new HashMap<>();
+        Ui.printSummaryExpense(0.0, testMap);
+        String out = out();
+
+        assertTrue(out.contains("Here is an overall summary of your expenses!"));
+        assertTrue(out.contains("Total Expense: 0.0"));
+
+        assertTrue(out.contains("Here is a breakdown of your expense:"));
+        assertTrue(out.contains("You have not spent anything yet!"));
+    }
+
+    @Test
+    void printIncomeByCategory_normalCase_printsLinesAndTopSource() {
+        double totalIncome = 1550.50;
+        Map<IncomeCategory, Double> testMap = new HashMap<>();
+        testMap.put(IncomeCategory.SALARY, 1500.00);
+        testMap.put(IncomeCategory.INVESTMENT, 50.50);
+
+        Ui.printIncomeByCategory(totalIncome, testMap);
+        String out = out();
+
+        assertTrue(out.contains("SALARY: 1500.00 (96.74%)"));
+        assertTrue(out.contains("INVESTMENT: 50.50 (3.26%)"));
+        assertTrue(out.contains("Your highest source of income is: SALARY"));
+    }
+
+    @Test
+    void printIncomeByCategory_emptyOrNegative_printsFriendlyMessage() {
+        Ui.printIncomeByCategory(0.0, Map.of());
+        String out1 = out();
+        assertTrue(out1.contains("You have not recorded any income yet!"));
+
+        Ui.printIncomeByCategory(-1.0, Map.of(IncomeCategory.SALARY, 1.0));
+        String out2 = out();
+        assertTrue(out2.contains("You have not recorded any income yet!"));
+    }
+
+    @Test
+    void printSummaryIncome_printsHeaderTotalBreakdownAndFooter() {
+        double totalIncome = 1550.50;
+        Map<IncomeCategory, Double> testMap = new HashMap<>();
+        testMap.put(IncomeCategory.SALARY, 1500.00);
+        testMap.put(IncomeCategory.INVESTMENT, 50.50);
+
+        Ui.printSummaryIncome(totalIncome, testMap);
+        String out = out();
+
+        assertTrue(out.contains("Here is an overall summary of your income!"));
+        assertTrue(out.contains("Total Income: 1550.5"));
+        assertTrue(out.contains("Here is a breakdown of your income:"));
+
+        assertTrue(out.contains("SALARY: 1500.00 (96.74%)"));
+        assertTrue(out.contains("INVESTMENT: 50.50 (3.26%)"));
+        assertTrue(out.contains("Your highest source of income is: SALARY"));
+    }
+
+    @Test
+    void printSummaryExpense_printsHeaderToNoIncomeMessage() {
+        Map<IncomeCategory, Double> testMap = new HashMap<>();
+        Ui.printSummaryIncome(0.0, testMap);
+        String out = out();
+
+        assertTrue(out.contains("Here is an overall summary of your income!"));
+        assertTrue(out.contains("Total Income: 0.0"));
+
+        assertTrue(out.contains("Here is a breakdown of your income:"));
+        assertTrue(out.contains("You have not recorded any income yet!"));
+    }
+
+    @Test
+    void printTip_printsKnownTips() {
+        String knownTip1 = "Don't buy a Mac especially if you are doing EE2026!";
+        String knownTip2 = "If you stay on campus, Dining Credits are now available to use in NUS food courts!";
+        String knownTip3 = "Keep a lookout for free welfare as exam period is approaching!";
+        String knownTip4 = "Remember to track your expenses daily!";
+        String knownTip5 = "Take the shuttle bus, it's worth it :(";
+        String knownTip6 = "OpenAI credits are too expensive!";
+        String knownTip7 = "The Deck banmian is less than $4!";
+        String knownTip8 = "You can spend the pass royale money on better food ._.";
+
+        for (int i = 0; i < 1000; i++) {
+            Ui.printTip();
+        }
+
+        String out = out();
+        assertTrue(out.contains(knownTip1));
+        assertTrue(out.contains(knownTip2));
+        assertTrue(out.contains(knownTip3));
+        assertTrue(out.contains(knownTip4));
+        assertTrue(out.contains(knownTip5));
+        assertTrue(out.contains(knownTip6));
+        assertTrue(out.contains(knownTip7));
+        assertTrue(out.contains(knownTip8));
+    }
+
+    @Test
+    void printTip_neverPrintsFakeTip() {
+        String fakeTip = "Spend all your money!";
+        for (int i = 0; i < 1000; i++) {
+            Ui.printTip();
+        }
+
+        String out = out();
+        assertFalse(out.contains(fakeTip));
     }
 }
