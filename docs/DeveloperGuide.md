@@ -367,7 +367,31 @@ Below is a sequence diagram illustrating the `modify-income` flow:
 
 ## Non-Functional Requirements
 
-{Give non-functional requirements}
+### Performance
+- **Responsiveness**: All commands must provide feedback to the user (either a result or an error message) in under 1 second, assuming a data set of up to 10,000 entries (incomes + expenses). This ensures the CLI application feels instantaneous.
+- **Resource Consumption**: The application should run efficiently on a typical personal computer, with minimal CPU and memory footprint during idle state (waiting for input).
+
+### Usability
+- **Error Feedback**: The application must never crash on invalid user input. All user errors (e.g., bad command syntax, invalid dates, non-numeric amounts) must be caught and reported with a clear, actionable error message via `Ui.printError()`.
+- **Learnability**: The command syntax must be consistent. All commands that take arguments must use the prefix-based system (e.g., `a/`, `c/`, `d/`) to minimise the user's cognitive load.
+- **Guidance**: A comprehensive `help` command must be available to list all available commands and their syntax.
+
+### Maintainability
+- **Separation of Concerns (SoC)**: The architecture must strictly enforce SoC.
+    - `Ui`: Handles all console input and output. No business logic.
+    - `Parser`: Handles all string parsing and user-input validation. No business logic or I/O.
+    - `FinanceManager`: Contains all business logic and state management. No parsing or direct I/O.
+    - `model` (e.g., `Income`, `Expense`): Plain data objects with constructors for validation.
+- **Testability**: All business logic (`FinanceManager`) and parsing logic (`Parser`) must be decoupled from the `Ui`, allowing them to be unit-tested without mocking `System.in` or `System.out`.
+- **Extensibility**: Adding a new command must follow a clear pattern (adding constants to `Ui`, a case to `FinTrack`, and methods to `Parser`, `FinanceManager`, and `Ui`) without requiring modifications to existing, unrelated commands.
+
+### Portability
+- **Platform Independence**: The application must be runnable on any operating system (Windows, macOS, Linux) that has a compatible Java Runtime Environment (JRE) installed.
+- **File System**: The `export` feature must handle different file system path conventions (e.g., ~ for home directory) and gracefully report file permission or path-not-found errors.
+
+### Security
+- **Local Data**: All user data is stored in-memory during runtime and is never transmitted over any network.
+- **File Access**: The application must only interact with the file system when explicitly requested by the user (e.g., via the `export` command) and must handle SecurityException if it lacks permission to write to a specified path.
 
 ## Glossary
 
