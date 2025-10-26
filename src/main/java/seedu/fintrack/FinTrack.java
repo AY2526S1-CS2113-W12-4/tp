@@ -103,7 +103,7 @@ public class FinTrack {
                                 .mapToDouble(seedu.fintrack.model.Income::getAmount).sum();
                         double monthlyExpense = fm.getExpensesViewForMonth(ym).stream()
                                 .mapToDouble(seedu.fintrack.model.Expense::getAmount).sum();
-                        Ui.printBalance(monthlyIncome - monthlyExpense, monthlyIncome, monthlyExpense);
+                        Ui.printBalance(monthlyIncome - monthlyExpense, monthlyIncome, monthlyExpense, ym);
                     } else {
                         Ui.printBalance(
                                 fm.getBalance(),
@@ -181,7 +181,7 @@ public class FinTrack {
                     Optional<YearMonth> ymOpt = Parser.parseOptionalMonthForExpenseList(input);
                     if (ymOpt.isPresent()) {
                         YearMonth ym = ymOpt.get();
-                        Ui.printListOfExpenses(fm.getExpensesViewForMonth(ym));
+                        Ui.printListOfExpenses(fm.getExpensesViewForMonth(ym), ym);
                     } else {
                         Ui.printListOfExpenses(fm.getExpensesView());
                     }
@@ -194,7 +194,7 @@ public class FinTrack {
                     Optional<YearMonth> ymOpt = Parser.parseOptionalMonthForIncomeList(input);
                     if (ymOpt.isPresent()) {
                         YearMonth ym = ymOpt.get();
-                        Ui.printListOfIncomes(fm.getIncomesViewForMonth(ym));
+                        Ui.printListOfIncomes(fm.getIncomesViewForMonth(ym), ym);
                     } else {
                         Ui.printListOfIncomes(fm.getIncomesView());
                     }

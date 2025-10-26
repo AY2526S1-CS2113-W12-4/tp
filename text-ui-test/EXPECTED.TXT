@@ -155,10 +155,10 @@ Amount: $5000.00
 Category: SALARY
 Description: Monthly salary
 --------------------------------------------------------------------------------
-> Overall Balance: 3920.00
+> Overall Balance for the month 2024-01: 3920.00
 Total Income: 5200.00
 Total Expense: 1280.00
-> Expenses (Newest first):
+> Expenses for the month 2024-01 (Newest first):
 --------------------------------------------------------------------------------
 #1
 Date: 2024-01-03
@@ -177,7 +177,7 @@ Amount: $1200.00
 Category: RENT
 Description: Monthly rent payment
 --------------------------------------------------------------------------------
-> Incomes (Newest first):
+> Incomes for the month 2024-01 (Newest first):
 --------------------------------------------------------------------------------
 #1
 Date: 2024-01-15
@@ -190,10 +190,10 @@ Amount: $5000.00
 Category: SALARY
 Description: Monthly salary
 --------------------------------------------------------------------------------
-> Overall Balance: 3705.00
+> Overall Balance for the month 2024-02: 3705.00
 Total Income: 5100.00
 Total Expense: 1395.00
-> Expenses (Newest first):
+> Expenses for the month 2024-02 (Newest first):
 --------------------------------------------------------------------------------
 #1
 Date: 2024-02-11
@@ -212,7 +212,7 @@ Amount: $1300.00
 Category: RENT
 Description: Monthly rent payment
 --------------------------------------------------------------------------------
-> Incomes (Newest first):
+> Incomes for the month 2024-02 (Newest first):
 --------------------------------------------------------------------------------
 #1
 Date: 2024-02-20
@@ -226,10 +226,10 @@ Amount: $4800.00
 Category: SALARY
 Description: Monthly salary
 --------------------------------------------------------------------------------
-> Overall Balance: 3425.00
+> Overall Balance for the month 2024-03: 3425.00
 Total Income: 4900.00
 Total Expense: 1475.00
-> Expenses (Newest first):
+> Expenses for the month 2024-03 (Newest first):
 --------------------------------------------------------------------------------
 #1
 Date: 2024-03-05
@@ -248,7 +248,7 @@ Amount: $1400.00
 Category: RENT
 Description: Monthly rent payment
 --------------------------------------------------------------------------------
-> Incomes (Newest first):
+> Incomes for the month 2024-03 (Newest first):
 --------------------------------------------------------------------------------
 #1
 Date: 2024-03-01
@@ -256,7 +256,7 @@ Amount: $4900.00
 Category: SALARY
 Description: Monthly salary
 --------------------------------------------------------------------------------
-> Overall Balance: 0.00
+> Overall Balance for the month 2024-04: 0.00
 Total Income: 0.00
 Total Expense: 0.00
 > No expenses recorded.
@@ -434,10 +434,10 @@ Total Expense: 4245.00
 > Overall Balance: 10725.00
 Total Income: 14950.00
 Total Expense: 4225.00
-> Overall Balance: 3445.00
+> Overall Balance for the month 2024-03: 3445.00
 Total Income: 4900.00
 Total Expense: 1455.00
-> Expenses (Newest first):
+> Expenses for the month 2024-03 (Newest first):
 --------------------------------------------------------------------------------
 #1
 Date: 2024-03-03
@@ -450,7 +450,7 @@ Amount: $1400.00
 Category: RENT
 Description: Monthly rent payment
 --------------------------------------------------------------------------------
-> Incomes (Newest first):
+> Incomes for the month 2024-03 (Newest first):
 --------------------------------------------------------------------------------
 #1
 Date: 2024-03-01

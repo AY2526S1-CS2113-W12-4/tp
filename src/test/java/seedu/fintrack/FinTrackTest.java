@@ -148,7 +148,7 @@ public class FinTrackTest {
                 "balance d/2025-09 extra",
                 "bye");
         String s = run(script);
-        mustContain(s, "Overall Balance:");
+        mustContain(s, "Overall Balance for the month 2025-09:");
         mustContain(s, "Error: Month must be in YYYY-MM format.");
         mustContain(s, "Error: Usage: balance [d/YYYY-MM]");
     }
@@ -180,9 +180,9 @@ public class FinTrackTest {
                 "bye");
         String s = run(script);
 
-        String listBlock = sectionBetween(s, "Expenses (Newest first):", "Bye.");
+        String listBlock = sectionBetween(s, "Expenses ", "Bye.");
 
-        mustContain(listBlock, "Expenses (Newest first):");
+        mustContain(listBlock, "Expenses for the month 2025-09 (Newest first):");
         mustContain(listBlock, "2025-09-29");  // present in the listing
         mustNotContain(listBlock, "2025-10-02"); // not present in the listing
         // ensure the oct description isn't in the list either
@@ -226,9 +226,9 @@ public class FinTrackTest {
                 "bye");
         String s = run(script);
 
-        String listBlock = sectionBetween(s, "Incomes (Newest first):", "Bye.");
+        String listBlock = sectionBetween(s, "Incomes ", "Bye.");
 
-        mustContain(listBlock, "Incomes (Newest first):");
+        mustContain(listBlock, "Incomes for the month 2025-09 (Newest first):");
         mustContain(listBlock, "2025-09-30");
         mustNotContain(listBlock, "2025-10-03");
         mustNotContain(listBlock, "OctPay");
