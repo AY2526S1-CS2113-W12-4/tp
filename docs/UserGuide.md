@@ -26,7 +26,7 @@ Tip: Type `help` after launch to see every available command.
     - `c/` for category (single word or phrase without leading/trailing spaces).
     - `d/` for date in `YYYY-MM-DD` format.
     - `des/` for an optional description. If omitted, the entry has no description.
-    - Parameters can be input in **any order**. For example, if `add-expense` requires the `a/<amount>`, `c/<category>` and `d/<YYYY-MM-DD>` parameters, it can be input in any order (e.g. `c/<category>`, `a/<amount>`, `d/<YYYY-MM-DD>`).
+- Parameters can be input in **any order**. For example, if `add-expense` requires the `a/<amount>`, `c/<category>` and `d/<YYYY-MM-DD>` parameters, it can be input in any order (e.g. `c/<category>`, `a/<amount>`, `d/<YYYY-MM-DD>`).
 - Dates must be valid calendar dates (for example, `2025-02-29` is invalid).
 - FinTrack keeps data only while it is running. Closing the application clears all records.
 
@@ -39,6 +39,7 @@ Shows a command overview in the terminal.
 - **Format:** `help`
 - **Example usage:** `help`
 - **Sample output:**
+
   ```
   === FinTrack Command Summary ===
   --------------------------------------------------------------------------------
@@ -141,9 +142,8 @@ Creates a new expense. Expenses are automatically sorted so the newest date appe
 Validation notes:
 - Amount must be a non-negative number (e.g., `5`, `14.20`).
 - Category and date are mandatory.
-- Valid expense categories (not case-sensitive): FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS.
 - Description is optional; omit it entirely if not needed.
-- Categories must be any one of the following (if not, an error message is presented to the user):
+- Categories (not case-sensitive) must be any one of the following (if not, an error message is presented to the user):
   - FOOD
   - STUDY
   - TRANSPORT
@@ -160,6 +160,7 @@ Records income that contributes to your balance.
 - **Format:** `add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]`
 - **Example usage:** `add-income a/3200 c/Salary d/2025-10-01 des/October salary`
 - **Sample output:**
+
   ```
   Income added:
     Amount: 3200.00
@@ -180,9 +181,10 @@ The same validation rules as `add-expense` apply to amount, date, and descriptio
 
 Shows every expense in reverse chronological order (newest first) with numbered entries. Use the index numbers when deleting expenses.
 
-- **Format:** `list-expense`
+- **Format:** `list-expense [d/<YYYY-MM>]`
 - **Example usage:** `list-expense`
 - **Sample output:**
+
   ```
   Expenses (Newest first):
   --------------------------------------------------
@@ -202,6 +204,25 @@ Shows every expense in reverse chronological order (newest first) with numbered 
 
 If there are no expenses, FinTrack prints `No expenses recorded.`
 
+#### Filtering by month (for list-expense)
+
+You can add the optional `d/<YYYY-MM>` field to show expenses only from that month.
+For example, `list-expense d/2025-10` lists only expenses recorded in **October 2025**.
+
+- **Example usage:** `list-expense d/2025-10`
+- **Sample output:**
+
+    ```
+    Expenses for the month 2025-10 (Newest first):
+    --------------------------------------------------
+    #1
+    Date: 2025-10-08
+    Amount: $12.50
+    Category: FOOD
+    Description: Lunch
+    --------------------------------------------------
+    ```
+
 ### Listing incomes: `list-income`
 
 Shows every income in reverse chronological order (newest first) with numbered entries. Use the index numbers when deleting or modifying incomes. Filter by month with the optional `d/<YYYY-MM>` parameter.
@@ -209,6 +230,7 @@ Shows every income in reverse chronological order (newest first) with numbered e
 - **Format:** `list-income [d/<YYYY-MM>]`
 - **Example usage:** `list-income`
 - **Sample output:**
+
   ```
   Incomes (Newest first):
   --------------------------------------------------
@@ -228,18 +250,54 @@ Shows every income in reverse chronological order (newest first) with numbered e
 
 If there are no incomes, FinTrack prints `No incomes recorded.`
 
+#### Filtering by month (for list-income)
+
+You can add the optional `d/<YYYY-MM>` field to show incomes only from that month.
+For example, `list-income d/2025-12` lists only incomes recorded in **December 2025**.
+
+- **Example usage:** `list-income d/2025-12`
+- **Sample output:**
+
+    ```
+    Incomes for the month 2025-10 (Newest first):
+    --------------------------------------------------
+    #1
+    Date: 2025-12-01
+    Amount: $3200.00
+    Category: SALARY
+    Description: December pay
+    --------------------------------------------------
+
+    ```
+
 ### Showing your balance: `balance`
 
 Summarises total income, total expenses, and the resulting balance (`income - expense`).
 
-- **Format:** `balance`
+- **Format:** `balance [d/<YYYY-MM>]`
 - **Example usage:** `balance`
 - **Sample output:**
+
   ```
   Overall Balance: 3158.00
     Total Income:  3200.00
     Total Expense: 42.00
   ```
+
+#### Filtering by month (for balance)
+
+You can add the optional `d/<YYYY-MM>` field to show balance and totals only for that month.
+For example, `balance d/2025-01` displays the total income, expenses, and balance for **January 2025**.
+
+- **Example usage:** `balance d/2025-01`
+- **Sample output:**
+
+    ```
+    Overall Balance for the month 2025-01:
+    Overall Balance: 3158.00
+    Total Income: 3200.00
+    Total Expense: 42.00
+    ```
 
 ### Deleting an expense: `delete-expense`
 
@@ -248,6 +306,7 @@ Removes an expense by its 1-based index as seen in the most recent `list-expense
 - **Format:** `delete-expense <index>`
 - **Example usage:** `delete-expense 2`
 - **Sample output:**
+
   ```
   Expense deleted (index 2):
     Amount: 12.50
@@ -265,6 +324,7 @@ Removes an expense by its 1-based index as seen in the most recent `list-income`
 - **Format:** `delete-income <index>`
 - **Example usage:** `delete-income 1`
 - **Sample output:**
+
   ```
   Income deleted (index 1):
     Amount: 3200.00
@@ -281,13 +341,14 @@ Allows the user to set budgets for expense categories available.
 - **Format:** `budget c/<category> a/<amount>`
 - **Example usage:** `budget c/food a/500`
 - **Sample output:**
+
   ```
   Budget set for FOOD: $500.00
   ```
   
 Validation notes:
 - Amount must be a non-negative number (e.g., `5`, `14.20`).
-- Categories must be any one of the following (if not, an error message is presented to the user):
+- Categories (not case-sensitive) must be any one of the following (if not, an error message is presented to the user):
   - FOOD
   - STUDY
   - TRANSPORT
@@ -304,6 +365,7 @@ Allows the user to view the budgets set for each expense category (if applicable
 - **Format:** `list-budget`
 - **Example usage:** `list-budget`
 - **Sample output:**
+
   ```
   Current Budgets:
   --------------------------------------------------------------------------------
@@ -379,6 +441,7 @@ Closes the application safely.
 - **Format:** `bye`
 - **Example usage:** `bye`
 - **Sample output:**
+
   ```
   Bye. Hope to see you again soon!
   ```
