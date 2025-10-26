@@ -3,9 +3,12 @@ package seedu.fintrack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -475,6 +478,177 @@ public class FinanceManagerTest {
         assertEquals(1300.0, febExpenseSum, 1e-9);
     }
 
+    // ============ Tests for Budget Management ============
+
+    @Test
+    void setBudget_valid_setsBudgetSuccessfully() {
+        fm.setBudget(ExpenseCategory.FOOD, 100.0);
+        assertEquals(100.0, fm.getBudgetForCategory(ExpenseCategory.FOOD));
+    }
+
+    @Test
+    void setBudget_update_updatesBudgetSuccessfully() {
+        fm.setBudget(ExpenseCategory.FOOD, 100.0);
+        fm.setBudget(ExpenseCategory.FOOD, 150.0);
+        assertEquals(150.0, fm.getBudgetForCategory(ExpenseCategory.FOOD));
+    }
+
+    @Test
+    void setBudget_setZero_setsBudgetToZero() {
+        fm.setBudget(ExpenseCategory.TRANSPORT, 0.0);
+        assertEquals(0.0, fm.getBudgetForCategory(ExpenseCategory.TRANSPORT));
+    }
+
+    @Test
+    void setBudget_nullCategory_throwsException() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            fm.setBudget(null, 100.0);
+        });
+        assertEquals("Category cannot be null", exception.getMessage());
+    }
+
+    @Test
+    void setBudget_negativeAmount_throwsException() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            fm.setBudget(ExpenseCategory.FOOD, -50.0);
+        });
+        assertEquals("Amount cannot be negative", exception.getMessage());
+    }
+
+    @Test
+    void getBudgetForCategory_noBudgetSet_returnsNull() {
+        assertNull(fm.getBudgetForCategory(ExpenseCategory.FOOD));
+    }
+
+    @Test
+    void getBudgetsView_noBudgets_returnsEmptyMap() {
+        assertTrue(fm.getBudgetsView().isEmpty());
+    }
+
+    @Test
+    void getBudgetsView_withBudgets_returnsUnmodifiableMap() {
+        fm.setBudget(ExpenseCategory.FOOD, 100.0);
+        fm.setBudget(ExpenseCategory.RENT, 500.0);
+
+        Map<ExpenseCategory, Double> budgets = fm.getBudgetsView();
+        assertEquals(2, budgets.size());
+        assertEquals(100.0, budgets.get(ExpenseCategory.FOOD));
+
+        // Verify unmodifiable
+        assertThrows(UnsupportedOperationException.class, () -> {
+            budgets.put(ExpenseCategory.TRANSPORT, 50.0);
+        });
+    }
+
+    @Test
+    void getTotalExpenseForCategory_noExpenses_returnsZero() {
+        assertEquals(0.0, fm.getTotalExpenseForCategory(ExpenseCategory.FOOD));
+    }
+
+    @Test
+    void getTotalExpenseForCategory_withExpenses_returnsCorrectSum() {
+        fm.addExpense(sampleExpense2); // 50 FOOD
+        fm.addExpense(new Expense(30.0, ExpenseCategory.FOOD, LocalDate.now(), "Snack"));
+        fm.addExpense(sampleExpense1); // 1200 RENT
+
+        assertEquals(80.0, fm.getTotalExpenseForCategory(ExpenseCategory.FOOD));
+    }
+
+    @Test
+    void getTotalExpenseForCategory_unrelatedCategory_returnsZero() {
+        fm.addExpense(sampleExpense1); // 1200 RENT
+        assertEquals(0.0, fm.getTotalExpenseForCategory(ExpenseCategory.FOOD));
+    }
+
+    @Test
+    void getTotalExpenseForCategory_nullCategory_returnsZero() {
+        fm.addExpense(sampleExpense1);
+        assertEquals(0.0, fm.getTotalExpenseForCategory(null));
+    }
+
+    @Test
+    void addExpense_noBudgetSet_returnsFalse() {
+        boolean overBudget = fm.addExpense(sampleExpense2); // 50 FOOD
+        assertFalse(overBudget);
+    }
+
+    @Test
+    void addExpense_budgetSetStaysUnder_returnsFalse() {
+        fm.setBudget(ExpenseCategory.FOOD, 100.0);
+        boolean isOverBudget1 = fm.addExpense(sampleExpense2); // 50 FOOD
+        assertFalse(isOverBudget1);
+        boolean isOverBudget2 = fm.addExpense(new Expense(30.0, ExpenseCategory.FOOD, LocalDate.now(), "Snack"));
+        assertFalse(isOverBudget2);
+        assertEquals(80.0, fm.getTotalExpenseForCategory(ExpenseCategory.FOOD));
+    }
+
+    @Test
+    void addExpense_budgetSetHitsExactly_returnsFalse() {
+        fm.setBudget(ExpenseCategory.FOOD, 100.0);
+        fm.addExpense(sampleExpense2); // 50 FOOD
+        boolean isOverBudget = fm.addExpense(new Expense(50.0, ExpenseCategory.FOOD, LocalDate.now(), "Dinner"));
+        assertFalse(isOverBudget);
+        assertEquals(100.0, fm.getTotalExpenseForCategory(ExpenseCategory.FOOD));
+    }
+
+    @Test
+    void addExpense_budgetSetCrossesThreshold_returnsTrue() {
+        fm.setBudget(ExpenseCategory.FOOD, 100.0);
+        fm.addExpense(sampleExpense2); // 50 FOOD
+        // This expense (80) will push the total (50+80=130) over the 100 budget
+        boolean overBudget = fm.addExpense(new Expense(80.0, ExpenseCategory.FOOD, LocalDate.now(), "Big meal"));
+        assertTrue(overBudget);
+        assertEquals(130.0, fm.getTotalExpenseForCategory(ExpenseCategory.FOOD));
+    }
+
+    @Test
+    void addExpense_budgetSetCrossesThresholdFromZero_returnsTrue() {
+        fm.setBudget(ExpenseCategory.FOOD, 100.0);
+        // This expense (101) will push the total (0+101=101) over the 100 budget
+        boolean overBudget = fm.addExpense(new Expense(101.0, ExpenseCategory.FOOD, LocalDate.now(), "Big meal"));
+        assertTrue(overBudget);
+        assertEquals(101.0, fm.getTotalExpenseForCategory(ExpenseCategory.FOOD));
+    }
+
+    @Test
+    void addExpense_budgetSetAlreadyExceeded_returnsFalse() {
+        fm.setBudget(ExpenseCategory.FOOD, 100.0);
+        // 1. Cross the budget
+        boolean overBudget1 = fm.addExpense(new Expense(110.0, ExpenseCategory.FOOD, LocalDate.now(), "Big meal"));
+        assertTrue(overBudget1);
+        assertEquals(110.0, fm.getTotalExpenseForCategory(ExpenseCategory.FOOD));
+
+        // 2. Add another expense while already over
+        // totalBefore (110) > budget (100), so the (totalBefore <= budget) check fails
+        boolean overBudget2 = fm.addExpense(new Expense(20.0, ExpenseCategory.FOOD, LocalDate.now(), "Snack"));
+        assertFalse(overBudget2); // Does not return true a second time
+        assertEquals(130.0, fm.getTotalExpenseForCategory(ExpenseCategory.FOOD));
+    }
+
+    @Test
+    void addExpense_budgetSetUnrelatedCategory_returnsFalse() {
+        fm.setBudget(ExpenseCategory.FOOD, 100.0);
+        // Add an expense for a different category
+        boolean overBudget = fm.addExpense(sampleExpense1); // 1200 RENT
+        assertFalse(overBudget);
+        assertEquals(0.0, fm.getTotalExpenseForCategory(ExpenseCategory.FOOD));
+        assertEquals(1200.0, fm.getTotalExpenseForCategory(ExpenseCategory.RENT));
+    }
+
+    @Test
+    void addExpense_budgetSetToZero_returnsTrueOnFirstExpense() {
+        fm.setBudget(ExpenseCategory.FOOD, 0.0);
+
+        // Any expense > 0 will cross the 0.0 budget
+        boolean overBudget1 = fm.addExpense(new Expense(1.0, ExpenseCategory.FOOD, LocalDate.now(), "Gum"));
+        assertTrue(overBudget1);
+
+        // Adding a second expense should return false (already over)
+        boolean overBudget2 = fm.addExpense(new Expense(5.0, ExpenseCategory.FOOD, LocalDate.now(), "Coffee"));
+        assertFalse(overBudget2);
+        assertEquals(6.0, fm.getTotalExpenseForCategory(ExpenseCategory.FOOD));
+    }
+
     // ============ Tests for modifyExpense ============
 
     @Test
@@ -921,5 +1095,48 @@ public class FinanceManagerTest {
         assertEquals(i2, afterRollback.get(1)); // Still middle (not deleted!)
         assertEquals(i1, afterRollback.get(2)); // Still oldest
         assertEquals(6000.0, fm.getTotalIncome()); // Total unchanged
+    }
+
+    // ============ Tests for summary ============
+    @Test
+    void getExpenseByCategory_empty_returnEmptyMap() {
+        Map<ExpenseCategory, Double> testMap = fm.getExpenseByCategory();
+        assertTrue(testMap.isEmpty());
+    }
+
+    @Test
+    void getExpenseByCategory_accumulatesAmountsPerCategory() {
+        fm.addExpense(new Expense(10.00, ExpenseCategory.FOOD, LocalDate.of(2025, 10, 1), "Lunch"));
+        fm.addExpense(new Expense(5.00, ExpenseCategory.TRANSPORT, LocalDate.of(2025, 10, 2), "Bus"));
+        fm.addExpense(new Expense(2.50, ExpenseCategory.FOOD, LocalDate.of(2025, 10, 3), "Snack"));
+
+        Map<ExpenseCategory, Double> testMap = fm.getExpenseByCategory();
+
+        // Only the categories used should appear
+        assertEquals(2, testMap.size());
+        // Totals per category
+        assertEquals(12.50, testMap.get(ExpenseCategory.FOOD));
+        assertEquals(5.00, testMap.get(ExpenseCategory.TRANSPORT));
+    }
+
+    @Test
+    void getIncomeByCategory_empty_returnsEmptyMap() {
+        Map<IncomeCategory, Double> testMap = fm.getIncomeByCategory();
+        assertTrue(testMap.isEmpty());
+    }
+
+    @Test
+    void getIncomeByCategory_accumulatesAmountsPerCategory() {
+        fm.addIncome(new Income(1000.00, IncomeCategory.SALARY, LocalDate.of(2025, 10, 5), "Monies"));
+        fm.addIncome(new Income(50.50, IncomeCategory.INVESTMENT, LocalDate.of(2025, 10, 6), "AMD"));
+        fm.addIncome(new Income(500.00, IncomeCategory.SALARY, LocalDate.of(2025, 10, 20), "Bonus"));
+
+        Map<IncomeCategory, Double> byCat = fm.getIncomeByCategory();
+
+        // Only the categories used should appear
+        assertEquals(2, byCat.size());
+        // Totals per category
+        assertEquals(1500.00, byCat.get(IncomeCategory.SALARY));
+        assertEquals(50.50, byCat.get(IncomeCategory.INVESTMENT));
     }
 }

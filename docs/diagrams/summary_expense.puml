@@ -1,0 +1,48 @@
+@startuml
+title Sequence for one successful call of "summary-expense"
+
+actor User
+participant "FinTrack\n(dispatcher)" as FinTrack
+participant "FinanceManager" as FM
+participant "Ui" as Ui
+
+User -> FinTrack: Enter command "summary-expense"
+activate FinTrack
+
+note right of FinTrack
+Parses input and ensures there are no extra arguments.
+end note
+
+FinTrack -> FM: getExpenseByCategory()
+activate FM
+FM --> FinTrack: Map<ExpenseCategory, Double> expenseByCategory
+deactivate FM
+
+FinTrack -> FM: getTotalExpense()
+activate FM
+FM --> FinTrack: double totalExpense
+deactivate FM
+
+FinTrack -> Ui: printSummaryExpense(totalExpense, expenseByCategory)
+activate Ui
+Ui -> Ui: print header + "Total Expense: %.2f"
+
+alt totalExpense <= 0 OR expenseByCategory is empty
+  Ui -> Ui: print "You have not spent anything yet!"
+else
+  Ui -> Ui: print "Here is a breakdown of your expense:"
+  loop for each (category, amount) in expenseByCategory
+    Ui -> Ui: percent = (amount / totalExpense) * 100.0
+    Ui -> Ui: print "%s: %.2f (%.2f%%)"
+    Ui -> Ui: update topCategory if amount is max
+  end
+  Ui -> Ui: print "Your most spent on category is: " + topCategory
+end
+Ui -> Ui: print footer line
+Ui --> FinTrack: done
+deactivate Ui
+
+FinTrack --> User: Command completes
+deactivate FinTrack
+
+@enduml

@@ -13,6 +13,7 @@ import seedu.fintrack.model.Expense;
 import seedu.fintrack.model.ExpenseCategory;
 import seedu.fintrack.model.Income;
 import seedu.fintrack.model.IncomeCategory;
+import seedu.fintrack.tips.TipsStorage;
 
 /**
  * Handles all user interaction for FinTrack.
@@ -34,6 +35,7 @@ public class Ui {
     public static final String MODIFY_INCOME_COMMAND = "modify-income";
     public static final String SUMMARY_EXPENSE_COMMAND = "summary-expense";
     public static final String SUMMARY_INCOME_COMMAND = "summary-income";
+    public static final String TIPS_COMMAND = "tips";
     public static final String EXPORT_COMMAND = "export";
     public static final String EXIT_COMMAND = "bye";
 
@@ -45,6 +47,7 @@ public class Ui {
 
     private static final Logger LOGGER = Logger.getLogger(Ui.class.getName());
     private static final Scanner SCANNER = new Scanner(System.in);
+    private static final TipsStorage TIPS = new TipsStorage();
 
     /**
      * Prints the welcome banner and a hint to show available commands.
@@ -577,7 +580,7 @@ public class Ui {
             System.out.print("Total Income: ");
             System.out.println(totalIncome);
             printNextLine();
-            System.out.println("Here is a breakdown of your expense:");
+            System.out.println("Here is a breakdown of your income:");
             printIncomeByCategory(totalIncome, incomeByCategory);
             printNextLine();
             printHorizontalLine(80);
@@ -586,6 +589,12 @@ public class Ui {
             LOGGER.log(Level.WARNING, "totalIncome or incomeByCategory should not be null.");
             printError(e.getMessage());
         }
+    }
+
+    static void printTip() {
+        String tip = TIPS.returnTip();
+        assert tip != null : "tip should not be null.";
+        System.out.println(tip);
     }
 
     /**
@@ -683,19 +692,24 @@ public class Ui {
         System.out.println("    " + SUMMARY_INCOME_COMMAND);
         System.out.println("    Example: summary-income");
 
+        System.out.println();
+        System.out.println("14. Provides a useful tip:");
+        System.out.println("    " + TIPS_COMMAND);
+        System.out.println("    Example: tips");
+
 
         System.out.println();
-        System.out.println("14. Show this help menu:");
+        System.out.println("15. Show this help menu:");
         System.out.println("    " + HELP_COMMAND);
         System.out.println("    Example: help");
 
         System.out.println();
-        System.out.println("15. Exit the program:");
+        System.out.println("16. Exit the program:");
         System.out.println("    " + EXIT_COMMAND);
         System.out.println("    Example: bye");
 
         System.out.println();
-        System.out.println("16. Export data to CSV file:");
+        System.out.println("17. Export data to CSV file:");
         System.out.println("    " + EXPORT_COMMAND + " <filepath>");
         System.out.println("    Example: export financial_data.csv");
 

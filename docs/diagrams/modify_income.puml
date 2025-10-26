@@ -1,0 +1,58 @@
+@startuml
+participant ":FinTrack" as FT
+participant ":Parser" as P
+participant ":FinanceManager" as FM
+participant ":Ui" as UI
+
+FT -> UI: waitForInput()
+activate FT
+UI --> FT: "modify-income 3 a/5200 c/SALARY d/2025-01-01 desc/Annual raise"
+
+FT -> P: returnFirstWord(input)
+P --> FT: "modify-income"
+
+FT -> FT: switch(commandWord)
+
+note right of FT: Handle MODIFY_INCOME_COMMAND
+
+FT -> P: parseModifyIncome(input)
+activate P
+
+P -> P: extract index from args
+note right of P: Parse "3 a/5200 c/SALARY..."
+
+P -> P: validate index is positive number
+
+P -> P: parseAddIncome(ADD_INCOME_COMMAND + remainingArgs)
+note right of P: Reuse add-income parsing logic\nfor amount, category, date, desc
+
+P --> FT: Map.Entry<index, newIncome>
+deactivate P
+
+FT -> FM: modifyIncome(index, newIncome)
+activate FM
+
+FM -> FM: deleteIncome(index)
+note right of FM: Remove old income at index
+
+alt index is invalid or list is empty
+    FM --> FT: IndexOutOfBoundsException
+    FT -> UI: printError(message)
+else index is valid
+    FM -> FM: addIncome(newIncome)
+    note right of FM: Add new income\n(maintains reverse chronological order)
+    
+    opt adding new income fails
+        FM -> FM: restore old income
+        FM --> FT: Exception
+        FT -> UI: printError(message)
+    end
+    
+    FM --> FT: success
+    deactivate FM
+    
+    FT -> UI: printIncomeModified(newIncome, index)
+end
+
+deactivate FT
+@enduml

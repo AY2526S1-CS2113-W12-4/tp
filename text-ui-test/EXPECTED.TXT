@@ -523,15 +523,19 @@ Description: Monthly salary
     summary-income
     Example: summary-income
 
-14. Show this help menu:
+14. Provides a useful tip:
+    tips
+    Example: tips
+
+15. Show this help menu:
     help
     Example: help
 
-15. Exit the program:
+16. Exit the program:
     bye
     Example: bye
 
-16. Export data to CSV file:
+17. Export data to CSV file:
     export <filepath>
     Example: export financial_data.csv
 --------------------------------------------------------------------------------
