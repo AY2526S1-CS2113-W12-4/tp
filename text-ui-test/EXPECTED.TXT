@@ -461,13 +461,13 @@ Description: Monthly salary
 > === FinTrack Command Summary ===
 --------------------------------------------------------------------------------
 1. Add an expense:
-   add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]
-   Example: add-expense a/12.50 c/Food d/2025-10-08 desc/Lunch
+   add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
+   Example: add-expense a/12.50 c/Food d/2025-10-08 des/Lunch
    Available categories: FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS
 
 2. Add an income:
-   add-income a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]
-   Example: add-income a/2000 c/Salary d/2025-10-01 desc/Monthly pay
+   add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
+   Example: add-income a/2000 c/Salary d/2025-10-01 des/Monthly pay
    Available categories: SALARY, SCHOLARSHIP, INVESTMENT, GIFT
 
 3. View all expenses (from latest to earliest date):
@@ -491,14 +491,14 @@ Description: Monthly salary
    Example: delete-income 1
 
 7. Modify an expense:
-   modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]
+   modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
    Modifies the expense shown at that index in 'list-expense'.
-   Example: modify-expense 1 a/1300 c/Rent d/2024-01-01 desc/Monthly rent increased
+   Example: modify-expense 1 a/1300 c/Rent d/2024-01-01 des/Monthly rent increased
 
 8. Modify an income:
-   modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]
+   modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
    Modifies the income shown at that index in 'list-income'.
-   Example: modify-income 3 a/250 c/Salary d/2024-01-15 desc/Extra performance bonus
+   Example: modify-income 3 a/250 c/Salary d/2024-01-15 des/Extra performance bonus
 
 9. View balance summary:
    balance

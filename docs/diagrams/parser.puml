@@ -16,7 +16,7 @@ Parser -> Parser : args = input.substring(...)
 Parser -> Parser : amountStr = getValue(args, "a/")
 Parser -> Parser : categoryStr = getValue(args, "c/")
 Parser -> Parser : dateStr = getValue(args, "d/")
-Parser -> Parser : desc = getOptionalValue(args, "desc/")
+Parser -> Parser : desc = getOptionalValue(args, "des/")
 
 ' --- Validation and Construction --- '
 note right of Parser

@@ -115,7 +115,7 @@ public class FinTrackTest {
     @Test
     void addIncome_andBalance() throws Exception {
         String script = String.join("\n",
-                "add-income a/2000 c/Salary d/2025-10-01 desc/Pay",
+                "add-income a/2000 c/Salary d/2025-10-01 des/Pay",
                 "add-income a/150 c/Gift d/2025-10-05",
                 "balance",
                 "bye");
@@ -129,7 +129,7 @@ public class FinTrackTest {
     void addExpenseBudgetWarns() throws Exception {
         String script = String.join("\n",
                 "budget c/Food a/50",
-                "add-expense a/30 c/Food d/2025-10-10 desc/Meal",
+                "add-expense a/30 c/Food d/2025-10-10 des/Meal",
                 "add-expense a/25 c/Food d/2025-10-11",
                 "bye");
         String s = run(script);
@@ -174,8 +174,8 @@ public class FinTrackTest {
     @Test
     void listExpense_filterByMonth_success() throws Exception {
         String script = String.join("\n",
-                "add-expense a/5 c/Food d/2025-09-29 desc/SeptMeal",
-                "add-expense a/7 c/Food d/2025-10-02 desc/OctMeal",
+                "add-expense a/5 c/Food d/2025-09-29 des/SeptMeal",
+                "add-expense a/7 c/Food d/2025-10-02 des/OctMeal",
                 "list-expense d/2025-09",
                 "bye");
         String s = run(script);
@@ -220,8 +220,8 @@ public class FinTrackTest {
     @Test
     void listIncome_filterByMonth_success() throws Exception {
         String script = String.join("\n",
-                "add-income a/100 c/Salary d/2025-09-30 desc/SeptPay",
-                "add-income a/120 c/Salary d/2025-10-03 desc/OctPay",
+                "add-income a/100 c/Salary d/2025-09-30 des/SeptPay",
+                "add-income a/120 c/Salary d/2025-10-03 des/OctPay",
                 "list-income d/2025-09",
                 "bye");
         String s = run(script);
@@ -283,10 +283,10 @@ public class FinTrackTest {
     void modifyPaths() throws Exception {
         String script = String.join("\n",
                 "budget c/Entertainment a/10",
-                "add-expense a/5 c/Entertainment d/2025-10-01 desc/Ticket",
-                "modify-expense 1 a/12 c/Entertainment d/2025-10-02 desc/VIP",
+                "add-expense a/5 c/Entertainment d/2025-10-01 des/Ticket",
+                "modify-expense 1 a/12 c/Entertainment d/2025-10-02 des/VIP",
                 "add-income a/10 c/Salary d/2025-10-01",
-                "modify-income 1 a/12 c/Salary d/2025-10-02 desc/Raise",
+                "modify-income 1 a/12 c/Salary d/2025-10-02 des/Raise",
                 "modify-income",
                 "modify-income 0 a/1 c/Salary d/2025-10-03",
                 "modify-income x a/1 c/Salary d/2025-10-03",

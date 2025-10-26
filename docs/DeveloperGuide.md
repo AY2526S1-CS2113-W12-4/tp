@@ -111,7 +111,7 @@ How the `Parser` component works:
 2. Methods like `parseAddExpense(input)` orchestrate the parsing process:
    - The command word (e.g. `add-expense`) is stripped from the input string.
    - `getValue()` is called for each required argument (e.g. `a/`, `c/`, `d/`). If any return `null`, an `IllegalArgumentException` is thrown.
-   - `getOptionalValue()` (a null-safe wrapper for `getValue()`) is called for optional arguments (e.g. `desc/`).
+   - `getOptionalValue()` (a null-safe wrapper for `getValue()`) is called for optional arguments (e.g. `des/`).
    - Type conversion and validation is performed on the extracted string values (e.g. `Double.parseDouble()`, `LocalDate.parse()`, `ExpenseCategory.parse()`).
    - If all validations pass, they construct and return the new data object (e.g. `new Expense(...)`). If any validation fails (e.g. `NumberFormatException`), it is caught and re-thrown as an `IllegalArgumentException` with a user-friendly message.
 3. Methods like `parseDeleteExpense(input)` are simpler. The command word is simply stripped and the remaining string is parsed as a positive integer.
@@ -370,7 +370,7 @@ Below is a sequence diagram illustrating the `modify-income` flow:
 ## User Stories
 
 | Version | As a ... | I want to ...             | So that I can ...                                           |
-| ------- | -------- | ------------------------- | ----------------------------------------------------------- |
+|---------|----------|---------------------------|-------------------------------------------------------------|
 | v1.0    | new user | see usage instructions    | refer to them when I forget how to use the application      |
 | v2.0    | user     | find a to-do item by name | locate a to-do without having to go through the entire list |
 

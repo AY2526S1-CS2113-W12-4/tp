@@ -80,7 +80,7 @@ public class ParserTest {
                 + Ui.AMOUNT_PREFIX + amount;
     }
 
-    /// ============ Tests for returnFirstWord and getFirstSpaceIndex ============
+    /// ============ Tests for returnFirstWord ============
 
     /**
      * Tests {@code returnFirstWord} with a standard command string without leading spaces.
@@ -113,17 +113,6 @@ public class ParserTest {
         String input = "  " + Ui.ADD_INCOME_COMMAND + " a/1 c/Salary d/2025-10-01";
         String first = Parser.returnFirstWord(input);
         assertEquals(Ui.ADD_INCOME_COMMAND, first);
-    }
-
-    /**
-     * Tests {@code getFirstSpaceIndex} with various inputs to check for correctness.
-     * Covers cases with a space, no space, and a leading space.
-     */
-    @Test
-    public void getFirstSpaceIndex_examples() {
-        assertEquals(4, Parser.getFirstSpaceIndex("echo hi"));  // "echo" + ' ' => 4 (0-based + 1)
-        assertEquals(-1, Parser.getFirstSpaceIndex("nospace"));
-        assertEquals(0, Parser.getFirstSpaceIndex(" x"));       // leading space
     }
 
     // ============ Test input handling for parseAddExpense ============

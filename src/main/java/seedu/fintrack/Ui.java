@@ -45,7 +45,7 @@ public class Ui {
     public static final String AMOUNT_PREFIX = "a/";
     public static final String CATEGORY_PREFIX = "c/";
     public static final String DATE_PREFIX = "d/";
-    public static final String DESCRIPTION_PREFIX = "desc/"; // optional
+    public static final String DESCRIPTION_PREFIX = "des/"; // optional
 
     private static Scanner uiScanner = new Scanner(System.in);
 
@@ -729,15 +729,15 @@ public class Ui {
 
         System.out.println("1. Add an expense:");
         System.out.print("   " + ADD_EXPENSE_COMMAND);
-        System.out.println(" a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]");
-        System.out.println("   Example: add-expense a/12.50 c/Food d/2025-10-08 desc/Lunch");
+        System.out.println(" a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
+        System.out.println("   Example: add-expense a/12.50 c/Food d/2025-10-08 des/Lunch");
         System.out.println("   Available categories: " +
                 "FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS");
 
         System.out.println();
         System.out.println("2. Add an income:");
-        System.out.println("   " + ADD_INCOME_COMMAND + " a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]");
-        System.out.println("   Example: add-income a/2000 c/Salary d/2025-10-01 desc/Monthly pay");
+        System.out.println("   " + ADD_INCOME_COMMAND + " a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
+        System.out.println("   Example: add-income a/2000 c/Salary d/2025-10-01 des/Monthly pay");
         System.out.println("   Available categories: SALARY, SCHOLARSHIP, INVESTMENT, GIFT");
 
         System.out.println();
@@ -768,17 +768,17 @@ public class Ui {
         System.out.println("7. Modify an expense:");
         System.out.println("   "
                 + MODIFY_EXPENSE_COMMAND
-                + " <index> a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]");
+                + " <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
         System.out.println("   Modifies the expense shown at that index in 'list-expense'.");
-        System.out.println("   Example: modify-expense 1 a/1300 c/Rent d/2024-01-01 desc/Monthly rent increased");
+        System.out.println("   Example: modify-expense 1 a/1300 c/Rent d/2024-01-01 des/Monthly rent increased");
 
         System.out.println();
         System.out.println("8. Modify an income:");
         System.out.println("   "
                 + MODIFY_INCOME_COMMAND
-                + " <index> a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]");
+                + " <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
         System.out.println("   Modifies the income shown at that index in 'list-income'.");
-        System.out.println("   Example: modify-income 3 a/250 c/Salary d/2024-01-15 desc/Extra performance bonus");
+        System.out.println("   Example: modify-income 3 a/250 c/Salary d/2024-01-15 des/Extra performance bonus");
 
         System.out.println();
         System.out.println("9. View balance summary:");

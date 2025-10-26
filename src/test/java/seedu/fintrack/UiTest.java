@@ -98,7 +98,7 @@ public class UiTest {
         assertEquals("a/", Ui.AMOUNT_PREFIX);
         assertEquals("c/", Ui.CATEGORY_PREFIX);
         assertEquals("d/", Ui.DATE_PREFIX);
-        assertEquals("desc/", Ui.DESCRIPTION_PREFIX);
+        assertEquals("des/", Ui.DESCRIPTION_PREFIX);
     }
 
     @Test

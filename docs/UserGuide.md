@@ -25,7 +25,7 @@ Tip: Type `help` after launch to see every available command.
   - `a/` for amount (non-negative number, decimals allowed).
   - `c/` for category (single word or phrase without leading/trailing spaces).
   - `d/` for date in `YYYY-MM-DD` format.
-  - `desc/` for an optional description. If omitted, the entry has no description.
+  - `des/` for an optional description. If omitted, the entry has no description.
 - Dates must be valid calendar dates (for example, `2025-02-29` is invalid).
 - FinTrack keeps data only while it is running. Closing the application clears all records.
 
@@ -42,7 +42,7 @@ Shows a command overview in the terminal.
   === FinTrack Command Summary ===
   -------------------------------------------------------------------------------
   1. Add an expense:
-     add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]
+     add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
   ...
   ```
 
@@ -50,8 +50,8 @@ Shows a command overview in the terminal.
 
 Creates a new expense. Expenses are automatically sorted so the newest date appears first when listed.
 
-- **Format:** `add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]`
-- **Example usage:** `add-expense a/12.50 c/Food d/2025-10-08 desc/Lunch with friends`
+- **Format:** `add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]`
+- **Example usage:** `add-expense a/12.50 c/Food d/2025-10-08 des/Lunch with friends`
 - **Sample output:**
   ```
   Expense added:
@@ -64,14 +64,15 @@ Creates a new expense. Expenses are automatically sorted so the newest date appe
 Validation notes:
 - Amount must be a non-negative number (e.g., `5`, `14.20`).
 - Category and date are mandatory.
+- Valid expense categories (not case-sensitive): FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS.
 - Description is optional; omit it entirely if not needed.
 
 ### Adding an income: `add-income`
 
 Records income that contributes to your balance.
 
-- **Format:** `add-income a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]`
-- **Example usage:** `add-income a/3200 c/Salary d/2025-10-01 desc/October salary`
+- **Format:** `add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]`
+- **Example usage:** `add-income a/3200 c/Salary d/2025-10-01 des/October salary`
 - **Sample output:**
   ```
   Income added:
@@ -81,14 +82,15 @@ Records income that contributes to your balance.
     Description: October salary
   ```
 
-The same validation rules as `add-expense` apply to amount, date, and description.
+The same validation rules as `add-expense` apply to amount, date, category and description.
+Valid income categories (not case-sensitive): SALARY, SCHOLARSHIP, INVESTMENT, GIFT.
 
-### Listing expenses: `list`
+### Listing expenses: `list-expense`
 
 Shows every expense in reverse chronological order (newest first) with numbered entries. Use the index numbers when deleting expenses.
 
-- **Format:** `list`
-- **Example usage:** `list`
+- **Format:** `list-expense`
+- **Example usage:** `list-expense`
 - **Sample output:**
   ```
   Expenses (Newest first):
@@ -124,7 +126,7 @@ Summarises total income, total expenses, and the resulting balance (`income - ex
 
 ### Deleting an expense: `delete-expense`
 
-Removes an expense by its 1-based index as seen in the most recent `list` output.
+Removes an expense by its 1-based index as seen in the most recent `list-expense` output.
 
 - **Format:** `delete-expense <index>`
 - **Example usage:** `delete-expense 2`
@@ -189,15 +191,19 @@ A: No. FinTrack currently requires ISO format `YYYY-MM-DD`.
 
 ## Command Summary
 
-| Command | Format | Example |
-| --- | --- | --- |
-| `help` | `help` | `help` |
-| `add-expense` | `add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]` | `add-expense a/12.50 c/Food d/2025-10-08 desc/Lunch` |
-| `add-income` | `add-income a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]` | `add-income a/3200 c/Salary d/2025-10-01 desc/October salary` |
-| `list` | `list` | `list` |
-| `balance` | `balance` | `balance` |
-| `delete-expense` | `delete-expense <index>` | `delete-expense 2` |
-| `delete-income` | `delete-income <index>` | `delete-income 1` |
-| `bye` | `bye` | `bye` |
+| Command                    | Format                                                                   | Example                                                      |
+|:---------------------------|--------------------------------------------------------------------------|--------------------------------------------------------------|
+| `help`                     | `help`                                                                   | `help`                                                       |
+| `add-expense`              | `add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]` | `add-expense a/12.50 c/Food d/2025-10-08 des/Lunch`          |
+| `add-income`               | `add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]`  | `add-income a/3200 c/Salary d/2025-10-01 des/October salary` |
+| `list-expense`             | `list-expense`                                                           | `list-expense`                                               |
+| `list-expense d/<YYYY-MM>` | `list-expense d/<YYYY-MM>`                                               | `list-expense d/2025-11`                                     |
+| `list-income`              | `list-income`                                                            | `list-income`                                                |
+| `list-income d/<YYYY-MM>`  | `list-income d/<YYYY-MM>`                                                | `list-income d/2025-12`                                      |
+| `balance`                  | `balance`                                                                | `balance`                                                    |
+| `balance d/<YYYY-MM>`      | `balance d/<YYYY-MM>`                                                    | `balance d/2025-01`                                          |
+| `delete-expense`           | `delete-expense <index>`                                                 | `delete-expense 2`                                           |
+| `delete-income`            | `delete-income <index>`                                                  | `delete-income 1`                                            |
+| `bye`                      | `bye`                                                                    | `bye`                                                        |
 
 Stay tuned to the project repository for upcoming enhancements such as persistent storage and income listings.

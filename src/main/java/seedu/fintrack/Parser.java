@@ -34,35 +34,24 @@ final class Parser {
 
     /**
      * Extracts the first word from the given input string, which is typically the command word.
-     * It handles leading spaces by trimming the input first.
+     * Handles leading spaces and tab characters by trimming them first,
+     * ensuring that the command is correctly recognized even if there
+     * are extra spaces or tabs before it.
      *
      * @param input The full user input string. Must not be null.
-     * @return The first word of the input string.
+     * @return The first word of the input string (the command).
      */
     public static String returnFirstWord(String input) {
         assert input != null : "Input cannot be null.";
 
-        int firstSpaceIndex = getFirstSpaceIndex(input);
-        if (firstSpaceIndex == 0) {
-            // Handle leading spaces
-            return returnFirstWord(input.substring(firstSpaceIndex + 1));
-        } else if (firstSpaceIndex != -1) {
-            return input.substring(0, firstSpaceIndex);
-        } else {
-            return input;
+        // Normalize tabs and multiple spaces to single spaces
+        String normalized = input.stripLeading().replaceAll("\\s+", " ");
+        int firstSpaceIndex = normalized.indexOf(' ');
+
+        if (firstSpaceIndex == -1) {
+            return normalized; // Only one token (command only)
         }
-    }
-
-    /**
-     * Finds the index of the first space character in a string.
-     *
-     * @param input The string to search within. Must not be null.
-     * @return The index of the first space, or -1 if no space is found.
-     */
-    public static int getFirstSpaceIndex(String input) {
-        assert input != null : "Input cannot be null.";
-
-        return input.indexOf(' ');
+        return normalized.substring(0, firstSpaceIndex);
     }
 
     /**
@@ -180,7 +169,7 @@ final class Parser {
     /**
      * Parses the user input for adding an expense.
      * Expected format:
-     * {@code add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<text>]}
+     * {@code add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<text>]}
      *
      * @param input The full user command string. Must not be null.
      * @return A new {@code Expense} object created from the parsed data.
@@ -192,6 +181,7 @@ final class Parser {
         LOGGER.log(Level.INFO, "Parsing expense input: ''{0}''.", input);
 
         String args = input.substring(Ui.ADD_EXPENSE_COMMAND.length()).trim();
+
         if (args.isEmpty()) {
             LOGGER.log(Level.WARNING,"Missing parameters for add-expense command.");
             throw new IllegalArgumentException("Missing parameters. See 'help'.");
@@ -236,7 +226,7 @@ final class Parser {
     /**
      * Parses the user input for adding an income.
      * Expected format:
-     * {@code add-income a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<text>]}
+     * {@code add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<text>]}
      *
      * @param input The full user command string. Must not be null.
      * @return A new {@code Income} object created from the parsed data.
@@ -248,6 +238,7 @@ final class Parser {
         LOGGER.log(Level.INFO, "Parsing add-income input: ''{0}''.", input);
 
         String args = input.substring(Ui.ADD_INCOME_COMMAND.length()).trim();
+
         if (args.isEmpty()) {
             LOGGER.log(Level.WARNING,"Missing parameters for add-income command.");
             throw new IllegalArgumentException("Missing parameters. See 'help'.");
@@ -437,7 +428,7 @@ final class Parser {
 
     /**
      * Parses a modify-expense command into an index and new expense data.
-     * Expected format: {@code modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<text>]}
+     * Expected format: {@code modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<text>]}
      *
      * @param input The full command string. Must not be null.
      * @return A pair containing the 1-based index and the new expense object.
@@ -486,7 +477,7 @@ final class Parser {
 
     /**
      * Parses a modify-income command into an index and new income data.
-     * Expected format: {@code modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<text>]}
+     * Expected format: {@code modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<text>]}
      *
      * @param input The full command string. Must not be null.
      * @return A pair containing the 1-based index and the new income object.
