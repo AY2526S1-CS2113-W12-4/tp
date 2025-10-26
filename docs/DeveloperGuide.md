@@ -426,8 +426,14 @@ Manage day-to-day expenses and budgets with optimal efficiency, stay on top of g
 - **File Access**: The application must only interact with the file system when explicitly requested by the user (e.g., via the `export` command) and must handle SecurityException if it lacks permission to write to a specified path.
 
 ## Glossary
-
-- _glossary item_ - Definition
+- _**Command word**_: First token that selects a feature (e.g., list-income).
+- _**Prefix**_: Short tag before a value that specifies the argument (e.g., a/12.50, c/FOOD, d/2025-10-08, des/Lunch).
+- _**Category**_: Enum describing type (Expense: FOOD, STUDY, …; Income: SALARY, …).
+- _**Index**_ (1-based): Visible numbering in lists used by delete-expense 2, etc.
+- _**Month** filter_: Optional d/YYYY-MM for list-expense, list-income, balance.
+- _**Newest**-first_: Display order where the most recent item appears first.
+- _**Budget**_: Per-category expense limit; warnings shown when exceeded.
+- _**Balance**_: Net amount (income − expense).
 
 ## Instructions for manual testing
 
