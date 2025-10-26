@@ -10,9 +10,9 @@ FinTrack is a lightweight command-line assistant that helps you keep an eye on d
 2. **Download or clone FinTrack.** Place the project folder anywhere on your computer.
 3. **Open a terminal at the project root.** On Windows you can use Command Prompt or PowerShell; on macOS/Linux use your preferred shell.
 4. **Run FinTrack from source.**
-   - Windows: `.\gradlew.bat run`
-   - macOS/Linux: `./gradlew run`
-   FinTrack will compile (on first run) and display a welcome banner followed by a `>` prompt.
+    - Windows: `.\gradlew.bat run`
+    - macOS/Linux: `./gradlew run`
+      FinTrack will compile (on first run) and display a welcome banner followed by a `>` prompt.
 5. *(Optional)* Build a runnable JAR with `./gradlew shadowJar` (macOS/Linux) or `.\gradlew.bat shadowJar` (Windows). The application JAR is created under `build/libs/`.
 
 Tip: Type `help` after launch to see every available command.
@@ -22,10 +22,10 @@ Tip: Type `help` after launch to see every available command.
 - FinTrack is fully keyboard-driven. Each command is entered on a single line and confirmed with Enter.
 - Commands are **case-sensitive**. Use lowercase as shown in this guide (e.g., `add-expense`, not `Add-Expense`).
 - Parameters use prefixes:
-  - `a/` for amount (non-negative number, decimals allowed).
-  - `c/` for category (single word or phrase without leading/trailing spaces).
-  - `d/` for date in `YYYY-MM-DD` format.
-  - `desc/` for an optional description. If omitted, the entry has no description.
+    - `a/` for amount (non-negative number, decimals allowed).
+    - `c/` for category (single word or phrase without leading/trailing spaces).
+    - `d/` for date in `YYYY-MM-DD` format.
+    - `desc/` for an optional description. If omitted, the entry has no description.
 - Dates must be valid calendar dates (for example, `2025-02-29` is invalid).
 - FinTrack keeps data only while it is running. Closing the application clears all records.
 
@@ -154,6 +154,64 @@ Removes an income entry. Incomes are numbered in the order they were added (the 
     Description: October salary
   ```
 
+### Viewing Summary of Expenses `summary-expense`
+
+Gives a summary of your overall expenses.
+
+- **Format:** `summary-expense`
+- **Example usage:** `summary-expense`
+- **Sample Output:**
+
+    ```
+    -----------------------------------------------
+    Here is an overall summary of your expenses!
+    Total Expense: 40.0
+
+    Here is a breakdown of your expense:
+    TRANSPORT: 10.00 (25.00%)
+    FOOD: 30.00 (75.00%)
+
+    Your most spent on category is: FOOD
+    -----------------------------------------------
+    ```
+
+If no expense has been tracked, `summary-expense` will let you know as well.
+
+### View Summary of Income `summary-income`
+
+Gives a summary of your overall income.
+
+- **Format:** `summary-income`
+- **Example usage:** `summary-income`
+- **Sample Output:**
+
+    ```
+    ----------------------------------------------
+    Here is an overall summary of your income!
+    Total Income: 30.0
+
+    Here is a breakdown of your income:
+    SALARY: 20.00 (66.67%)
+    INVESTMENT: 10.00 (33.33%)
+
+    Your highest source of income is: SALARY
+    ----------------------------------------------
+    ```
+
+If no income has been tracked, `summary-income` will let you know as well.
+
+### Get some money saving tips `tips`
+
+Get a random tip.
+
+- **Format:** `tips`
+- **Example usage:** `tips`
+- **Sample Output:**
+
+    ```
+    Take the shuttle bus, it's worth it :(
+    ```
+
 ### Leaving FinTrack: `bye`
 
 Closes the application safely.
@@ -172,6 +230,7 @@ You can also close the terminal window, but `bye` ensures the farewell message i
 - Invalid commands or parameters print a single line beginning with `Error:`, for example `Error: Amount must be a valid number.`
 - The original data remains unchanged when an error occurs.
 - Use `help` whenever you are unsure of the required format.
+- If any test pertaining to `tips` fails, you should try to run the test again. As tips relies on random number generation, there is a chance that the test can fail due to sheer unluckiness. While it is statistically unlikely the test fails, it is not impossible.
 
 ## FAQ
 
@@ -198,6 +257,9 @@ A: No. FinTrack currently requires ISO format `YYYY-MM-DD`.
 | `balance` | `balance` | `balance` |
 | `delete-expense` | `delete-expense <index>` | `delete-expense 2` |
 | `delete-income` | `delete-income <index>` | `delete-income 1` |
+| `summary-expense` | `summary-expense` | `summary-expense`|
+| `summary-income` | `summary-income` | `summary-income` |
+| `tips` | `tips` | `tips`|
 | `bye` | `bye` | `bye` |
 
 Stay tuned to the project repository for upcoming enhancements such as persistent storage and income listings.
