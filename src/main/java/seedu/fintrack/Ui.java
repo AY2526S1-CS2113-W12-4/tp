@@ -639,7 +639,6 @@ public class Ui {
             printNextLine();
             System.out.println("Here is a breakdown of your expense:");
             printExpenseByCategory(totalExpense, expenseByCategory);
-            printNextLine();
             printHorizontalLine(80);
             LOGGER.log(Level.INFO, "summary-expense called successfully.");
         } catch (NullPointerException e) {
@@ -700,7 +699,6 @@ public class Ui {
             printNextLine();
             System.out.println("Here is a breakdown of your income:");
             printIncomeByCategory(totalIncome, incomeByCategory);
-            printNextLine();
             printHorizontalLine(80);
             LOGGER.log(Level.INFO, "summary-income called successfully.");
         } catch (NullPointerException e) {

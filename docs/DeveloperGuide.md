@@ -29,15 +29,15 @@ How the `FinTrack` component works:
 1. The application starts by welcoming the user (via `Ui.printWelcome()`) and initialising the `FinanceManager`, which holds the application's state (all incomes, expenses and budgets).
 2. It waits for user input using `Ui.waitForInput()`.
 3. The input is parsed as follows:
-   - The command word (e.g. `add-expense`) is extracted using `Parser.returnFirstWord()`.
-   - A `switch` statement is used to route the command word to the appropriate logic block.
-   - For commands that take no arguments (like `list`, `help` and `bye`), it uses the `hasUnexpectedArguments()` helper to validate the input before executing.
-   - For commands that take arguments (like `add-expense`, `delete-income`, `budget`), it delegates the parsing of the entire input string to the `Parser` class (e.g. `Parser.parseAddExpense(input)`).
+    - The command word (e.g. `add-expense`) is extracted using `Parser.returnFirstWord()`.
+    - A `switch` statement is used to route the command word to the appropriate logic block.
+    - For commands that take no arguments (like `list`, `help` and `bye`), it uses the `hasUnexpectedArguments()` helper to validate the input before executing.
+    - For commands that take arguments (like `add-expense`, `delete-income`, `budget`), it delegates the parsing of the entire input string to the `Parser` class (e.g. `Parser.parseAddExpense(input)`).
 4. The relevant command is executed as follows:
-   - If the `Parser` successfully returns a valid object (like an `Expense` or an `int`), `FinTrack` passes this object to the `FinanceManager` to perform the business logic (e.g. `fm.addExpense(expense)`).
-   - Based on the result from `FinanceManager`, it then calls the appropriate `Ui` method to show success (e.g. `Ui.printExpenseAdded(expense)`).
-   - Any `IllegalArgumentException` or `IndexOutOfBoundsException` (from `Parser` or `FinanceManager`) is caught within the loop. The error message is retrieved (`e.getMessage()`)
-     and printed to the user via `Ui.printError()`.
+    - If the `Parser` successfully returns a valid object (like an `Expense` or an `int`), `FinTrack` passes this object to the `FinanceManager` to perform the business logic (e.g. `fm.addExpense(expense)`).
+    - Based on the result from `FinanceManager`, it then calls the appropriate `Ui` method to show success (e.g. `Ui.printExpenseAdded(expense)`).
+    - Any `IllegalArgumentException` or `IndexOutOfBoundsException` (from `Parser` or `FinanceManager`) is caught within the loop. The error message is retrieved (`e.getMessage()`)
+      and printed to the user via `Ui.printError()`.
 5. The loop continues until the user enters the `bye` command (`Ui.EXIT_COMMAND`).
 
 The above flow is illustrated by the sequence diagram below, showing how the `add-expense` command is processed.
@@ -105,9 +105,9 @@ Because every method is static (most with package-private visibility), they can 
 How the `Parser` component works:
 
 1. The private `getValue(String args, String prefix)` method is the core of the parser. It works by:
-   - Finding the start of a given prefix (e.g. `a/`).
-   - Finding the start of the next known prefix (e.g. `c/`) using the `findNextPrefixIndex()` helper.
-   - Extracting the substring between these two points as the value. This logic allows the user to provide arguments in any order (e.g. `c/food a/10` is the same as `a/10 c/food`).
+    - Finding the start of a given prefix (e.g. `a/`).
+    - Finding the start of the next known prefix (e.g. `c/`) using the `findNextPrefixIndex()` helper.
+    - Extracting the substring between these two points as the value. This logic allows the user to provide arguments in any order (e.g. `c/food a/10` is the same as `a/10 c/food`).
 2. Methods like `parseAddExpense(input)` orchestrate the parsing process:
    - The command word (e.g. `add-expense`) is stripped from the input string.
    - `getValue()` is called for each required argument (e.g. `a/`, `c/`, `d/`). If any return `null`, an `IllegalArgumentException` is thrown.
@@ -240,13 +240,13 @@ Here is how `export` works:
 1. In `FinTrack`, `Parser` handles the input by recognising the export command and parsing the file path using `parseExport(input)`.
 2. A new `CsvStorage` instance is created to handle the file I/O operations (following the Single Responsibility Principle by keeping storage concerns separate from business logic).
 3. `FinTrack` retrieves all necessary data from `FinanceManager`:
-   - `getIncomesView()` - Returns an unmodifiable list of all incomes
-   - `getExpensesView()` - Returns an unmodifiable list of all expenses
-   - `getTotalIncome()`, `getTotalExpense()`, `getBalance()` - Summary statistics
+    - `getIncomesView()` - Returns an unmodifiable list of all incomes
+    - `getExpensesView()` - Returns an unmodifiable list of all expenses
+    - `getTotalIncome()`, `getTotalExpense()`, `getBalance()` - Summary statistics
 4. The `CsvStorage.export()` method writes the data to a CSV file in proper CSV format:
-   - Single header row: `Type,Date,Amount,Category,Description`
-   - All incomes and expenses in one unified table with a `Type` column distinguishing between "INCOME" and "EXPENSE"
-   - Summary section at the end with total income, total expenses, and balance
+    - Single header row: `Type,Date,Amount,Category,Description`
+    - All incomes and expenses in one unified table with a `Type` column distinguishing between "INCOME" and "EXPENSE"
+    - Summary section at the end with total income, total expenses, and balance
 5. If successful, `Ui` calls `printExportSuccess()` to confirm the export. Any errors (IOException, SecurityException, IllegalArgumentException) are caught and displayed to the user via `printError()`.
 
 Below is a sequence diagram to illustrate how the export command works:
@@ -256,21 +256,21 @@ Below is a sequence diagram to illustrate how the export command works:
 **Separation of Concerns via Storage Layer:**
 - **Why we created a separate Storage layer**: Initially, export functionality was in `FinanceManager`, which violated the Single Responsibility Principle. `FinanceManager` should manage financial data and business logic, not handle file I/O.
 - **Alternative considered**: Keeping `exportToCSV()` in `FinanceManager` - This was rejected because:
-  - It mixed business logic with persistence concerns
-  - It would make `FinanceManager` harder to test
-  - Adding new export formats (JSON, XML) would bloat the class
-- **Why this approach is better**: 
-  - `Storage` interface allows for multiple implementations (CSV, JSON, etc.)
-  - Follows the same stateless pattern as `Parser` and `Ui`
-  - Makes the code more maintainable and testable
-  - Sets foundation for future features like auto-save and data import
+    - It mixed business logic with persistence concerns
+    - It would make `FinanceManager` harder to test
+    - Adding new export formats (JSON, XML) would bloat the class
+- **Why this approach is better**:
+    - `Storage` interface allows for multiple implementations (CSV, JSON, etc.)
+    - Follows the same stateless pattern as `Parser` and `Ui`
+    - Makes the code more maintainable and testable
+    - Sets foundation for future features like auto-save and data import
 
 **CSV Format Choice:**
 - **Single-table format with Type column**: We chose to have all transactions in one table with a "Type" column (INCOME/EXPENSE) rather than separate sections
 - **Alternative considered**: Separate INCOMES and EXPENSES sections - This was rejected because:
-  - Not standard CSV format
-  - Harder to import into spreadsheet applications
-  - Cannot be easily sorted or filtered as a unified dataset
+    - Not standard CSV format
+    - Harder to import into spreadsheet applications
+    - Cannot be easily sorted or filtered as a unified dataset
 - **Why single-table is better**: Proper CSV format that works seamlessly with Excel, Google Sheets, and data analysis tools
 ### Modify (`modify-expense and modify-income`)
 
@@ -285,15 +285,15 @@ Both commands work by replacing the old entry with new data while maintaining th
 
 1. In `FinTrack`, `Parser` handles the input by recognising the `modify-expense` command.
 2. `Parser.parseModifyExpense(input)` extracts two key pieces of information:
-   - The **index** (1-based position in the expense list)
-   - The **new expense data** (amount, category, date, optional description)
+    - The **index** (1-based position in the expense list)
+    - The **new expense data** (amount, category, date, optional description)
 3. The parser validates the index is a positive integer, then reuses the existing `parseAddExpense()` logic to parse the remaining parameters (amount, category, date, description).
 4. The parser returns a `Map.Entry<Integer, Expense>` containing both the index and the new expense object.
 5. `FinTrack` calls `fm.modifyExpense(index, newExpense)` which:
-   - Calls `deleteExpense(index)` to remove the old expense and stores it temporarily
-   - Calls `addExpense(newExpense)` to add the new expense (which maintains reverse chronological ordering)
-   - If adding the new expense fails for any reason, the old expense is restored to maintain data integrity
-   - Returns a boolean indicating if the modification caused the category budget to be exceeded
+    - Calls `deleteExpense(index)` to remove the old expense and stores it temporarily
+    - Calls `addExpense(newExpense)` to add the new expense (which maintains reverse chronological ordering)
+    - If adding the new expense fails for any reason, the old expense is restored to maintain data integrity
+    - Returns a boolean indicating if the modification caused the category budget to be exceeded
 6. `Ui.printExpenseModified()` confirms the successful modification.
 7. If the budget was exceeded, additional warnings are displayed via `printBudgetExceededWarning()`.
 
@@ -305,14 +305,14 @@ Below is a sequence diagram illustrating the `modify-expense` flow:
 
 1. In `FinTrack`, `Parser` handles the input by recognising the `modify-income` command.
 2. `Parser.parseModifyIncome(input)` extracts two key pieces of information:
-   - The **index** (1-based position in the income list)
-   - The **new income data** (amount, category, date, optional description)
+    - The **index** (1-based position in the income list)
+    - The **new income data** (amount, category, date, optional description)
 3. The parser validates the index is a positive integer, then reuses the existing `parseAddIncome()` logic to parse the remaining parameters.
 4. The parser returns a `Map.Entry<Integer, Income>` containing both the index and the new income object.
 5. `FinTrack` calls `fm.modifyIncome(index, newIncome)` which:
-   - Calls `deleteIncome(index)` to remove the old income and stores it temporarily
-   - Calls `addIncome(newIncome)` to add the new income (which maintains reverse chronological ordering)
-   - If adding the new income fails for any reason, the old income is restored to maintain data integrity
+    - Calls `deleteIncome(index)` to remove the old income and stores it temporarily
+    - Calls `addIncome(newIncome)` to add the new income (which maintains reverse chronological ordering)
+    - If adding the new income fails for any reason, the old income is restored to maintain data integrity
 6. `Ui.printIncomeModified()` confirms the successful modification.
 
 Below is a sequence diagram illustrating the `modify-income` flow:
@@ -325,16 +325,16 @@ Below is a sequence diagram illustrating the `modify-income` flow:
 
 - **Why this approach**: The modify operations are implemented as a delete followed by an add operation, rather than direct in-place modification.
 - **Advantages**:
-  - **Code Reuse**: Leverages existing, well-tested `deleteExpense()`/`deleteIncome()` and `addExpense()`/`addIncome()` methods
-  - **Consistency**: Ensures that modified entries are automatically re-sorted into the correct chronological position
-  - **Budget Checking**: For expenses, the add operation automatically checks budget constraints
-  - **Validation**: All validation logic from the add operations is automatically applied
+    - **Code Reuse**: Leverages existing, well-tested `deleteExpense()`/`deleteIncome()` and `addExpense()`/`addIncome()` methods
+    - **Consistency**: Ensures that modified entries are automatically re-sorted into the correct chronological position
+    - **Budget Checking**: For expenses, the add operation automatically checks budget constraints
+    - **Validation**: All validation logic from the add operations is automatically applied
 - **Alternatives considered**:
-  - Direct in-place modification - This was rejected because:
-    - Would require duplicating validation logic
-    - Would need manual re-sorting if the date changes
-    - Would complicate budget checking logic
-    - Increases code complexity and potential for bugs
+    - Direct in-place modification - This was rejected because:
+        - Would require duplicating validation logic
+        - Would need manual re-sorting if the date changes
+        - Would complicate budget checking logic
+        - Increases code complexity and potential for bugs
 
 **Rollback on Failure:**
 
@@ -346,26 +346,41 @@ Below is a sequence diagram illustrating the `modify-income` flow:
 
 - **Smart parsing**: The modify parsers extract the index first, then prepend the appropriate command (`add-expense` or `add-income`) to the remaining arguments and call the existing add parsers
 - **Benefits**:
-  - Eliminates code duplication
-  - Ensures modify commands support exactly the same format as add commands
-  - Any improvements to add parsing automatically benefit modify parsing
+    - Eliminates code duplication
+    - Ensures modify commands support exactly the same format as add commands
+    - Any improvements to add parsing automatically benefit modify parsing
 
 **Index Validation:**
 
 - Both modify methods provide clear, specific error messages:
-  - "Cannot modify expense/income: The list is empty" when the list has no items
-  - "Index out of range. Valid range: 1 to N" when the index is invalid
-  - Helps users understand exactly what went wrong
+    - "Cannot modify expense/income: The list is empty" when the list has no items
+    - "Index out of range. Valid range: 1 to N" when the index is invalid
+    - Helps users understand exactly what went wrong
 
 ## Product scope
 
 ### Target user profile
 
-{Describe the target user profile}
+- Is a current NUS CEG undergraduate
+- Has a need to manage finances
+- Prefers Desktop apps over other types
+- Prefers typing to mouse interactions
+- Can type fast
+- Is reasonably comfortable using CLI apps
 
 ### Value proposition
 
-{Describe the value proposition: what problem does it solve?}
+FinTrack is a lightning-fast, keyboard-first desktop finance tracker built for NUS CEG undergraduates who live in a terminal.
+It lets you capture expenses and income in seconds, set custom categorical budgets, and get clear summaries without ever leaving the keyboard—or your desktop.
+
+#### Why it is perfect for the target profile?
+
+- CLI-only App: Optimised for fast typing: every action is a short command, no need for mouse, modal pop-ups, no distractions, only the keyboard, allowing a busy undergraduate to tracks finances as fast as possible
+- Desktop + Offline: Able to run on Windows/macOS/Linux and works offline, allowing the user to update their profile anywhere on the go
+- Student-Centric budgeting: Not only can the app help you plan your finances, it also helps save you even more money by providing helpful tips specially crafted for you
+
+#### Outcome
+Manage day-to-day expenses and budgets with optimal efficiency, stay on top of good deals and the latest money-savvy tips and hacks, and make smarter money decisions—without the bloat of mobile apps or the friction of a mouse.
 
 ## User Stories
 

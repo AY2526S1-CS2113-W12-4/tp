@@ -10,9 +10,9 @@ FinTrack is a lightweight command-line assistant that helps you keep an eye on d
 2. **Download or clone FinTrack.** Place the project folder anywhere on your computer.
 3. **Open a terminal at the project root.** On Windows you can use Command Prompt or PowerShell; on macOS/Linux use your preferred shell.
 4. **Run FinTrack from source.**
-   - Windows: `.\gradlew.bat run`
-   - macOS/Linux: `./gradlew run`
-   FinTrack will compile (on first run) and display a welcome banner followed by a `>` prompt.
+    - Windows: `.\gradlew.bat run`
+    - macOS/Linux: `./gradlew run`
+      FinTrack will compile (on first run) and display a welcome banner followed by a `>` prompt.
 5. *(Optional)* Build a runnable JAR with `./gradlew shadowJar` (macOS/Linux) or `.\gradlew.bat shadowJar` (Windows). The application JAR is created under `build/libs/`.
 
 Tip: Type `help` after launch to see every available command.
@@ -111,6 +111,32 @@ Shows every expense in reverse chronological order (newest first) with numbered 
 
 If there are no expenses, FinTrack prints `No expenses recorded.`
 
+### Listing incomes: `list-income`
+
+Shows every income in reverse chronological order (newest first) with numbered entries. Use the index numbers when deleting or modifying incomes. Filter by month with the optional `d/<YYYY-MM>` parameter.
+
+- **Format:** `list-income [d/<YYYY-MM>]`
+- **Example usage:** `list-income`
+- **Sample output:**
+  ```
+  Incomes (Newest first):
+  --------------------------------------------------
+  #1
+  Date: 2025-10-15
+  Amount: $500.00
+  Category: Freelance
+  Description: Design project
+  --------------------------------------------------
+  #2
+  Date: 2025-10-01
+  Amount: $3200.00
+  Category: Salary
+  Description: October salary
+  --------------------------------------------------
+  ```
+
+If there are no incomes, FinTrack prints `No incomes recorded.`
+
 ### Showing your balance: `balance`
 
 Summarises total income, total expenses, and the resulting balance (`income - expense`).
@@ -156,6 +182,64 @@ Removes an income entry. Incomes are numbered in the order they were added (the 
     Description: October salary
   ```
 
+### Viewing Summary of Expenses `summary-expense`
+
+Gives a summary of your overall expenses.
+
+- **Format:** `summary-expense`
+- **Example usage:** `summary-expense`
+- **Sample Output:**
+
+    ```
+    -----------------------------------------------
+    Here is an overall summary of your expenses!
+    Total Expense: 40.0
+
+    Here is a breakdown of your expense:
+    TRANSPORT: 10.00 (25.00%)
+    FOOD: 30.00 (75.00%)
+
+    Your most spent on category is: FOOD
+    -----------------------------------------------
+    ```
+
+If no expense has been tracked, `summary-expense` will let you know as well.
+
+### View Summary of Income `summary-income`
+
+Gives a summary of your overall income.
+
+- **Format:** `summary-income`
+- **Example usage:** `summary-income`
+- **Sample Output:**
+
+    ```
+    ----------------------------------------------
+    Here is an overall summary of your income!
+    Total Income: 30.0
+
+    Here is a breakdown of your income:
+    SALARY: 20.00 (66.67%)
+    INVESTMENT: 10.00 (33.33%)
+
+    Your highest source of income is: SALARY
+    ----------------------------------------------
+    ```
+
+If no income has been tracked, `summary-income` will let you know as well.
+
+### Get some money saving tips `tips`
+
+Get a random tip.
+
+- **Format:** `tips`
+- **Example usage:** `tips`
+- **Sample Output:**
+
+    ```
+    Take the shuttle bus, it's worth it :(
+    ```
+
 ### Leaving FinTrack: `bye`
 
 Closes the application safely.
@@ -174,6 +258,7 @@ You can also close the terminal window, but `bye` ensures the farewell message i
 - Invalid commands or parameters print a single line beginning with `Error:`, for example `Error: Amount must be a valid number.`
 - The original data remains unchanged when an error occurs.
 - Use `help` whenever you are unsure of the required format.
+- If any test pertaining to `tips` fails, you should try to run the test again. As tips relies on random number generation, there is a chance that the test can fail due to sheer unluckiness. While it is statistically unlikely the test fails, it is not impossible.
 
 ## FAQ
 
@@ -188,6 +273,15 @@ A: FinTrack only accepts standard numbers without currency symbols (e.g., use `a
 
 **Q: Can I enter dates in other formats such as DD-MM-YYYY?**  
 A: No. FinTrack currently requires ISO format `YYYY-MM-DD`.
+
+**Q: How can I review transactions for a specific month?**  
+A: Use the optional month filter on incomes (`list-income d/<YYYY-MM>`).
+
+**Q: Can categories or descriptions include spaces?**  
+A: Yes. Everything following a prefix is read until the next prefix, so `c/Office Supplies` and `desc/New laptop bag` both work.
+
+**Q: Why was my date rejected even though it looks correct?**  
+A: Ensure the date is valid on the calendar and in `YYYY-MM-DD` format.
 
 ## Command Summary
 
@@ -204,6 +298,9 @@ A: No. FinTrack currently requires ISO format `YYYY-MM-DD`.
 | `balance d/<YYYY-MM>`      | `balance d/<YYYY-MM>`                                                    | `balance d/2025-01`                                          |
 | `delete-expense`           | `delete-expense <index>`                                                 | `delete-expense 2`                                           |
 | `delete-income`            | `delete-income <index>`                                                  | `delete-income 1`                                            |
+| `summary-expense`          | `summary-expense`                                                        | `summary-expense`                                            |
+| `summary-income`           | `summary-income`                                                         | `summary-income`                                             |
+| `tips`                     | `tips`                                                                   | `tips`                                                       |
 | `bye`                      | `bye`                                                                    | `bye`                                                        |
 
-Stay tuned to the project repository for upcoming enhancements such as persistent storage and income listings.
+Stay tuned to the project repository for upcoming enhancements such as persistent storage and advanced summaries.
