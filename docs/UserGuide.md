@@ -109,6 +109,32 @@ Shows every expense in reverse chronological order (newest first) with numbered 
 
 If there are no expenses, FinTrack prints `No expenses recorded.`
 
+### Listing incomes: `list-income`
+
+Shows every income in reverse chronological order (newest first) with numbered entries. Use the index numbers when deleting or modifying incomes. Filter by month with the optional `d/<YYYY-MM>` parameter.
+
+- **Format:** `list-income [d/<YYYY-MM>]`
+- **Example usage:** `list-income`
+- **Sample output:**
+  ```
+  Incomes (Newest first):
+  --------------------------------------------------
+  #1
+  Date: 2025-10-15
+  Amount: $500.00
+  Category: Freelance
+  Description: Design project
+  --------------------------------------------------
+  #2
+  Date: 2025-10-01
+  Amount: $3200.00
+  Category: Salary
+  Description: October salary
+  --------------------------------------------------
+  ```
+
+If there are no incomes, FinTrack prints `No incomes recorded.`
+
 ### Showing your balance: `balance`
 
 Summarises total income, total expenses, and the resulting balance (`income - expense`).
@@ -124,7 +150,7 @@ Summarises total income, total expenses, and the resulting balance (`income - ex
 
 ### Deleting an expense: `delete-expense`
 
-Removes an expense by its 1-based index as seen in the most recent `list` output.
+Removes an expense by its 1-based index as seen in the most recent `list-expense` output.
 
 - **Format:** `delete-expense <index>`
 - **Example usage:** `delete-expense 2`
@@ -194,10 +220,11 @@ A: No. FinTrack currently requires ISO format `YYYY-MM-DD`.
 | `help` | `help` | `help` |
 | `add-expense` | `add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]` | `add-expense a/12.50 c/Food d/2025-10-08 desc/Lunch` |
 | `add-income` | `add-income a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]` | `add-income a/3200 c/Salary d/2025-10-01 desc/October salary` |
-| `list` | `list` | `list` |
+| `list-expense` | `list-expense [d/<YYYY-MM>]` | `list-expense d/2025-10` |
+| `list-income` | `list-income [d/<YYYY-MM>]` | `list-income d/2025-10` |
 | `balance` | `balance` | `balance` |
 | `delete-expense` | `delete-expense <index>` | `delete-expense 2` |
 | `delete-income` | `delete-income <index>` | `delete-income 1` |
 | `bye` | `bye` | `bye` |
 
-Stay tuned to the project repository for upcoming enhancements such as persistent storage and income listings.
+Stay tuned to the project repository for upcoming enhancements such as persistent storage and advanced summaries.
