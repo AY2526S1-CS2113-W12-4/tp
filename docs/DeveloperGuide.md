@@ -7,6 +7,18 @@
 ## Design
 This section describes the overall architecture and explores the core classes of FinTrack.
 
+### Architecture
+
+FinTrack adopts a layered architecture that keeps user interaction, parsing, application logic, and domain data clearly separated. The runtime flow for a typical command is:
+
+1. `Ui` prompts for input and renders all textual feedback to the user.
+2. `FinTrack` runs the command loop, routing the raw input to the relevant parser method.
+3. `Parser` validates syntax, extracts parameters, and produces typed objects or primitives that the logic layer understands.
+4. `FinanceManager` applies the requested operation to the in-memory state, which is organised by the classes in the `model` package (`Expense`, `Income`, their category enums, and list wrappers that enforce ordering and invariants).
+5. The resulting state or any error messages are returned to `Ui` for display, keeping the rest of the system unaware of console concerns.
+
+This separation keeps orchestrating code small, makes the parser and logic testable in isolation, and allows future enhancements (such as a GUI or persistence layer) to be introduced without rewriting existing modules.
+
 ### FinTrack Module (`FinTrack.java`)
 `FinTrack` (`src/main/java/seedu/fintrack/FinTrack.java`) serves as the main entry point and the central controller of the application. It is responsible for managing the application's lifecycle and coordinating the interactions between the user interface (`Ui`), the business logic (`FinanceManager`), and the input processor (`Parser`). The `main` method executes a simple, continuous 'Read-Evaluate-Print' loop (REPL).
 
