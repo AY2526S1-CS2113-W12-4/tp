@@ -1,11 +1,12 @@
 package seedu.fintrack.model;
 
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public enum IncomeCategory {
-    SALARY, SCHOLARSHIP, INVESTMENT, GIFT;
+    SALARY, SCHOLARSHIP, INVESTMENT, GIFT, OTHERS;
 
     private static final Logger LOGGER = Logger.getLogger(IncomeCategory.class.getName());
     public static IncomeCategory parse(String categoryString) {
@@ -16,7 +17,8 @@ public enum IncomeCategory {
             return IncomeCategory.valueOf(stringToParse);
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "IncomeCategory parse called with unknown category");
-            throw new IllegalArgumentException("Unknown income category!");
+            throw new IllegalArgumentException("Unknown income category!\n" +
+                    "Available categories: " + Arrays.toString(IncomeCategory.values()));
         }
     }
 }

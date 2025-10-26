@@ -21,6 +21,7 @@ Given below are my contributions to the project:
   - Wrote additional tests for existing features to increase coverage from 80% to 86% (FinanceManager from 58% to 100%, Parser from 85% to 100%): [#106](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/106)
 - **Documentation**: 
   - User Guide: 
+    - Wrote instructions on how to use the `list-income` command.
     - Wrote instructions on how to use the `budget` command.
     - Wrote instructions on how to use the `list-budget` command.
   - Developer Guide
