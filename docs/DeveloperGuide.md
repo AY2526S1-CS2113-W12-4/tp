@@ -44,6 +44,10 @@ The above flow is illustrated by the sequence diagram below, showing how the `ad
 
 ![add_expense.png](images/add_expense.png)
 
+The following is an example class diagram that encapsulates the role of `FinTrack` and other modules `FinanceManager`, `Ui` and `Parser` when running `add-expense`:
+
+![FinTrack.png](images/FinTrack.png)
+
 Why `FinTrack` was implemented this way:
 
 - **Separation of Concerns**: The `FinTrack` class acts purely as a controller. It doesn't know how to parse data (`Parser`), how to store data (`FinanceManager`), or how to display information (`Ui`). This makes the code highly modular and easy to maintain.
@@ -116,9 +120,13 @@ How the `Parser` component works:
     - If all validations pass, they construct and return the new data object (e.g. `new Expense(...)`). If any validation fails (e.g. `NumberFormatException`), it is caught and re-thrown as an `IllegalArgumentException` with a user-friendly message.
 3. Methods like `parseDeleteExpense(input)` are simpler. The command word is simply stripped and the remaining string is parsed as a positive integer.
 
-The internal logic for `parseAddExpense` is shown below:
+The internal logic for `parseAddExpense` is shown below in this sequence diagram:
 
 ![parser.png](images/parser.png)
+
+The following is an example class diagram that encapsulates the role of the `Parser` class when running the `add-expense` command:
+
+![parser_class.png](images/parser_class.png)
 
 Why `Parser` was implemented this way:
 
