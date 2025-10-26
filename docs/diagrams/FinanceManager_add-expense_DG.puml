@@ -1,0 +1,27 @@
+@startuml
+title addExpense flow — maintaining ExpenseList
+
+actor User
+participant ":FinTrack" as FinTrack
+participant ":FinanceManager" as FM
+participant ":ExpenseList" as ExpList
+participant ":Ui" as Ui
+
+User -> FinTrack : enter "add-expense ..."
+FinTrack -> FM : addExpense(expense)
+activate FM
+FM -> ExpList : add(expense)
+activate ExpList
+ExpList -> ExpList : validateForUserInput(expense)\nsort newest → oldest
+ExpList --> FM : (expense stored)
+deactivate ExpList
+
+FM -> FM : check category budget
+FM --> FinTrack : budgetExceeded : boolean
+deactivate FM
+
+FinTrack -> Ui : printExpenseAdded(expense)
+opt budgetExceeded
+  FinTrack -> Ui : printBudgetExceededWarning(...)
+end
+@enduml
