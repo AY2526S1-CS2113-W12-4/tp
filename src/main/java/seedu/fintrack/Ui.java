@@ -1,6 +1,9 @@
 package seedu.fintrack;
 
 import java.nio.file.Path;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Scanner;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -42,12 +45,13 @@ public class Ui {
     public static final String AMOUNT_PREFIX = "a/";
     public static final String CATEGORY_PREFIX = "c/";
     public static final String DATE_PREFIX = "d/";
-    public static final String DESCRIPTION_PREFIX = "desc/"; // optional
+    public static final String DESCRIPTION_PREFIX = "des/"; // optional
 
     private static Scanner uiScanner = new Scanner(System.in);
 
     private static final Logger LOGGER = Logger.getLogger(Ui.class.getName());
     private static final TipsStorage TIPS = new TipsStorage();
+    private static final DateTimeFormatter YEAR_MONTH_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM");
 
     /**
      * Reassigns the {@link #uiScanner} used by {@link Ui#waitForInput()} to a new {@link java.util.Scanner}.
@@ -209,6 +213,22 @@ public class Ui {
         assert Double.isFinite(totalExpense) : "totalExpense must be finite";
 
         System.out.println("Overall Balance: " + String.format("%.2f", balance));
+        System.out.println("Total Income: " + String.format("%.2f", totalIncome));
+        System.out.println("Total Expense: " + String.format("%.2f", totalExpense));
+        LOGGER.fine("Printed balance summary.");
+    }
+
+    /** Overloaded version: Prints a balance summary for a specific month. */
+    static void printBalance(double balance, double totalIncome, double totalExpense, YearMonth month) {
+        Objects.requireNonNull(month, "month cannot be null");
+        assert Double.isFinite(balance) : "balance must be finite";
+        assert Double.isFinite(totalIncome) : "totalIncome must be finite";
+        assert Double.isFinite(totalExpense) : "totalExpense must be finite";
+
+        System.out.println("Overall Balance for the month " // indicates the specific month
+                + month.format(YEAR_MONTH_FORMATTER)
+                + ": "
+                + String.format("%.2f", balance));
         System.out.println("Total Income: " + String.format("%.2f", totalIncome));
         System.out.println("Total Expense: " + String.format("%.2f", totalExpense));
         LOGGER.fine("Printed balance summary.");
@@ -403,7 +423,7 @@ public class Ui {
      * @throws NullPointerException if {@code incomesView} is {@code null}.
      * @implNote Logs at {@code FINE} when the list is empty and after completion.
      */
-    static void printListOfIncomes(java.util.List<Income> incomesView) {
+    static void printListOfIncomes(List<Income> incomesView) {
         Objects.requireNonNull(incomesView, "incomesView cannot be null");
 
         if (incomesView.isEmpty()) {
@@ -412,6 +432,45 @@ public class Ui {
             return;
         }
         System.out.println("Incomes (Newest first):");
+        var fmt = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        for (int i = 0; i < incomesView.size(); i++) {
+            try {
+                var income = incomesView.get(i);
+                int idx = i + 1;
+                Objects.requireNonNull(income, "income entry cannot be null");
+                Objects.requireNonNull(income.getCategory(), "income category cannot be null");
+                Objects.requireNonNull(income.getDate(), "income date cannot be null");
+                assert Double.isFinite(income.getAmount()) : "income amount must be finite";
+
+                printHorizontalLine(80);
+                System.out.println("#" + idx);
+                System.out.println("Date: " + income.getDate().format(fmt));
+                System.out.println("Amount: $" + String.format("%.2f", income.getAmount()));
+                System.out.println("Category: " + income.getCategory());
+                if (income.getDescription() != null && !income.getDescription().isBlank()) {
+                    System.out.println("Description: " + income.getDescription());
+                }
+            } catch (RuntimeException ex) {
+                LOGGER.log(Level.WARNING, "Skipping malformed income at position {0}: {1}",
+                        new Object[]{i, ex.toString()});
+            }
+        }
+        printHorizontalLine(80);
+        LOGGER.fine("Finished printing incomes list (count=" + incomesView.size() + ").");
+    }
+
+    /** Overloaded version: Prints a list of incomes for a specific month. */
+    static void printListOfIncomes(List<Income> incomesView, YearMonth month) {
+        Objects.requireNonNull(incomesView, "incomesView cannot be null");
+
+        if (incomesView.isEmpty()) {
+            System.out.println("No incomes recorded.");
+            LOGGER.fine("No incomes to list.");
+            return;
+        }
+        System.out.println("Incomes for the month "
+                + month.format(YEAR_MONTH_FORMATTER)
+                + " (Newest first):"); // indicates the specific month
         var fmt = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd");
         for (int i = 0; i < incomesView.size(); i++) {
             try {
@@ -450,7 +509,7 @@ public class Ui {
      * @throws NullPointerException if {@code expensesView} is {@code null}.
      * @implNote Logs at {@code FINE} when the list is empty and after completion.
      */
-    static void printListOfExpenses(java.util.List<seedu.fintrack.model.Expense> expensesView) {
+    static void printListOfExpenses(List<Expense> expensesView) {
         Objects.requireNonNull(expensesView, "expensesView cannot be null");
 
         if (expensesView.isEmpty()) {
@@ -459,6 +518,46 @@ public class Ui {
             return;
         }
         System.out.println("Expenses (Newest first):");
+        var fmt = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        for (int i = 0; i < expensesView.size(); i++) {
+            try {
+                var e = expensesView.get(i);
+                int idx = i + 1;
+                Objects.requireNonNull(e, "expense entry cannot be null");
+                Objects.requireNonNull(e.getCategory(), "expense category cannot be null");
+                Objects.requireNonNull(e.getDate(), "expense date cannot be null");
+                assert Double.isFinite(e.getAmount()) : "expense amount must be finite";
+
+                printHorizontalLine(80);
+                System.out.println("#" + idx);
+                System.out.println("Date: " + e.getDate().format(fmt));
+                System.out.println("Amount: $" + String.format("%.2f", e.getAmount()));
+                System.out.println("Category: " + e.getCategory());
+                if (e.getDescription() != null && !e.getDescription().isBlank()) {
+                    System.out.println("Description: " + e.getDescription());
+                }
+            } catch (RuntimeException ex) {
+                // Defensive: skip malformed entries but keep the list usable.
+                LOGGER.log(Level.WARNING, "Skipping malformed expense at position {0}: {1}",
+                        new Object[]{i, ex.toString()});
+            }
+        }
+        printHorizontalLine(80);
+        LOGGER.fine("Finished printing expenses list (count=" + expensesView.size() + ").");
+    }
+
+    /** Overloaded version: Prints a list of expenses for a specific month. */
+    static void printListOfExpenses(List<Expense> expensesView, YearMonth month) {
+        Objects.requireNonNull(expensesView, "expensesView cannot be null");
+
+        if (expensesView.isEmpty()) {
+            System.out.println("No expenses recorded.");
+            LOGGER.fine("No expenses to list.");
+            return;
+        }
+        System.out.println("Expenses for the month "
+                + month.format(YEAR_MONTH_FORMATTER)
+                + " (Newest first):"); // indicates the specific month
         var fmt = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd");
         for (int i = 0; i < expensesView.size(); i++) {
             try {
@@ -628,15 +727,15 @@ public class Ui {
 
         System.out.println("1. Add an expense:");
         System.out.print("   " + ADD_EXPENSE_COMMAND);
-        System.out.println(" a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]");
-        System.out.println("   Example: add-expense a/12.50 c/Food d/2025-10-08 desc/Lunch");
+        System.out.println(" a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
+        System.out.println("   Example: add-expense a/12.50 c/Food d/2025-10-08 des/Lunch");
         System.out.println("   Available categories: " +
                 "FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS");
 
         System.out.println();
         System.out.println("2. Add an income:");
-        System.out.println("   " + ADD_INCOME_COMMAND + " a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]");
-        System.out.println("   Example: add-income a/2000 c/Salary d/2025-10-01 desc/Monthly pay");
+        System.out.println("   " + ADD_INCOME_COMMAND + " a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
+        System.out.println("   Example: add-income a/2000 c/Salary d/2025-10-01 des/Monthly pay");
         System.out.println("   Available categories: SALARY, SCHOLARSHIP, INVESTMENT, GIFT");
 
         System.out.println();
@@ -667,17 +766,17 @@ public class Ui {
         System.out.println("7. Modify an expense:");
         System.out.println("   "
                 + MODIFY_EXPENSE_COMMAND
-                + " <index> a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]");
+                + " <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
         System.out.println("   Modifies the expense shown at that index in 'list-expense'.");
-        System.out.println("   Example: modify-expense 1 a/1300 c/Rent d/2024-01-01 desc/Monthly rent increased");
+        System.out.println("   Example: modify-expense 1 a/1300 c/Rent d/2024-01-01 des/Monthly rent increased");
 
         System.out.println();
         System.out.println("8. Modify an income:");
         System.out.println("   "
                 + MODIFY_INCOME_COMMAND
-                + " <index> a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]");
+                + " <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
         System.out.println("   Modifies the income shown at that index in 'list-income'.");
-        System.out.println("   Example: modify-income 3 a/250 c/Salary d/2024-01-15 desc/Extra performance bonus");
+        System.out.println("   Example: modify-income 3 a/250 c/Salary d/2024-01-15 des/Extra performance bonus");
 
         System.out.println();
         System.out.println("9. View balance summary:");

@@ -1,18 +1,18 @@
 James Gosling
-add-income a/5000 c/Salary d/2024-01-01 desc/Monthly salary
+add-income a/5000 c/Salary d/2024-01-01 des/Monthly salary
 add-income a/200 c/Salary d/2024-01-15
-add-income a/4800 c/Salary d/2024-02-01 desc/Monthly salary
-add-income a/300 c/Salary d/2024-02-20 desc/Logo commission
-add-income a/4900 c/Salary d/2024-03-01 desc/Monthly salary
-add-expense a/1200 c/Rent d/2024-01-01 desc/Monthly rent payment
+add-income a/4800 c/Salary d/2024-02-01 des/Monthly salary
+add-income a/300 c/Salary d/2024-02-20 des/Logo commission
+add-income a/4900 c/Salary d/2024-03-01 des/Monthly salary
+add-expense a/1200 c/Rent d/2024-01-01 des/Monthly rent payment
 add-expense a/50 c/Food d/2024-01-02
-add-expense a/30 c/Transport d/2024-01-03 desc/Bus fare
-add-expense a/1300 c/Rent d/2024-02-01 desc/Monthly rent payment
-add-expense a/60 c/Food d/2024-02-10 desc/Lunch
+add-expense a/30 c/Transport d/2024-01-03 des/Bus fare
+add-expense a/1300 c/Rent d/2024-02-01 des/Monthly rent payment
+add-expense a/60 c/Food d/2024-02-10 des/Lunch
 add-expense a/35 c/Transport d/2024-02-11
-add-expense a/1400 c/Rent d/2024-03-01 desc/Monthly rent payment
+add-expense a/1400 c/Rent d/2024-03-01 des/Monthly rent payment
 add-expense a/55 c/Food d/2024-03-03
-add-expense a/20 c/Transport d/2024-03-05 desc/Taxi
+add-expense a/20 c/Transport d/2024-03-05 des/Taxi
 balance
 list-expense
 list-income
@@ -31,11 +31,11 @@ list-income d/2024-04
 balance d/24-01
 list-expense d/2024/01
 list-income d/202401
-modify-expense 9 a/1300 c/Rent d/2024-01-01 desc/Monthly rent increased
+modify-expense 9 a/1300 c/Rent d/2024-01-01 des/Monthly rent increased
 list-expense
-modify-expense 8 a/45 c/Food d/2024-01-02 desc/Updated food cost
+modify-expense 8 a/45 c/Food d/2024-01-02 des/Updated food cost
 list-expense
-modify-income 4 a/250 c/Salary d/2024-01-15 desc/Extra performance bonus
+modify-income 4 a/250 c/Salary d/2024-01-15 des/Extra performance bonus
 list-income
 balance
 delete-expense 1

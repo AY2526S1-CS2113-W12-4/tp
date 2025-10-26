@@ -155,10 +155,10 @@ Amount: $5000.00
 Category: SALARY
 Description: Monthly salary
 --------------------------------------------------------------------------------
-> Overall Balance: 3920.00
+> Overall Balance for the month 2024-01: 3920.00
 Total Income: 5200.00
 Total Expense: 1280.00
-> Expenses (Newest first):
+> Expenses for the month 2024-01 (Newest first):
 --------------------------------------------------------------------------------
 #1
 Date: 2024-01-03
@@ -177,7 +177,7 @@ Amount: $1200.00
 Category: RENT
 Description: Monthly rent payment
 --------------------------------------------------------------------------------
-> Incomes (Newest first):
+> Incomes for the month 2024-01 (Newest first):
 --------------------------------------------------------------------------------
 #1
 Date: 2024-01-15
@@ -190,10 +190,10 @@ Amount: $5000.00
 Category: SALARY
 Description: Monthly salary
 --------------------------------------------------------------------------------
-> Overall Balance: 3705.00
+> Overall Balance for the month 2024-02: 3705.00
 Total Income: 5100.00
 Total Expense: 1395.00
-> Expenses (Newest first):
+> Expenses for the month 2024-02 (Newest first):
 --------------------------------------------------------------------------------
 #1
 Date: 2024-02-11
@@ -212,7 +212,7 @@ Amount: $1300.00
 Category: RENT
 Description: Monthly rent payment
 --------------------------------------------------------------------------------
-> Incomes (Newest first):
+> Incomes for the month 2024-02 (Newest first):
 --------------------------------------------------------------------------------
 #1
 Date: 2024-02-20
@@ -226,10 +226,10 @@ Amount: $4800.00
 Category: SALARY
 Description: Monthly salary
 --------------------------------------------------------------------------------
-> Overall Balance: 3425.00
+> Overall Balance for the month 2024-03: 3425.00
 Total Income: 4900.00
 Total Expense: 1475.00
-> Expenses (Newest first):
+> Expenses for the month 2024-03 (Newest first):
 --------------------------------------------------------------------------------
 #1
 Date: 2024-03-05
@@ -248,7 +248,7 @@ Amount: $1400.00
 Category: RENT
 Description: Monthly rent payment
 --------------------------------------------------------------------------------
-> Incomes (Newest first):
+> Incomes for the month 2024-03 (Newest first):
 --------------------------------------------------------------------------------
 #1
 Date: 2024-03-01
@@ -256,7 +256,7 @@ Amount: $4900.00
 Category: SALARY
 Description: Monthly salary
 --------------------------------------------------------------------------------
-> Overall Balance: 0.00
+> Overall Balance for the month 2024-04: 0.00
 Total Income: 0.00
 Total Expense: 0.00
 > No expenses recorded.
@@ -434,10 +434,10 @@ Total Expense: 4245.00
 > Overall Balance: 10725.00
 Total Income: 14950.00
 Total Expense: 4225.00
-> Overall Balance: 3445.00
+> Overall Balance for the month 2024-03: 3445.00
 Total Income: 4900.00
 Total Expense: 1455.00
-> Expenses (Newest first):
+> Expenses for the month 2024-03 (Newest first):
 --------------------------------------------------------------------------------
 #1
 Date: 2024-03-03
@@ -450,7 +450,7 @@ Amount: $1400.00
 Category: RENT
 Description: Monthly rent payment
 --------------------------------------------------------------------------------
-> Incomes (Newest first):
+> Incomes for the month 2024-03 (Newest first):
 --------------------------------------------------------------------------------
 #1
 Date: 2024-03-01
@@ -461,13 +461,13 @@ Description: Monthly salary
 > === FinTrack Command Summary ===
 --------------------------------------------------------------------------------
 1. Add an expense:
-   add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]
-   Example: add-expense a/12.50 c/Food d/2025-10-08 desc/Lunch
+   add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
+   Example: add-expense a/12.50 c/Food d/2025-10-08 des/Lunch
    Available categories: FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS
 
 2. Add an income:
-   add-income a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]
-   Example: add-income a/2000 c/Salary d/2025-10-01 desc/Monthly pay
+   add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
+   Example: add-income a/2000 c/Salary d/2025-10-01 des/Monthly pay
    Available categories: SALARY, SCHOLARSHIP, INVESTMENT, GIFT
 
 3. View all expenses (from latest to earliest date):
@@ -491,14 +491,14 @@ Description: Monthly salary
    Example: delete-income 1
 
 7. Modify an expense:
-   modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]
+   modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
    Modifies the expense shown at that index in 'list-expense'.
-   Example: modify-expense 1 a/1300 c/Rent d/2024-01-01 desc/Monthly rent increased
+   Example: modify-expense 1 a/1300 c/Rent d/2024-01-01 des/Monthly rent increased
 
 8. Modify an income:
-   modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]
+   modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
    Modifies the income shown at that index in 'list-income'.
-   Example: modify-income 3 a/250 c/Salary d/2024-01-15 desc/Extra performance bonus
+   Example: modify-income 3 a/250 c/Salary d/2024-01-15 des/Extra performance bonus
 
 9. View balance summary:
    balance

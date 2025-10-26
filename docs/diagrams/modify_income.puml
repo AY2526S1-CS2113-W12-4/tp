@@ -6,7 +6,7 @@ participant ":Ui" as UI
 
 FT -> UI: waitForInput()
 activate FT
-UI --> FT: "modify-income 3 a/5200 c/SALARY d/2025-01-01 desc/Annual raise"
+UI --> FT: "modify-income 3 a/5200 c/SALARY d/2025-01-01 des/Annual raise"
 
 FT -> P: returnFirstWord(input)
 P --> FT: "modify-income"
