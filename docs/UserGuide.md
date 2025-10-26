@@ -213,6 +213,15 @@ A: FinTrack only accepts standard numbers without currency symbols (e.g., use `a
 **Q: Can I enter dates in other formats such as DD-MM-YYYY?**  
 A: No. FinTrack currently requires ISO format `YYYY-MM-DD`.
 
+**Q: How can I review transactions for a specific month?**  
+A: Use the optional month filter on incomes (`list-income d/<YYYY-MM>`).
+
+**Q: Can categories or descriptions include spaces?**  
+A: Yes. Everything following a prefix is read until the next prefix, so `c/Office Supplies` and `desc/New laptop bag` both work.
+
+**Q: Why was my date rejected even though it looks correct?**  
+A: Ensure the date is valid on the calendar and in `YYYY-MM-DD` format.
+
 ## Command Summary
 
 | Command | Format | Example |
