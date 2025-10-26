@@ -26,6 +26,7 @@ Tip: Type `help` after launch to see every available command.
     - `c/` for category (single word or phrase without leading/trailing spaces).
     - `d/` for date in `YYYY-MM-DD` format.
     - `desc/` for an optional description. If omitted, the entry has no description.
+    - Parameters can be input in **any order**. For example, if `add-expense` requires the `a/<amount>`, `c/<category>` and `d/<YYYY-MM-DD>` parameters, it can be input in any order (e.g. `c/<category>`, `a/<amount>`, `d/<YYYY-MM-DD>`).
 - Dates must be valid calendar dates (for example, `2025-02-29` is invalid).
 - FinTrack keeps data only while it is running. Closing the application clears all records.
 
@@ -40,18 +41,94 @@ Shows a command overview in the terminal.
 - **Sample output:**
   ```
   === FinTrack Command Summary ===
-  -------------------------------------------------------------------------------
+  --------------------------------------------------------------------------------
   1. Add an expense:
-     add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]
-  ...
+     add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
+     Example: add-expense a/12.50 c/Food d/2025-10-08 des/Lunch
+     Available categories: FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS
+
+  2. Add an income:
+     add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
+     Example: add-income a/2000 c/Salary d/2025-10-01 des/Monthly pay
+     Available categories: SALARY, SCHOLARSHIP, INVESTMENT, GIFT
+
+  3. View all expenses (from latest to earliest date):
+     list-expense
+     To view by month: list-expense d/<YYYY-MM>
+     Example: list-expense d/2025-10
+
+  4. View all incomes (from latest to earliest date):
+     list-income
+     To view by month: list-income d/<YYYY-MM>
+     Example: list-income d/2025-10
+
+  5. Delete an expense:
+     delete-expense <index>
+     Deletes the expense shown at that index in 'list-expense'.
+     Example: delete-expense 1
+
+  6. Delete an income:
+     delete-income <index>
+     Deletes the income shown at that index in 'list-income'.
+     Example: delete-income 1
+
+  7. Modify an expense:
+     modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
+     Modifies the expense shown at that index in 'list-expense'.
+     Example: modify-expense 1 a/1300 c/Rent d/2024-01-01 desc/Monthly rent increased
+
+  8. Modify an income:
+     modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
+     Modifies the income shown at that index in 'list-income'.
+     Example: modify-income 3 a/250 c/Salary d/2024-01-15 des/Extra performance bonus
+
+  9. View balance summary:
+     balance
+     Shows total income, total expenses, and current balance.
+     To view by month: balance d/<YYYY-MM>
+     Example: balance d/2025-10
+
+  10. Set budget for expense categories:
+      budget
+      Example: budget c/FOOD a/1000
+      Available categories: FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS
+
+  11. List budgets for expense categories:
+      list-budget
+      Example: list-budget
+
+  12. Show a summary of your total expenses:
+      summary-expense
+      Example: summary-expense
+
+  13. Show a summary of your total income:
+      summary-income
+      Example: summary-income
+
+  14. Provides a useful tip:
+      tips
+      Example: tips
+
+  15. Show this help menu:
+      help
+      Example: help
+
+  16. Exit the program:
+      bye
+      Example: bye
+
+  17. Export data to CSV file:
+      export <filepath>
+      Example: export financial_data.csv
+  --------------------------------------------------------------------------------
   ```
 
 ### Adding an expense: `add-expense`
 
 Creates a new expense. Expenses are automatically sorted so the newest date appears first when listed.
 
-- **Format:** `add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]`
-- **Example usage:** `add-expense a/12.50 c/Food d/2025-10-08 desc/Lunch with friends`
+- **Format:** `add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]`
+- **Example usage:** `add-expense a/12.50 c/Food d/2025-10-08 des/Lunch with friends`
 - **Sample output:**
   ```
   Expense added:
@@ -65,13 +142,22 @@ Validation notes:
 - Amount must be a non-negative number (e.g., `5`, `14.20`).
 - Category and date are mandatory.
 - Description is optional; omit it entirely if not needed.
+- Categories must be any one of the following (if not, an error message is presented to the user):
+  - FOOD
+  - STUDY
+  - TRANSPORT
+  - BILLS
+  - ENTERTAINMENT
+  - RENT
+  - GROCERIES
+  - OTHERS
 
 ### Adding an income: `add-income`
 
 Records income that contributes to your balance.
 
-- **Format:** `add-income a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]`
-- **Example usage:** `add-income a/3200 c/Salary d/2025-10-01 desc/October salary`
+- **Format:** `add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]`
+- **Example usage:** `add-income a/3200 c/Salary d/2025-10-01 des/October salary`
 - **Sample output:**
   ```
   Income added:
@@ -82,13 +168,19 @@ Records income that contributes to your balance.
   ```
 
 The same validation rules as `add-expense` apply to amount, date, and description.
+- Categories must be any of the following (if not, an error message is presented to the user):
+  - SALARY
+  - SCHOLARSHIP
+  - INVESTMENT
+  - GIFT
+  - OTHERS
 
-### Listing expenses: `list`
+### Listing expenses: `list-expense`
 
 Shows every expense in reverse chronological order (newest first) with numbered entries. Use the index numbers when deleting expenses.
 
-- **Format:** `list`
-- **Example usage:** `list`
+- **Format:** `list-expense`
+- **Example usage:** `list-expense`
 - **Sample output:**
   ```
   Expenses (Newest first):
@@ -167,7 +259,7 @@ FinTrack rejects zero or negative indexes and any index larger than the number o
 
 ### Deleting an income: `delete-income`
 
-Removes an income entry. Incomes are numbered in the order they were added (the first income added is index 1).
+Removes an expense by its 1-based index as seen in the most recent `list-income` output.
 
 - **Format:** `delete-income <index>`
 - **Example usage:** `delete-income 1`
@@ -179,6 +271,47 @@ Removes an income entry. Incomes are numbered in the order they were added (the 
     Date: 2025-10-01
     Description: October salary
   ```
+FinTrack rejects zero or negative indexes and any index larger than the number of incomes.
+
+### Setting budgets: `budget`
+
+Allows the user to set budgets for expense categories available.
+
+- **Format:** `budget c/<category> a/<amount>`
+- **Example usage:** `budget c/food a/500`
+- **Sample output:**
+  ```
+  Budget set for FOOD: $500.00
+  ```
+  
+Validation notes:
+- Amount must be a non-negative number (e.g., `5`, `14.20`).
+- Categories must be any one of the following (if not, an error message is presented to the user):
+  - FOOD
+  - STUDY
+  - TRANSPORT
+  - BILLS
+  - ENTERTAINMENT
+  - RENT
+  - GROCERIES
+  - OTHERS
+
+### Viewing list of budgets: `list-budget`
+
+Allows the user to view the budgets set for each expense category (if applicable). 
+
+- **Format:** `list-budget`
+- **Example usage:** `list-budget`
+- **Sample output:**
+  ```
+  Current Budgets:
+  --------------------------------------------------------------------------------
+  FOOD                : $500.00
+  TRANSPORT           : $100.00
+  ENTERTAINMENT       : $200.00
+  --------------------------------------------------------------------------------
+  ```
+If the user has not set budgets for any category, FinTrack prints `No budgets have been set.`
 
 ### Viewing Summary of Expenses `summary-expense`
 
@@ -264,7 +397,7 @@ You can also close the terminal window, but `bye` ensures the farewell message i
 A: Not yet. All data resides in memory. Export important figures before exiting.
 
 **Q: How do I update an entry?**  
-A: Delete the incorrect entry (`delete-expense` or `delete-income`) and add a new one with the corrected values.
+A: Modify the entry (`modify-expense` or `modify-income`) with the correct format.
 
 **Q: Why do I see "Amount must be a valid number"?**  
 A: FinTrack only accepts standard numbers without currency symbols (e.g., use `a/15.90`, not `a/$15.90`).
@@ -283,19 +416,22 @@ A: Ensure the date is valid on the calendar and in `YYYY-MM-DD` format.
 
 ## Command Summary
 
-| Command | Format | Example |
-| --- | --- | --- |
-| `help` | `help` | `help` |
-| `add-expense` | `add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]` | `add-expense a/12.50 c/Food d/2025-10-08 desc/Lunch` |
-| `add-income` | `add-income a/<amount> c/<category> d/<YYYY-MM-DD> [desc/<description>]` | `add-income a/3200 c/Salary d/2025-10-01 desc/October salary` |
-| `list-expense` | `list-expense [d/<YYYY-MM>]` | `list-expense d/2025-10` |
-| `list-income` | `list-income [d/<YYYY-MM>]` | `list-income d/2025-10` |
-| `balance` | `balance` | `balance` |
-| `delete-expense` | `delete-expense <index>` | `delete-expense 2` |
-| `delete-income` | `delete-income <index>` | `delete-income 1` |
-| `summary-expense` | `summary-expense` | `summary-expense`|
-| `summary-income` | `summary-income` | `summary-income` |
-| `tips` | `tips` | `tips`|
-| `bye` | `bye` | `bye` |
+| Command           | Format                                                                   | Example                                                      |
+|-------------------|--------------------------------------------------------------------------|--------------------------------------------------------------|
+| `help`            | `help`                                                                   | `help`                                                       |
+| `add-expense`     | `add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]` | `add-expense a/12.50 c/Food d/2025-10-08 des/Lunch`          |
+| `add-income`      | `add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]`  | `add-income a/3200 c/Salary d/2025-10-01 des/October salary` |
+| `list-expense`    | `list-expense [d/<YYYY-MM>]`                                             | `list-expense d/2025-10`                                     |
+| `list-income`     | `list-income [d/<YYYY-MM>]`                                              | `list-income d/2025-10`                                      |
+| `list`            | `list`                                                                   | `list`                                                       |
+| `balance`         | `balance`                                                                | `balance`                                                    |
+| `delete-expense`  | `delete-expense <index>`                                                 | `delete-expense 2`                                           |
+| `delete-income`   | `delete-income <index>`                                                  | `delete-income 1`                                            |
+| `budget`          | `budget c/<category> a/<amount>`                                         | `budget c/food a/500`                                        |
+| `list-budget`     | `list-budget`                                                            | `list-budget`                                                |
+| `summary-expense` | `summary-expense`                                                        | `summary-expense`                                            |
+| `summary-income`  | `summary-income`                                                         | `summary-income`                                             |
+| `tips`            | `tips`                                                                   | `tips`                                                       |
+| `bye`             | `bye`                                                                    | `bye`                                                        |
 
-Stay tuned to the project repository for upcoming enhancements such as persistent storage and advanced summaries.
+Stay tuned to the project repository for upcoming enhancements such as persistent storage.
