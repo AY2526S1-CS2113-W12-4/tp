@@ -19,3 +19,4 @@ text-ui-test/EXPECTED-UNIX.TXT
 *.log
 *.lck
 test coverage stuff/
+financial_data.csv
