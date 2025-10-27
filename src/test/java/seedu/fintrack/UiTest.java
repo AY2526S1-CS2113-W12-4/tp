@@ -397,6 +397,16 @@ public class UiTest {
     }
 
     @Test
+    void printSummaryExpense_zeroTotalsWithEntries_doesNotPrintNaN() {
+        Map<ExpenseCategory, Double> testMap = Map.of(ExpenseCategory.FOOD, 0.0);
+        Ui.printSummaryExpense(0.0, testMap);
+        String out = out();
+
+        assertTrue(out.contains("You have not spent anything yet!"));
+        assertFalse(out.contains("NaN"));
+    }
+
+    @Test
     void printIncomeByCategory_normalCase_printsLinesAndTopSource() {
         double totalIncome = 1550.50;
         Map<IncomeCategory, Double> testMap = new HashMap<>();
@@ -452,6 +462,16 @@ public class UiTest {
 
         assertTrue(out.contains("Here is a breakdown of your income:"));
         assertTrue(out.contains("You have not recorded any income yet!"));
+    }
+
+    @Test
+    void printSummaryIncome_zeroTotalsWithEntries_doesNotPrintNaN() {
+        Map<IncomeCategory, Double> testMap = Map.of(IncomeCategory.GIFT, 0.0);
+        Ui.printSummaryIncome(0.0, testMap);
+        String out = out();
+
+        assertTrue(out.contains("You have not recorded any income yet!"));
+        assertFalse(out.contains("NaN"));
     }
 
     @Test

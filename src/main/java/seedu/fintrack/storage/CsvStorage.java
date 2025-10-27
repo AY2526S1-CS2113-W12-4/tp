@@ -76,6 +76,8 @@ public class CsvStorage implements Storage {
                     expense.getCategory(),
                     escapeCommas(expense.getDescription()));
             }
+
+            writeSummarySection(writer, totalIncome, totalExpense, balance);
             
             LOGGER.log(Level.INFO, "Successfully exported data to CSV");
         } catch (IOException e) {

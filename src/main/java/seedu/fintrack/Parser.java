@@ -81,8 +81,10 @@ final class Parser {
         }
         start += prefix.length();
 
-        // Find the next prefix or end-of-string
-        int next = findNextPrefixIndex(args, start);
+        // Find the next prefix or end-of-string. Description (des/) always consumes the rest.
+        int next = Ui.DESCRIPTION_PREFIX.equals(prefix)
+                ? -1
+                : findNextPrefixIndex(args, start);
         String val = (next < 0) ? args.substring(start) : args.substring(start, next);
         val = val.trim();
 
@@ -119,12 +121,32 @@ final class Parser {
             Ui.DESCRIPTION_PREFIX
         };
         for (String p : prefixes) {
-            int idx = args.indexOf(p, fromIndex);
-            if (idx >= 0 && (next < 0 || idx < next)) {
-                next = idx;
+            int searchIndex = fromIndex;
+            while (searchIndex >= 0) {
+                int idx = args.indexOf(p, searchIndex);
+                if (idx < 0) {
+                    break;
+                }
+                if (isPrefixStart(args, idx)) {
+                    if (next < 0 || idx < next) {
+                        next = idx;
+                    }
+                    break;
+                }
+                searchIndex = idx + 1;
             }
         }
         return next;
+    }
+
+    private static boolean isPrefixStart(String args, int index) {
+        if (index < 0 || index >= args.length()) {
+            return false;
+        }
+        if (index == 0) {
+            return true;
+        }
+        return Character.isWhitespace(args.charAt(index - 1));
     }
 
     public static Map.Entry<ExpenseCategory, Double> parseSetBudget(String input) throws IllegalArgumentException {
