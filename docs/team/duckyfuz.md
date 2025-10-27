@@ -33,6 +33,7 @@ Given below are my contributions to the project:
   - Write tests to ensure atomicity of `Modify Income / Expense` methods. [#87](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/87)
 
 - **Documentation**:
+
   - User Guide:
     - Wrote instructions on how to use the `modify-expense` command.
     - Wrote instructions on how to use the `modify-income` command.
