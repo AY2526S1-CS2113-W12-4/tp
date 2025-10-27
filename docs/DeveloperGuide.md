@@ -437,4 +437,67 @@ Manage day-to-day expenses and budgets with optimal efficiency, stay on top of g
 
 ## Instructions for manual testing
 
-{Give instructions on how to do a manual product testing e.g., how to load sample data to be used for testing}
+Follow these steps to manually test FinTrack and verify its features:
+
+### 1. Download and Install Java
+
+As per course requirements, you are require to use Java 17 for FinTrack.
+
+1. Go to the [Oracle JDK Downloads page](https://www.oracle.com/java/technologies/downloads/).
+2. Download the installer for your operating system (Windows, macOS, or Linux).
+3. Follow the installation instructions for your platform.
+4. Verify installation by running `java -version` in your terminal or command prompt. You should see a version number.
+
+### 2. Download or Build FinTrack
+
+You can either use a pre-built JAR or build from source:
+
+#### Option A: Download Pre-built JAR
+1. Obtain the latest release JAR from the release page (e.g., `fintrack.jar`).
+2. Save it to a convenient directory.
+
+#### Option B: Build from Source
+1. Clone the repository:
+    ```sh
+    git clone git@github.com:AY2526S1-CS2113-W12-4/tp.git
+    cd tp
+    ```
+2. Build using Gradle:
+    ```sh
+    ./gradlew shadowJar
+    ```
+3. The JAR will be located at `build/libs/fintrack.jar`.
+
+### 3. Run the Application
+
+In your terminal, run:
+```sh
+java -jar fintrack.jar
+```
+or (if built from source):
+```sh
+java -jar build/libs/fintrack.jar
+```
+
+You should see the welcome message and prompt.
+
+### 4. Load Sample Data (Optional)
+
+You can manually add sample data using the `add-expense` and `add-income` commands, or copy over some commands from `text-ui-test/input.txt`.
+
+### 5. Test Features Manually
+
+Type commands at the prompt to test features:
+- Add, list, delete, and modify expenses/incomes
+- Set and list budgets
+- View summaries and balance
+- Export data using the `export` command
+- Try invalid commands to verify error handling
+
+### 6. Compare Output
+
+Compare the output of your manual session with some example outputs in `text-ui-test/EXPECTED.TXT` to verify correctness.
+
+### 7. Exit
+
+Type `bye` to exit the application.
