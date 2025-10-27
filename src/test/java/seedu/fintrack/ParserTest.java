@@ -251,6 +251,76 @@ public class ParserTest {
     }
 
     /**
+     * add-expense should tolerate tabs/multiple spaces between prefixes and values.
+     */
+    @Test
+    public void parseAddExpense_whitespaceVariants_ok() {
+        String input = Ui.ADD_EXPENSE_COMMAND + "\t"
+                + Ui.AMOUNT_PREFIX + "12.34  "
+                + Ui.CATEGORY_PREFIX + "Food\t"
+                + Ui.DATE_PREFIX + "2025-10-09  "
+                + Ui.DESCRIPTION_PREFIX + "messy spacing";
+
+        Expense e = Parser.parseAddExpense(input);
+        assertEquals(12.34, e.getAmount(), 1e-9);
+        assertEquals(ExpenseCategory.FOOD, e.getCategory());
+        assertEquals(LocalDate.of(2025, 10, 9), e.getDate());
+        assertEquals("messy spacing", e.getDescription());
+    }
+
+    /**
+     * add-expense should accept compulsory parameters in any order because prefixes drive parsing.
+     */
+    @Test
+    public void parseAddExpense_parameterOrder_ok() {
+        String input = Ui.ADD_EXPENSE_COMMAND + " "
+                + Ui.DATE_PREFIX + "2025-10-10 "
+                + Ui.AMOUNT_PREFIX + "9.99 "
+                + Ui.CATEGORY_PREFIX + "Transport "
+                + Ui.DESCRIPTION_PREFIX + "Out-of-order prefixes ";
+
+        Expense e = Parser.parseAddExpense(input);
+        assertEquals(9.99, e.getAmount(), 1e-9);
+        assertEquals(ExpenseCategory.TRANSPORT, e.getCategory());
+        assertEquals(LocalDate.of(2025, 10, 10), e.getDate());
+        assertEquals("Out-of-order prefixes", e.getDescription());
+    }
+
+    /**
+     * add-expense should reject descriptions that appear before other prefixes.
+     */
+    @Test
+    public void parseAddExpense_descriptionNotLast_throws() {
+        String input = Ui.ADD_EXPENSE_COMMAND + " "
+                + Ui.DESCRIPTION_PREFIX + "Should fail "
+                + Ui.AMOUNT_PREFIX + "12 "
+                + Ui.CATEGORY_PREFIX + "Food "
+                + Ui.DATE_PREFIX + "2025-10-10";
+
+        try {
+            Parser.parseAddExpense(input);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Description (des/) must be the last parameter.", e.getMessage());
+        }
+    }
+
+    /**
+     * Description should survive multiple prefix-like tokens when placed last.
+     */
+    @Test
+    public void parseAddExpense_descriptionWithMultiplePrefixes_textPreserved() {
+        String input = addExpense(
+                "18.90",
+                "food",
+                "2025-10-12",
+                "Gym c/membership renewal a/15 d/2025-10-12 c/MISC");
+
+        Expense e = Parser.parseAddExpense(input);
+        assertEquals("Gym c/membership renewal a/15 d/2025-10-12 c/MISC", e.getDescription());
+    }
+
+    /**
      * Helper method to construct a valid 'modify-expense' command string for testing.
      *
      * @param index The index of the expense to modify.
@@ -361,6 +431,61 @@ public class ParserTest {
     }
 
     /**
+     * Ensures modify-expense tolerates tabs/multiple spaces between command, index, and prefixes.
+     */
+    @Test
+    public void parseModifyExpense_whitespaceVariants_ok() {
+        String input = Ui.MODIFY_EXPENSE_COMMAND + "\t1   "
+                + Ui.AMOUNT_PREFIX + "42 "
+                + Ui.CATEGORY_PREFIX + "Food "
+                + Ui.DATE_PREFIX + "2025-10-07 "
+                + Ui.DESCRIPTION_PREFIX + "tab spacing";
+
+        var result = Parser.parseModifyExpense(input);
+        assertEquals(1, result.getKey());
+        Expense e = result.getValue();
+        assertEquals(42.0, e.getAmount(), 1e-9);
+        assertEquals(ExpenseCategory.FOOD, e.getCategory());
+        assertEquals(LocalDate.of(2025, 10, 7), e.getDate());
+        assertEquals("tab spacing", e.getDescription());
+    }
+
+    /**
+     * modify-expense should reject descriptions that appear before other prefixes.
+     */
+    @Test
+    public void parseModifyExpense_descriptionNotLast_throws() {
+        String input = Ui.MODIFY_EXPENSE_COMMAND + " 2 "
+                + Ui.DESCRIPTION_PREFIX + "Should fail "
+                + Ui.AMOUNT_PREFIX + "10 "
+                + Ui.CATEGORY_PREFIX + "Food "
+                + Ui.DATE_PREFIX + "2025-10-20";
+
+        try {
+            Parser.parseModifyExpense(input);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Description (des/) must be the last parameter.", e.getMessage());
+        }
+    }
+
+    /**
+     * modify-expense should keep description text even when it mimics prefixes.
+     */
+    @Test
+    public void parseModifyExpense_descriptionWithPrefixes_textPreserved() {
+        String input = Ui.MODIFY_EXPENSE_COMMAND + " 3 "
+                + Ui.AMOUNT_PREFIX + "25 "
+                + Ui.CATEGORY_PREFIX + "Food "
+                + Ui.DATE_PREFIX + "2025-10-15 "
+                + Ui.DESCRIPTION_PREFIX + "Lunch a/12.5 c/Food d/2025-10-15";
+
+        var result = Parser.parseModifyExpense(input);
+        Expense e = result.getValue();
+        assertEquals("Lunch a/12.5 c/Food d/2025-10-15", e.getDescription());
+    }
+
+    /**
      * Tests parsing of a valid 'modify-income' command with an optional description.
      * Expects a correctly configured Map.Entry with index and Income object.
      */
@@ -425,6 +550,62 @@ public class ParserTest {
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Income index must be a positive number.", e.getMessage());
+        }
+    }
+
+    /**
+     * Ensures modify-income tolerates tabs/multiple spaces between command, index, and prefixes.
+     */
+    @Test
+    public void parseModifyIncome_whitespaceVariants_ok() {
+        String input = Ui.MODIFY_INCOME_COMMAND + " \t2\t"
+                + Ui.AMOUNT_PREFIX + "900 "
+                + Ui.CATEGORY_PREFIX + "Scholarship "
+                + Ui.DATE_PREFIX + "2026-01-05 "
+                + Ui.DESCRIPTION_PREFIX + "mixed whitespace";
+
+        var result = Parser.parseModifyIncome(input);
+        assertEquals(2, result.getKey());
+        Income income = result.getValue();
+        assertEquals(900.0, income.getAmount(), 1e-9);
+        assertEquals(IncomeCategory.SCHOLARSHIP, income.getCategory());
+        assertEquals(LocalDate.of(2026, 1, 5), income.getDate());
+        assertEquals("mixed whitespace", income.getDescription());
+    }
+
+    /**
+     * modify-income should keep descriptions that contain other prefixes.
+     */
+    @Test
+    public void parseModifyIncome_descriptionWithPrefixes_textPreserved() {
+        String input = Ui.MODIFY_INCOME_COMMAND + " 4 "
+                + Ui.AMOUNT_PREFIX + "1800 "
+                + Ui.CATEGORY_PREFIX + "Salary "
+                + Ui.DATE_PREFIX + "2026-02-01 "
+                + Ui.DESCRIPTION_PREFIX + "Pay raise a/300 c/SALARY d/2026-02-01";
+
+        var result = Parser.parseModifyIncome(input);
+        assertEquals(4, result.getKey());
+        Income income = result.getValue();
+        assertEquals("Pay raise a/300 c/SALARY d/2026-02-01", income.getDescription());
+    }
+
+    /**
+     * modify-income should reject descriptions that appear before other prefixes.
+     */
+    @Test
+    public void parseModifyIncome_descriptionNotLast_throws() {
+        String input = Ui.MODIFY_INCOME_COMMAND + " 1 "
+                + Ui.DESCRIPTION_PREFIX + "Should fail "
+                + Ui.AMOUNT_PREFIX + "700 "
+                + Ui.CATEGORY_PREFIX + "Gift "
+                + Ui.DATE_PREFIX + "2026-03-02";
+
+        try {
+            Parser.parseModifyIncome(input);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Description (des/) must be the last parameter.", e.getMessage());
         }
     }
 
@@ -588,6 +769,77 @@ public class ParserTest {
         } catch (IllegalArgumentException e) {
             assertEquals("Date must be in YYYY-MM-DD format.", e.getMessage());
         }
+    }
+
+    /**
+     * add-income must tolerate mixed whitespace between command/prefix segments.
+     */
+    @Test
+    public void parseAddIncome_whitespaceVariants_ok() {
+        String input = Ui.ADD_INCOME_COMMAND + "  \t"
+                + Ui.AMOUNT_PREFIX + "1500 "
+                + Ui.CATEGORY_PREFIX + "Salary\t "
+                + Ui.DATE_PREFIX + "2025-11-01   "
+                + Ui.DESCRIPTION_PREFIX + "tab heavy";
+
+        Income income = Parser.parseAddIncome(input);
+        assertEquals(1500.0, income.getAmount(), 1e-9);
+        assertEquals(IncomeCategory.SALARY, income.getCategory());
+        assertEquals(LocalDate.of(2025, 11, 1), income.getDate());
+        assertEquals("tab heavy", income.getDescription());
+    }
+
+    /**
+     * add-income should parse compulsory prefixes correctly even when the order is shuffled.
+     */
+    @Test
+    public void parseAddIncome_parameterOrder_ok() {
+        String input = Ui.ADD_INCOME_COMMAND + " "
+                + Ui.CATEGORY_PREFIX + "Gift "
+                + Ui.DATE_PREFIX + "2025-12-24 "
+                + Ui.AMOUNT_PREFIX + "88.8 "
+                + Ui.DESCRIPTION_PREFIX + "Reordered prefixes ";
+
+
+        Income income = Parser.parseAddIncome(input);
+        assertEquals(88.8, income.getAmount(), 1e-9);
+        assertEquals(IncomeCategory.GIFT, income.getCategory());
+        assertEquals(LocalDate.of(2025, 12, 24), income.getDate());
+        assertEquals("Reordered prefixes", income.getDescription());
+    }
+
+    /**
+     * add-income should reject descriptions that appear before other prefixes.
+     */
+    @Test
+    public void parseAddIncome_descriptionNotLast_throws() {
+        String input = Ui.ADD_INCOME_COMMAND + " "
+                + Ui.DESCRIPTION_PREFIX + "Should fail "
+                + Ui.AMOUNT_PREFIX + "500 "
+                + Ui.CATEGORY_PREFIX + "Salary "
+                + Ui.DATE_PREFIX + "2025-11-01";
+
+        try {
+            Parser.parseAddIncome(input);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Description (des/) must be the last parameter.", e.getMessage());
+        }
+    }
+
+    /**
+     * Income description should keep prefix-looking substrings intact.
+     */
+    @Test
+    public void parseAddIncome_descriptionWithPrefixes_textPreserved() {
+        String input = addIncome(
+                "2500",
+                "salary",
+                "2025-11-30",
+                "Bonus with a/500 c/SALARY \t d/2025-11-30");
+
+        Income income = Parser.parseAddIncome(input);
+        assertEquals("Bonus with a/500 c/SALARY \t d/2025-11-30", income.getDescription());
     }
 
     /*
@@ -838,6 +1090,24 @@ public class ParserTest {
         } catch (IllegalArgumentException e) {
             assertEquals("Usage: list-income [d/YYYY-MM]", e.getMessage());
         }
+    }
+
+    /**
+     * Optional month parsing should accept tabs and multiple spaces after the command.
+     */
+    @Test
+    public void parseOptionalMonth_whitespaceVariants_ok() {
+        Optional<YearMonth> withTab = Parser.parseOptionalMonthForExpenseList(
+                Ui.LIST_EXPENSE_COMMAND + "\t" + Ui.DATE_PREFIX + "2025-10");
+        assertEquals(YearMonth.of(2025, 10), withTab.orElseThrow());
+
+        Optional<YearMonth> manySpaces = Parser.parseOptionalMonthForIncomeList(
+                Ui.LIST_INCOME_COMMAND + "      " + Ui.DATE_PREFIX + "2027-01");
+        assertEquals(YearMonth.of(2027, 1), manySpaces.orElseThrow());
+
+        Optional<YearMonth> balanceSpaced = Parser.parseOptionalMonthForBalance(
+                Ui.BALANCE_COMMAND + "  \t  " + Ui.DATE_PREFIX + "2024-12");
+        assertEquals(YearMonth.of(2024, 12), balanceSpaced.orElseThrow());
     }
 
     // ============ Tests for parseSetBudget ============
