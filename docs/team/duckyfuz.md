@@ -49,5 +49,5 @@ Given below are my contributions to the project:
   - Managed project workflow: triaged issues, reviewed PRs with detailed feedback, and facilitated weekly syncs to drive progress and resolve blockers.
 
 - **Community**:
-  - PRs reviewed (with non-trivial comments): [#70](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/70) , [#60](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/60) , [#53](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/53) , [#47](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/47)
+  - PRs reviewed (with non-trivial comments): [#142](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/142) , [#70](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/70) , [#60](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/60) , [#53](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/53) , [#47](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/47)
   - Smoke-tested peers’ releases and filed detailed reports on github issues [#22](https://github.com/nus-cs2113-AY2526S1/forum/issues/22#issuecomment-3356133185) and [#21](https://github.com/nus-cs2113-AY2526S1/forum/issues/21#issuecomment-3356114983), helping them gain confidence in their deployments.
