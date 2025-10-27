@@ -594,7 +594,7 @@ public class Ui {
      */
 
     static void printExpenseByCategory(Double totalExpense, Map<ExpenseCategory, Double> expenseByCategory) {
-        if (totalExpense < 0 || expenseByCategory.isEmpty()) {
+        if (totalExpense <= 0 || expenseByCategory.isEmpty()) {
             System.out.println("You have not spent anything yet!");
             return;
         }
@@ -605,7 +605,7 @@ public class Ui {
         for (Map.Entry<ExpenseCategory, Double> mapEntry : expenseByCategory.entrySet()) {
             ExpenseCategory category = mapEntry.getKey();
             double amount = (mapEntry.getValue());
-            double percentOfTotal = (amount/totalExpense) * 100.0;
+            double percentOfTotal = totalExpense == 0.0 ? 0.0 : (amount / totalExpense) * 100.0;
             System.out.printf("%s: %.2f (%.2f%%)%n", category, amount, percentOfTotal);
 
             if (amount > topAmount) {
@@ -654,7 +654,7 @@ public class Ui {
      * @param incomeByCategory map of each category to its total amount
      */
     static void printIncomeByCategory(Double totalIncome, Map<IncomeCategory, Double> incomeByCategory) {
-        if (totalIncome < 0 || incomeByCategory.isEmpty()) {
+        if (totalIncome <= 0 || incomeByCategory.isEmpty()) {
             System.out.println("You have not recorded any income yet!");
             return;
         }
@@ -665,7 +665,7 @@ public class Ui {
         for (Map.Entry<IncomeCategory, Double> mapEntry : incomeByCategory.entrySet()) {
             IncomeCategory category = mapEntry.getKey();
             double amount = (mapEntry.getValue());
-            double percentOfTotal = (amount/totalIncome) * 100.0;
+            double percentOfTotal = totalIncome == 0.0 ? 0.0 : (amount / totalIncome) * 100.0;
             System.out.printf("%s: %.2f (%.2f%%)%n", category, amount, percentOfTotal);
 
             if (amount > topAmount) {
