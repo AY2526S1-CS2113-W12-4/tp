@@ -133,6 +133,27 @@ public class ParserTest {
     }
 
     /**
+     * Ensures descriptions can contain prefix-like substrings without being truncated.
+     */
+    @Test
+    public void parseAddExpense_descriptionContainsPrefix_textPreserved() {
+        String input = addExpense("12.50", "food", "2025-10-01", "Lunch with c/friends");
+        Expense e = Parser.parseAddExpense(input);
+        assertEquals("Lunch with c/friends", e.getDescription());
+    }
+
+    /**
+     * Ensures descriptions with embedded spaces and prefix-like substrings remain intact.
+     */
+    @Test
+    public void parseAddExpense_descriptionContainsPrefixWithSpaces_textPreserved() {
+        String input = addExpense("12.50", "food", "2025-10-01",
+                "Lunch with c/      friends");
+        Expense e = Parser.parseAddExpense(input);
+        assertEquals("Lunch with c/      friends", e.getDescription());
+    }
+
+    /**
      * Tests parsing of a valid 'add-expense' command without an optional description.
      * Expects the description field of the resulting {@link Expense} object to be an empty string.
      */
