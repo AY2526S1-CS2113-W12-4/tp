@@ -110,7 +110,7 @@ final class Parser {
         String v = getValue(args, prefix);
         return v == null ? "" : v;
     }
-
+    
     private static int findNextPrefixIndex(String args, int fromIndex) {
         assert args != null : "Arguments cannot be null.";
 
@@ -140,6 +140,16 @@ final class Parser {
         return next;
     }
 
+    /**
+     * Locates the first usable occurrence of a prefix in the argument string.
+     *
+     * <p>The search ignores prefix lookalikes that are embedded in descriptions by
+     * requiring the match to be at the string start or immediately preceded by whitespace.</p>
+     *
+     * @param args argument segment to scan; must not be {@code null}
+     * @param prefix prefix token to look for (e.g. {@code c/}); must not be {@code null}
+     * @return zero-based index of the first real prefix, or {@code -1} when absent
+     */
     private static int findFirstPrefixIndex(String args, String prefix) {
         int searchIndex = 0;
         while (searchIndex >= 0 && searchIndex < args.length()) {
@@ -155,6 +165,15 @@ final class Parser {
         return -1;
     }
 
+    /**
+     * Verifies that {@code des/} appears after every compulsory prefix.
+     *
+     * <p>If a description token is followed by any other recognised prefix, an
+     * {@link IllegalArgumentException} is thrown so callers can surface a stable error.</p>
+     *
+     * @param args raw argument string following the command word
+     * @throws IllegalArgumentException when {@code des/} is not the final prefix
+     */
     private static void ensureDescriptionLast(String args) {
         int descriptionIndex = findFirstPrefixIndex(args, Ui.DESCRIPTION_PREFIX);
         if (descriptionIndex < 0) {
@@ -183,6 +202,17 @@ final class Parser {
         return Character.isWhitespace(args.charAt(index - 1));
     }
 
+    /**
+     * Returns the substring that follows the command literal, trimming any leading whitespace.
+     *
+     * <p>The command word itself must match exactly; everything after the first block of
+     * whitespace is preserved verbatim so downstream parsers retain the user’s spacing.</p>
+     *
+     * @param input full user input; must not be {@code null}
+     * @param commandLiteral expected command word (e.g. {@code list-expense}); must not be {@code null}
+     * @return argument portion of the input (possibly empty) with leading whitespace removed
+     * @throws IllegalArgumentException if the input does not begin with the command literal
+     */
     private static String extractArgumentsAfterCommand(String input, String commandLiteral) {
         Objects.requireNonNull(input, "input cannot be null");
         Objects.requireNonNull(commandLiteral, "commandLiteral cannot be null");
