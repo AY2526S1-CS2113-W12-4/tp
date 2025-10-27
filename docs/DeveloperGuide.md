@@ -392,10 +392,20 @@ Manage day-to-day expenses and budgets with optimal efficiency, stay on top of g
 
 ## User Stories
 
-| Version | As a ... | I want to ...             | So that I can ...                                           |
-|---------|----------|---------------------------|-------------------------------------------------------------|
-| v1.0    | new user | see usage instructions    | refer to them when I forget how to use the application      |
-| v2.0    | user     | find a to-do item by name | locate a to-do without having to go through the entire list |
+| Priority | As a ... | I want to ... | So that I can ... |
+|----------|----------|---------------|--------------------|
+| * * * | NUS CEG freshman who just installed FinTrack | follow the built-in help command that lists every command and example | learn the CLI syntax quickly before keying in my finances |
+| * * * | hall-resident CEG student on a tight stipend | record an expense with amount, category, date, and optional description in one command | capture daily dining and lab purchases during busy weeks |
+| * * * | scholarship-funded CEG student | log my incomes with their categories and descriptions | distinguish stipends, bursaries, and freelance pay when reviewing my cashflow |
+| * * * | hardware project treasurer | list expenses (optionally filtered by month) | reconcile component spending for each sprint without exporting to spreadsheets |
+| * * * | capstone teammate managing shared funds | correct or delete a transaction when I mistype a value | keep our shared balance accurate for reimbursements |
+| * * * | graduating CEG student planning tuition payments | view the balance summary for a specific month | confirm that my savings goal stays on track before major payments |
+| * * | robotics team finance director | set budgets per expense category and get warned when spending exceeds it | catch electronics purchases that blow past our allocation before the next claim |
+| * * | CEG student overseeing multiple CCAs | list all category budgets in one command | review caps before approving the next component purchase |
+| * * | hackathon organiser from CEG | view an expense summary by category | identify which cost centre is consuming most of our funds |
+| * * | part-time CEG student with varied income sources | view an income summary by category | understand which funding sources sustain my allowance |
+| * * | FinTrack treasurer preparing a reimbursement report | export all transactions to CSV | share a clean spending report with supervisors without rewriting data |
+
 
 ## Non-Functional Requirements
 
