@@ -287,6 +287,36 @@ public class ParserTest {
     }
 
     /**
+     * add-expense should reject NaN or infinite amounts.
+     */
+    @Test
+    public void parseAddExpense_nonFiniteAmount_throws() {
+        String[] inputs = {
+            Ui.ADD_EXPENSE_COMMAND + " "
+                    + Ui.AMOUNT_PREFIX + "NaN "
+                    + Ui.CATEGORY_PREFIX + "Food "
+                    + Ui.DATE_PREFIX + "2025-10-10",
+            Ui.ADD_EXPENSE_COMMAND + " "
+                    + Ui.AMOUNT_PREFIX + "Infinity "
+                    + Ui.CATEGORY_PREFIX + "Food "
+                    + Ui.DATE_PREFIX + "2025-10-10",
+            Ui.ADD_EXPENSE_COMMAND + " "
+                    + Ui.AMOUNT_PREFIX + "-Infinity "
+                    + Ui.CATEGORY_PREFIX + "Food "
+                    + Ui.DATE_PREFIX + "2025-10-10"
+        };
+
+        for (String input : inputs) {
+            try {
+                Parser.parseAddExpense(input);
+                fail();
+            } catch (IllegalArgumentException e) {
+                assertEquals("Amount must be finite.", e.getMessage());
+            }
+        }
+    }
+
+    /**
      * add-expense should reject descriptions that appear before other prefixes.
      */
     @Test
@@ -470,6 +500,36 @@ public class ParserTest {
     }
 
     /**
+     * modify-expense should reject NaN or infinite amounts via the underlying add parser.
+     */
+    @Test
+    public void parseModifyExpense_nonFiniteAmount_throws() {
+        String[] inputs = {
+            Ui.MODIFY_EXPENSE_COMMAND + " 1 "
+                    + Ui.AMOUNT_PREFIX + "NaN "
+                    + Ui.CATEGORY_PREFIX + "Food "
+                    + Ui.DATE_PREFIX + "2025-10-10",
+            Ui.MODIFY_EXPENSE_COMMAND + " 1 "
+                    + Ui.AMOUNT_PREFIX + "Infinity "
+                    + Ui.CATEGORY_PREFIX + "Food "
+                    + Ui.DATE_PREFIX + "2025-10-10",
+            Ui.MODIFY_EXPENSE_COMMAND + " 1 "
+                    + Ui.AMOUNT_PREFIX + "-Infinity "
+                    + Ui.CATEGORY_PREFIX + "Food "
+                    + Ui.DATE_PREFIX + "2025-10-10"
+        };
+
+        for (String input : inputs) {
+            try {
+                Parser.parseModifyExpense(input);
+                fail();
+            } catch (IllegalArgumentException e) {
+                assertEquals("Amount must be finite.", e.getMessage());
+            }
+        }
+    }
+
+    /**
      * modify-expense should keep description text even when it mimics prefixes.
      */
     @Test
@@ -606,6 +666,36 @@ public class ParserTest {
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Description (des/) must be the last parameter.", e.getMessage());
+        }
+    }
+
+    /**
+     * modify-income should reject NaN or infinite amounts via the underlying add parser.
+     */
+    @Test
+    public void parseModifyIncome_nonFiniteAmount_throws() {
+        String[] inputs = {
+            Ui.MODIFY_INCOME_COMMAND + " 1 "
+                    + Ui.AMOUNT_PREFIX + "NaN "
+                    + Ui.CATEGORY_PREFIX + "Salary "
+                    + Ui.DATE_PREFIX + "2026-01-01",
+            Ui.MODIFY_INCOME_COMMAND + " 1 "
+                    + Ui.AMOUNT_PREFIX + "Infinity "
+                    + Ui.CATEGORY_PREFIX + "Salary "
+                    + Ui.DATE_PREFIX + "2026-01-01",
+            Ui.MODIFY_INCOME_COMMAND + " 1 "
+                    + Ui.AMOUNT_PREFIX + "-Infinity "
+                    + Ui.CATEGORY_PREFIX + "Salary "
+                    + Ui.DATE_PREFIX + "2026-01-01"
+        };
+
+        for (String input : inputs) {
+            try {
+                Parser.parseModifyIncome(input);
+                fail();
+            } catch (IllegalArgumentException e) {
+                assertEquals("Amount must be finite.", e.getMessage());
+            }
         }
     }
 
@@ -806,6 +896,36 @@ public class ParserTest {
         assertEquals(IncomeCategory.GIFT, income.getCategory());
         assertEquals(LocalDate.of(2025, 12, 24), income.getDate());
         assertEquals("Reordered prefixes", income.getDescription());
+    }
+
+    /**
+     * add-income should reject NaN or infinite amounts.
+     */
+    @Test
+    public void parseAddIncome_nonFiniteAmount_throws() {
+        String[] inputs = {
+            Ui.ADD_INCOME_COMMAND + " "
+                    + Ui.AMOUNT_PREFIX + "NaN "
+                    + Ui.CATEGORY_PREFIX + "Salary "
+                    + Ui.DATE_PREFIX + "2025-11-01",
+            Ui.ADD_INCOME_COMMAND + " "
+                    + Ui.AMOUNT_PREFIX + "Infinity "
+                    + Ui.CATEGORY_PREFIX + "Salary "
+                    + Ui.DATE_PREFIX + "2025-11-01",
+            Ui.ADD_INCOME_COMMAND + " "
+                    + Ui.AMOUNT_PREFIX + "-Infinity "
+                    + Ui.CATEGORY_PREFIX + "Salary "
+                    + Ui.DATE_PREFIX + "2025-11-01"
+        };
+
+        for (String input : inputs) {
+            try {
+                Parser.parseAddIncome(input);
+                fail();
+            } catch (IllegalArgumentException e) {
+                assertEquals("Amount must be finite.", e.getMessage());
+            }
+        }
     }
 
     /**
@@ -1134,6 +1254,33 @@ public class ParserTest {
         var result = Parser.parseSetBudget(input);
         assertEquals(ExpenseCategory.TRANSPORT, result.getKey());
         assertEquals(150.0, result.getValue(), 1e-9);
+    }
+
+    /**
+     * budget should reject NaN or infinite amounts.
+     */
+    @Test
+    public void parseSetBudget_nonFinite_throws() {
+        String[] inputs = {
+            Ui.BUDGET_COMMAND + " "
+                    + Ui.CATEGORY_PREFIX + "food "
+                    + Ui.AMOUNT_PREFIX + "NaN",
+            Ui.BUDGET_COMMAND + " "
+                    + Ui.CATEGORY_PREFIX + "food "
+                    + Ui.AMOUNT_PREFIX + "Infinity",
+            Ui.BUDGET_COMMAND + " "
+                    + Ui.CATEGORY_PREFIX + "food "
+                    + Ui.AMOUNT_PREFIX + "-Infinity"
+        };
+
+        for (String input : inputs) {
+            try {
+                Parser.parseSetBudget(input);
+                fail();
+            } catch (IllegalArgumentException e) {
+                assertEquals("Amount must be finite.", e.getMessage());
+            }
+        }
     }
 
     /**

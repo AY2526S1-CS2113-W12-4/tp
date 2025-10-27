@@ -227,6 +227,11 @@ final class Parser {
             throw new IllegalArgumentException("Amount must be a valid number.");
         }
 
+        if (!Double.isFinite(amount)) {
+            LOGGER.log(Level.WARNING, "Non-finite amount provided for budget command: {0}.", amount);
+            throw new IllegalArgumentException("Amount must be finite.");
+        }
+
         if (amount < 0) {
             LOGGER.log(Level.WARNING, "Negative amount provided for budget command: {0}.", amount);
             throw new IllegalArgumentException("Amount must be non-negative.");
@@ -276,6 +281,10 @@ final class Parser {
         } catch (NumberFormatException e) {
             LOGGER.log(Level.WARNING, "Invalid amount format: {0}.", amountStr);
             throw new IllegalArgumentException("Amount must be a valid number.");
+        }
+        if (!Double.isFinite(amount)) {
+            LOGGER.log(Level.WARNING, "Non-finite amount provided: {0}.", amount);
+            throw new IllegalArgumentException("Amount must be finite.");
         }
         if (amount < 0) {
             LOGGER.log(Level.WARNING, "Negative amount provided: {0}.", amount);
@@ -335,6 +344,10 @@ final class Parser {
         } catch (NumberFormatException e) {
             LOGGER.log(Level.WARNING, "Invalid amount format: {0}.", amountStr);
             throw new IllegalArgumentException("Amount must be a valid number.");
+        }
+        if (!Double.isFinite(amount)) {
+            LOGGER.log(Level.WARNING, "Non-finite amount provided: {0}.", amount);
+            throw new IllegalArgumentException("Amount must be finite.");
         }
         if (amount < 0) {
             LOGGER.log(Level.WARNING, "Negative amount provided: {0}.", amount);

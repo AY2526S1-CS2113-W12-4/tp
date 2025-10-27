@@ -85,6 +85,11 @@ public class FinanceManager {
             throw new IllegalArgumentException("Category cannot be null");
         }
 
+        if (!Double.isFinite(amount)) {
+            LOGGER.log(Level.WARNING, "setBudget called with non-finite amount: {0}", amount);
+            throw new IllegalArgumentException("Amount must be finite");
+        }
+
         if (amount < 0) {
             LOGGER.log(Level.WARNING, "setBudget called with negative amount: {0}", amount);
             throw new IllegalArgumentException("Amount cannot be negative");
