@@ -334,6 +334,64 @@ Removes an expense by its 1-based index as seen in the most recent `list-income`
   ```
 FinTrack rejects zero or negative indexes and any index larger than the number of incomes.
 
+### Modifying an expense: `modify-expense`
+
+Updates an existing expense entry at a specified index. The new entry replaces the old one and is re-sorted by date if necessary.
+
+- **Format:** `modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]`
+- **Example usage:** `modify-expense 1 a/1300 c/Rent d/2024-01-01 des/Monthly rent increased`
+- **Sample output:**
+  ```
+  Expense at index 1 modified to:
+    Amount: 1300.00
+    Category: Rent
+    Date: 2024-01-01
+    Description: Monthly rent increased
+  ```
+
+Validation notes:
+
+- Index must be a valid, existing expense index (as shown in `list-expense`).
+- All other validation rules are the same as for `add-expense`.
+- If the modification causes the category budget to be exceeded, a warning is shown.
+
+### Modifying an income: `modify-income`
+
+Updates an existing income entry at a specified index. The new entry replaces the old one and is re-sorted by date if necessary.
+
+- **Format:** `modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]`
+- **Example usage:** `modify-income 3 a/250 c/Salary d/2024-01-15 des/Extra performance bonus`
+- **Sample output:**
+  ```
+  Income at index 3 modified to:
+    Amount: 250.00
+    Category: Salary
+    Date: 2024-01-15
+    Description: Extra performance bonus
+  ```
+
+Validation notes:
+
+- Index must be a valid, existing income index (as shown in `list-income`).
+- All other validation rules are the same as for `add-income`.
+
+### Exporting your data: `export`
+
+Exports all incomes and expenses to a CSV file for use in spreadsheet applications or backups.
+
+- **Format:** `export <filepath>`
+- **Example usage:** `export financial_data.csv`
+- **Sample output:**
+  ```
+  Successfully exported data to: /path/to/financial_data.csv
+  ```
+
+Notes:
+
+- The CSV file will contain all incomes and expenses in a single table, with a `Type` column to distinguish between them.
+- The file can be opened in Excel, Google Sheets, or any compatible application.
+- If the export fails (e.g., due to permissions), an error message is shown.
+
 ### Setting budgets: `budget`
 
 Allows the user to set budgets for expense categories available.
@@ -447,6 +505,23 @@ Closes the application safely.
   ```
 
 You can also close the terminal window, but `bye` ensures the farewell message is shown.
+
+### Exporting your data: `export`
+
+Exports all incomes and expenses to a CSV file for use in spreadsheet applications or backups.
+
+- **Format:** `export <filepath>`
+- **Example usage:** `export financial_data.csv`
+- **Sample output:**
+  ```
+  Successfully exported data to: /path/to/financial_data.csv
+  ```
+
+Notes:
+
+- The CSV file will contain all incomes and expenses in a single table, with a `Type` column to distinguish between them.
+- The file can be opened in Excel, Google Sheets, or any compatible application.
+- If the export fails (e.g., due to permissions), an error message is shown.
 
 ## Error Handling
 
