@@ -31,7 +31,7 @@ How the `FinTrack` component works:
 3. The input is parsed as follows:
     - The command word (e.g. `add-expense`) is extracted using `Parser.returnFirstWord()`.
     - A `switch` statement is used to route the command word to the appropriate logic block.
-    - For commands that take no arguments (like `list`, `help` and `bye`), it uses the `hasUnexpectedArguments()` helper to validate the input before executing.
+    - For commands that take no arguments (like `help` and `bye`), it uses the `hasUnexpectedArguments()` helper to validate the input before executing.
     - For commands that take arguments (like `add-expense`, `delete-income`, `budget`), it delegates the parsing of the entire input string to the `Parser` class (e.g. `Parser.parseAddExpense(input)`).
 4. The relevant command is executed as follows:
     - If the `Parser` successfully returns a valid object (like an `Expense` or an `int`), `FinTrack` passes this object to the `FinanceManager` to perform the business logic (e.g. `fm.addExpense(expense)`).
@@ -83,7 +83,7 @@ All methods that print `Expense`, `Income`, or `ExpenseCategory` objects follow 
 
 #### List Views
 
-`printListOfIncomes(...)` and `printListOfExpenses(...)` render collections supplied by the model. Both methods iterate defensively: each entry is validated inside the loop, and malformed records are skipped with a `WARNING` log instead of aborting the entire render. Income entries are printed oldest first to match insertion order, while expenses are shown newest first to surface recent spending. Each row is wrapped with a 50-character horizontal divider to improve readability, and dates are standardised to `yyyy-MM-dd` via a local `DateTimeFormatter`.
+`printListOfIncomes(...)` and `printListOfExpenses(...)` render collections supplied by the model. Both methods iterate defensively: each entry is validated inside the loop, and malformed records are skipped with a `WARNING` log instead of aborting the entire render. Both incomes and expenses are shown newest first to surface recent cash flows. Each row is wrapped with a 80-character horizontal divider to improve readability, and dates are standardised to `yyyy-MM-dd` via a local `DateTimeFormatter`.
 
 ![img.png](images/img.png)
 
@@ -173,7 +173,7 @@ It handles the core logic for adding, deleting, and retrieving transactions, tra
     - Filtering by month is supported through `getIncomesViewForMonth(YearMonth)` and `getExpensesViewForMonth(YearMonth)`.
 
 6. **Data export**  
-   The method `exportToCSV(Path)` outputs all incomes, expenses, and a summary section into a CSV file.  
+   The method `CsvStorage.export()` outputs all incomes, expenses, and a summary section into a CSV file.  
    It automatically creates directories if they do not exist and logs each step of the export process.
 
 The sequence diagram below shows how `FinTrack` delegates an expense addition to `FinanceManager`, and how it performs budget checks and interacts with `ExpenseList`.
@@ -189,6 +189,35 @@ The sequence diagram below shows how `FinTrack` delegates an expense addition to
 ## Implementation
 
 This section describes some noteworthy details of how certain features are implemented.
+
+### Monthly Filtering (balance, list-expense, list-income)
+
+The `balance`, `list-expense`, and `list-income` commands accept an optional month filter
+so users can focus on a specific year–month window. The syntax reuses the existing
+date prefix (`d/<YYYY-MM>`), e.g. `list-expense d/2024-10`.
+
+Here is how the monthly filter works:
+
+1. In `FinTrack`, the input is routed to `Parser.parseOptionalMonthForBalance(...)`,
+   `parseOptionalMonthForExpenseList(...)`, or `parseOptionalMonthForIncomeList(...)`.
+   Each helper strips the command word, looks for a `d/` token, and when found, parses
+   it into a `YearMonth` type variable.
+2. If a month is present, `FinTrack` calls
+   `FinanceManager.getExpensesViewForMonth(...)` / `getIncomesViewForMonth(...)` (and
+   combines both for `balance`) to retrieve the filtered reverse-chronological lists;
+   otherwise the standard unfiltered views are used.
+3. `Ui.printBalance(...)`, `Ui.printListOfExpenses(...)`, and `Ui.printListOfIncomes(...)`
+   detect the supplied `YearMonth` and adjust the heading to reflect the chosen month
+   while keeping the rest of the formatting identical.
+
+#### Design Considerations
+
+- Prefix reuse: Using the existing `d/` token keeps the CLI syntax consistent across
+  commands.
+- Optional filter: Treating the month as optional preserves backward compatibility
+  with scripts and user habits.
+- Up-front validation: Parsing into `YearMonth` inside `Parser` ensures downstream logic
+  always receives a valid, normalised month value.
 
 ### Budget (`budget and list-budget`)
 
@@ -482,11 +511,11 @@ You can either use a pre-built JAR or build from source:
 
 In your terminal, run:
 ```sh
-java -jar fintrack.jar
+    java -jar fintrack.jar
 ```
 or (if built from source):
 ```sh
-java -jar build/libs/fintrack.jar
+    java -jar build/libs/fintrack.jar
 ```
 
 You should see the welcome message and prompt.

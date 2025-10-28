@@ -110,7 +110,7 @@ final class Parser {
         String v = getValue(args, prefix);
         return v == null ? "" : v;
     }
-    
+
     private static int findNextPrefixIndex(String args, int fromIndex) {
         assert args != null : "Arguments cannot be null.";
 
