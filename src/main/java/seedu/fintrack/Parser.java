@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Optional;
@@ -109,7 +110,7 @@ final class Parser {
         String v = getValue(args, prefix);
         return v == null ? "" : v;
     }
-
+    
     private static int findNextPrefixIndex(String args, int fromIndex) {
         assert args != null : "Arguments cannot be null.";
 
@@ -139,6 +140,58 @@ final class Parser {
         return next;
     }
 
+    /**
+     * Locates the first usable occurrence of a prefix in the argument string.
+     *
+     * <p>The search ignores prefix lookalikes that are embedded in descriptions by
+     * requiring the match to be at the string start or immediately preceded by whitespace.</p>
+     *
+     * @param args argument segment to scan; must not be {@code null}
+     * @param prefix prefix token to look for (e.g. {@code c/}); must not be {@code null}
+     * @return zero-based index of the first real prefix, or {@code -1} when absent
+     */
+    private static int findFirstPrefixIndex(String args, String prefix) {
+        int searchIndex = 0;
+        while (searchIndex >= 0 && searchIndex < args.length()) {
+            int idx = args.indexOf(prefix, searchIndex);
+            if (idx < 0) {
+                return -1;
+            }
+            if (isPrefixStart(args, idx)) {
+                return idx;
+            }
+            searchIndex = idx + 1;
+        }
+        return -1;
+    }
+
+    /**
+     * Verifies that {@code des/} appears after every compulsory prefix.
+     *
+     * <p>If a description token is followed by any other recognised prefix, an
+     * {@link IllegalArgumentException} is thrown so callers can surface a stable error.</p>
+     *
+     * @param args raw argument string following the command word
+     * @throws IllegalArgumentException when {@code des/} is not the final prefix
+     */
+    private static void ensureDescriptionLast(String args) {
+        int descriptionIndex = findFirstPrefixIndex(args, Ui.DESCRIPTION_PREFIX);
+        if (descriptionIndex < 0) {
+            return;
+        }
+        String[] otherPrefixes = {
+            Ui.AMOUNT_PREFIX,
+            Ui.CATEGORY_PREFIX,
+            Ui.DATE_PREFIX
+        };
+        for (String prefix : otherPrefixes) {
+            int idx = findFirstPrefixIndex(args, prefix);
+            if (idx > descriptionIndex) {
+                throw new IllegalArgumentException("Description (des/) must be the last parameter.");
+            }
+        }
+    }
+
     private static boolean isPrefixStart(String args, int index) {
         if (index < 0 || index >= args.length()) {
             return false;
@@ -147,6 +200,32 @@ final class Parser {
             return true;
         }
         return Character.isWhitespace(args.charAt(index - 1));
+    }
+
+    /**
+     * Returns the substring that follows the command literal, trimming any leading whitespace.
+     *
+     * <p>The command word itself must match exactly; everything after the first block of
+     * whitespace is preserved verbatim so downstream parsers retain the user’s spacing.</p>
+     *
+     * @param input full user input; must not be {@code null}
+     * @param commandLiteral expected command word (e.g. {@code list-expense}); must not be {@code null}
+     * @return argument portion of the input (possibly empty) with leading whitespace removed
+     * @throws IllegalArgumentException if the input does not begin with the command literal
+     */
+    private static String extractArgumentsAfterCommand(String input, String commandLiteral) {
+        Objects.requireNonNull(input, "input cannot be null");
+        Objects.requireNonNull(commandLiteral, "commandLiteral cannot be null");
+
+        if (!input.startsWith(commandLiteral)) {
+            throw new IllegalArgumentException("Invalid command. See 'help'.");
+        }
+
+        int idx = commandLiteral.length();
+        while (idx < input.length() && Character.isWhitespace(input.charAt(idx))) {
+            idx++;
+        }
+        return idx >= input.length() ? "" : input.substring(idx);
     }
 
     public static Map.Entry<ExpenseCategory, Double> parseSetBudget(String input) throws IllegalArgumentException {
@@ -176,6 +255,11 @@ final class Parser {
         } catch (NumberFormatException e) {
             LOGGER.log(Level.WARNING, "Invalid amount for budget command: {0}.", amountStr);
             throw new IllegalArgumentException("Amount must be a valid number.");
+        }
+
+        if (!Double.isFinite(amount)) {
+            LOGGER.log(Level.WARNING, "Non-finite amount provided for budget command: {0}.", amount);
+            throw new IllegalArgumentException("Amount must be finite.");
         }
 
         if (amount < 0) {
@@ -209,6 +293,8 @@ final class Parser {
             throw new IllegalArgumentException("Missing parameters. See 'help'.");
         }
 
+        ensureDescriptionLast(args);
+
         String amountStr = getValue(args, Ui.AMOUNT_PREFIX);
         String categoryString = getValue(args, Ui.CATEGORY_PREFIX);
         String dateStr = getValue(args, Ui.DATE_PREFIX);
@@ -225,6 +311,10 @@ final class Parser {
         } catch (NumberFormatException e) {
             LOGGER.log(Level.WARNING, "Invalid amount format: {0}.", amountStr);
             throw new IllegalArgumentException("Amount must be a valid number.");
+        }
+        if (!Double.isFinite(amount)) {
+            LOGGER.log(Level.WARNING, "Non-finite amount provided: {0}.", amount);
+            throw new IllegalArgumentException("Amount must be finite.");
         }
         if (amount < 0) {
             LOGGER.log(Level.WARNING, "Negative amount provided: {0}.", amount);
@@ -266,6 +356,8 @@ final class Parser {
             throw new IllegalArgumentException("Missing parameters. See 'help'.");
         }
 
+        ensureDescriptionLast(args);
+
         String amountStr = getValue(args, Ui.AMOUNT_PREFIX);
         String categoryString = getValue(args, Ui.CATEGORY_PREFIX);
         String dateStr = getValue(args, Ui.DATE_PREFIX);
@@ -282,6 +374,10 @@ final class Parser {
         } catch (NumberFormatException e) {
             LOGGER.log(Level.WARNING, "Invalid amount format: {0}.", amountStr);
             throw new IllegalArgumentException("Amount must be a valid number.");
+        }
+        if (!Double.isFinite(amount)) {
+            LOGGER.log(Level.WARNING, "Non-finite amount provided: {0}.", amount);
+            throw new IllegalArgumentException("Amount must be finite.");
         }
         if (amount < 0) {
             LOGGER.log(Level.WARNING, "Negative amount provided: {0}.", amount);
@@ -384,20 +480,10 @@ final class Parser {
 
         assert input != null : "input cannot be null";
         assert commandLiteral != null : "commandLiteral cannot be null";
-        
-        // Guard: input must be exactly the command or the command followed by a space
-        if (!input.equals(commandLiteral) && !input.startsWith(commandLiteral + " ")) {
-            LOGGER.log(Level.WARNING, 
-                       "Input does not start with expected command literal: {0}", 
-                       commandLiteral);
-            throw new IllegalArgumentException("Invalid command. See 'help'.");
-        }
 
         LOGGER.log(Level.INFO, "Parsing optional month after command: {0}", commandLiteral);
 
-        final String rest = input.length() >= commandLiteral.length()
-                ? input.substring(commandLiteral.length()).trim()
-                : "";
+        final String rest = extractArgumentsAfterCommand(input, commandLiteral);
 
         if (rest.isEmpty()) {
             LOGGER.log(Level.FINE, "No month argument detected for {0}", commandLiteral);
@@ -460,7 +546,7 @@ final class Parser {
         assert input != null : "Input for parsing modify-expense cannot be null.";
         LOGGER.log(Level.INFO, "Parsing modify-expense input: ''{0}''.", input);
 
-        String args = input.substring(Ui.MODIFY_EXPENSE_COMMAND.length()).trim();
+        String args = extractArgumentsAfterCommand(input, Ui.MODIFY_EXPENSE_COMMAND);
         if (args.isEmpty()) {
             LOGGER.log(Level.WARNING, "Missing parameters for modify-expense command.");
             throw new IllegalArgumentException(
@@ -469,16 +555,22 @@ final class Parser {
         }
 
         // Extract the index
-        int spaceIndex = args.indexOf(' ');
-        if (spaceIndex == -1) {
+        int split = -1;
+        for (int i = 0; i < args.length(); i++) {
+            if (Character.isWhitespace(args.charAt(i))) {
+                split = i;
+                break;
+            }
+        }
+        if (split == -1) {
             LOGGER.log(Level.WARNING, "Missing parameters after index in modify-expense command.");
             throw new IllegalArgumentException(
                     "Missing parameters. Usage: modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD>"
             );
         }
 
-        String indexStr = args.substring(0, spaceIndex);
-        String remainingArgs = args.substring(spaceIndex + 1);
+        String indexStr = args.substring(0, split);
+        String remainingArgs = args.substring(split).stripLeading();
 
         int index;
         try {
@@ -509,7 +601,7 @@ final class Parser {
         assert input != null : "Input for parsing modify-income cannot be null.";
         LOGGER.log(Level.INFO, "Parsing modify-income input: ''{0}''.", input);
 
-        String args = input.substring(Ui.MODIFY_INCOME_COMMAND.length()).trim();
+        String args = extractArgumentsAfterCommand(input, Ui.MODIFY_INCOME_COMMAND);
         if (args.isEmpty()) {
             LOGGER.log(Level.WARNING, "Missing parameters for modify-income command.");
             throw new IllegalArgumentException(
@@ -518,16 +610,22 @@ final class Parser {
         }
 
         // Extract the index
-        int spaceIndex = args.indexOf(' ');
-        if (spaceIndex == -1) {
+        int split = -1;
+        for (int i = 0; i < args.length(); i++) {
+            if (Character.isWhitespace(args.charAt(i))) {
+                split = i;
+                break;
+            }
+        }
+        if (split == -1) {
             LOGGER.log(Level.WARNING, "Missing parameters after index in modify-income command.");
             throw new IllegalArgumentException(
                     "Missing parameters. Usage: modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD>"
             );
         }
 
-        String indexStr = args.substring(0, spaceIndex);
-        String remainingArgs = args.substring(spaceIndex + 1);
+        String indexStr = args.substring(0, split);
+        String remainingArgs = args.substring(split).stripLeading();
 
         int index;
         try {

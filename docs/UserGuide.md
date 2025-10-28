@@ -26,7 +26,8 @@ Tip: Type `help` after launch to see every available command.
     - `c/` for category (single word or phrase without leading/trailing spaces).
     - `d/` for date in `YYYY-MM-DD` format.
     - `des/` for an optional description. If omitted, the entry has no description.
-- Parameters can be input in **any order**. For example, if `add-expense` requires the `a/<amount>`, `c/<category>` and `d/<YYYY-MM-DD>` parameters, it can be input in any order (e.g. `c/<category>`, `a/<amount>`, `d/<YYYY-MM-DD>`).
+- Compulsory parameters can be input in **any order**. For example, if `add-expense` requires the `a/<amount>`, `c/<category>` and `d/<YYYY-MM-DD>` parameters, it can be input in any order (e.g. `c/<category>`, `a/<amount>`, `d/<YYYY-MM-DD>`).
+  - However, if you include the optional description (`des/`), place it after all other parameters—everything after `des/` is treated as part of the description.
 - Dates must be valid calendar dates (for example, `2025-02-29` is invalid).
 - FinTrack keeps data only while it is running. Closing the application clears all records.
 
