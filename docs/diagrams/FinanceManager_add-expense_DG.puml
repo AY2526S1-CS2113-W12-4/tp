@@ -1,24 +1,20 @@
 @startuml
-title addExpense flow — maintaining ExpenseList
+title add-expense flow — maintaining ExpenseList
 
 actor User
-participant ":FinTrack" as FinTrack
-participant ":FinanceManager" as FM
-participant ":ExpenseList" as ExpList
-participant ":Ui" as Ui
+participant "<<class>>\n:FinTrack" as FinTrack
+participant "<<class>>\n:FinanceManager" as FM
+participant "<<class>>\n:ExpenseList" as ExpList
+participant "<<class>>\n:Ui" as Ui
 
 User -> FinTrack : enter "add-expense ..."
 FinTrack -> FM : addExpense(expense)
-activate FM
 FM -> ExpList : add(expense)
-activate ExpList
 ExpList -> ExpList : validateForUserInput(expense)\nsort newest → oldest
-ExpList --> FM : (expense stored)
-deactivate ExpList
+ExpList --> FM
 
 FM -> FM : check category budget
-FM --> FinTrack : budgetExceeded : boolean
-deactivate FM
+FM --> FinTrack : budgetExceeded = true/false
 
 FinTrack -> Ui : printExpenseAdded(expense)
 opt budgetExceeded

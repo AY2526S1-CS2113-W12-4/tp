@@ -21,8 +21,21 @@ FinTrack adopts a layered architecture that keeps user interaction, parsing, app
 This separation keeps orchestrating code small, makes the parser and logic testable in isolation, and allows future enhancements (such as a GUI or persistence layer) to be introduced without rewriting existing modules.
 
 ### FinTrack Module (`FinTrack.java`)
-
 `FinTrack` (`src/main/java/seedu/fintrack/FinTrack.java`) serves as the main entry point and the central controller of the application. It is responsible for managing the application's lifecycle and coordinating the interactions between the user interface (`Ui`), the business logic (`FinanceManager`), and the input processor (`Parser`). The `main` method executes a simple, continuous 'Read-Evaluate-Print' loop (REPL).
+
+The class diagram below captures how `FinTrack` coordinates the main components that drive the command loop, and
+how they depend on one another.
+
+![FinTrackClassDiagram.png](images/FinTrackClassDiagram.png)
+
+- `FinTrack` orchestrates the CLI loop: every iteration it invokes `Parser`, hands work to `FinanceManager`, and
+  delegates presenting feedback to `Ui`.
+    - `Parser` depends on the command prefixes declared in `Ui`, ensuring the parser and help
+      text interpret CLI syntax the same way.
+    - `Ui` centralises every user-facing token and message so other modules don't need to print directly to the console.
+    - `FinanceManager` encapsulates all business logic, exposing the operations the rest of the app calls to manipulate/query financial data.
+    - `CsvStorage` implements the `Storage` interface, handling exporting financial data to CSV format. `FinTrack` instantiates it by default when handling the `export`
+      command.
 
 How the `FinTrack` component works:
 
