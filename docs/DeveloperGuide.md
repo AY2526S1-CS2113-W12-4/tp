@@ -136,6 +136,16 @@ Alternatives considered:
 `FinanceManager` (`src/main/java/seedu/fintrack/FinanceManager.java`) is the central component that manages all financial data in FinTrack.  
 It handles the core logic for adding, deleting, and retrieving transactions, tracking budgets, and calculating summaries such as total income, total expense, and overall balance.
 
+Below is a high-level overview of how the `FinanceManager` component looks like:
+
+![financemanager_class.png](images/financemanager_class.png)
+
+`FinanceManager` serves as the core component managing all financial data. It has a composition relationship with both `IncomeList` and `ExpenseList`, meaning these list structures are integral parts of the manager and cannot exist independently. This strong ownership relationship ensures that when the `FinanceManager` is destroyed, its associated lists are destroyed as well, maintaining data integrity within the system.
+
+`IncomeList` and `ExpenseList` also demonstrate composition relationships with their respective `Income` and `Expense` objects, maintaining data integrity across the application.
+
+Several dependency and association relationships connect the classes to their respective category enumerations. `FinanceManager` depends on the `ExpenseCategory` enumeration for budget management operations, while `Income` and `Expense` each have direct associations with their corresponding category enumerations, `IncomeCategory` and `ExpenseCategory` respectively. These associations ensure that every financial transaction is properly categorised, with `Income` objects linked to categories like `SALARY, SCHOLARSHIP, INVESTMENT, and GIFT`, while `Expense` objects are associated with categories such as `FOOD, TRANSPORT, BILLS, and ENTERTAINMENT`. This categorical structure provides the foundation for organising and analysing financial data within the system.
+
 #### How the `FinanceManager` component works:
 1. **State management**  
    The class maintains three key data structures:
