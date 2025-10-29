@@ -8,7 +8,6 @@ participant ":FinanceManager" as FM
 activate FT
 FT -> UI: printWelcome()
 activate UI
-UI --> FT
 deactivate UI
 
 create FM
@@ -17,10 +16,9 @@ activate FM
 FM --> FT
 deactivate FM
 
-loop until "bye" command
-    FT -> UI: waitForInput()
-    activate UI
+loop until user types "bye"
     User -> UI: "add-expense a/10 c/food d/2025-10-12"
+    activate UI
     UI --> FT: input
     deactivate UI
 
@@ -41,10 +39,9 @@ loop until "bye" command
 
     FT -> UI: printExpenseAdded(expense)
     activate UI
-    UI --> FT
     deactivate UI
 
-    opt isOverBudget
+    opt isOverBudget == true
         FT -> FM: getTotalExpenseForCategory(category)
         activate FM
         FM --> FT
@@ -57,14 +54,12 @@ loop until "bye" command
 
         FT -> UI: printBudgetExceededWarning(...)
         activate UI
-        UI --> FT
         deactivate UI
     end
 end
 
 FT -> UI: printExit()
 activate UI
-UI --> FT
 deactivate UI
 
 deactivate FT

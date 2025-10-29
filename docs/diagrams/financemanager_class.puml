@@ -1,0 +1,63 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class FinanceManager {
+    - budgets: Map<ExpenseCategory, Double>
+    + setBudget(category: ExpenseCategory, amount: double)
+    + modifyExpense(index: int, newExpense: Expense): boolean
+    + modifyIncome(index: int, newIncome: Income)
+    + getBalance(): double
+}
+
+class Income {
+    - amount: double
+    - category: IncomeCategory
+    - date: LocalDate
+    - description: String
+}
+
+class Expense {
+    - amount: double
+    - category: ExpenseCategory
+    - date: LocalDate
+    - description: String
+}
+
+class IncomeList {
+    + add(income: Income)
+    + remove(index: int): Income
+    + asUnmodifiableView(): List<Income>
+}
+
+class ExpenseList {
+    + add(expense: Expense)
+    + remove(index: int): Expense
+    + asUnmodifiableView(): List<Expense>
+}
+
+enum ExpenseCategory {
+    FOOD
+    STUDY
+    TRANSPORT
+    BILLS
+    ENTERTAINMENT
+    RENT
+    GROCERIES
+    OTHERS
+}
+
+enum IncomeCategory {
+    SALARY
+    SCHOLARSHIP
+    INVESTMENT
+    GIFT
+}
+
+FinanceManager *--> IncomeList
+FinanceManager *--> ExpenseList
+FinanceManager ..> ExpenseCategory
+IncomeList o-- Income
+ExpenseList o-- Expense
+
+@enduml
