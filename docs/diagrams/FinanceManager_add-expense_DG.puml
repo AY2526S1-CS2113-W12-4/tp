@@ -4,7 +4,7 @@ title add-expense flow — maintaining ExpenseList
 actor User
 participant "<<class>>\n:FinTrack" as FinTrack
 participant "<<class>>\n:FinanceManager" as FM
-participant "<<class>>\n:ExpenseList" as ExpList
+participant ":ExpenseList" as ExpList
 participant "<<class>>\n:Ui" as Ui
 
 User -> FinTrack : enter "add-expense ..."
