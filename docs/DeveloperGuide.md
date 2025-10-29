@@ -10,6 +10,10 @@ This section describes the overall architecture and explores the core classes of
 
 ### Architecture
 
+![architecture.png](images/architecture.png)
+
+The Architecture Diagram above shows the high-level design of FinTrack.
+
 FinTrack adopts a layered architecture that keeps user interaction, parsing, application logic, and domain data clearly separated. The runtime flow for a typical command is:
 
 1. `Ui` prompts for input and renders all textual feedback to the user.

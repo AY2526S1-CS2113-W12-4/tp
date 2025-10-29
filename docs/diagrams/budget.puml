@@ -1,32 +1,61 @@
 @startuml
-title Set Budget, then Add Expense (Sequence)
+title FinTrack — Budget Feature (Object Diagram)
 
-actor User
-participant Ui
-participant FinTrack
-participant Parser
-participant "FinanceManager" as FM
+/'
+  Scenario:
+  1) User runs:  budget c/FOOD a/200
+  2) User runs:  add-expense a/50 c/FOOD d/2025-10-29 desc/"Lunch"
+'/
 
-== Set Budget ==
-User -> Ui: enter "budget c/<CATEGORY> a/<AMOUNT>"
-Ui --> FinTrack: onInput(command)
-FinTrack -> Parser: parseSetBudget(command)
-Parser --> FinTrack: (category, amount)
-FinTrack -> FM: setBudget(category, amount)
-FM --> FinTrack: ok
-FinTrack -> Ui: printBudgetSet(category, amount)
+/' Core runtime objects '/
+object ui         as "<u>Ui : Ui</u>"
+object parser     as "<u>Parser : Parser</u>"
+object fm         as "<u>fm : FinanceManager</u>" {
+  expenses: ExpenseList
+  budgets : Map<ExpenseCategory, Double>
+}
 
-== Add Expense ==
-User -> Ui: enter "add-expense d/<DATE> c/<CATEGORY> a/<AMOUNT> ..."
-Ui --> FinTrack: onInput(command)
-FinTrack -> Parser: parseAddExpense(command)
-Parser --> FinTrack: Expense
-FinTrack -> FM: addExpense(expense)
-FM --> FinTrack: (added, spentInCategory, budgetForCategory)
-FinTrack -> Ui: printExpenseAdded(expense)
+object expenses   as "<u>expenses : ExpenseList</u>"
+object budgets    as "<u>budgets : HashMap&lt;ExpenseCategory, Double&gt;</u>" {
+  FOOD -> 200.00
+}
 
-alt spentInCategory > budgetForCategory
-  FinTrack -> Ui: printBudgetExceededWarning(expense.category, budgetForCategory, spentInCategory)
-end
+/' Example category & value objects produced by Parser '/
+object budgetEntry as "<u>entry : Map.Entry&lt;ExpenseCategory, Double&gt;</u>" {
+  key   = FOOD
+  value = 200.00
+}
+
+object e1         as "<u>e1 : Expense</u>" {
+  amount      = 50.00
+  category    = FOOD
+  date        = 2025-10-29
+  description = "Lunch"
+}
+
+/' Object links: who holds what '/
+fm *-- expenses
+fm *-- budgets
+parser ..> budgetEntry
+ui ..> parser
+ui ..> fm
+
+/' Budget setting flow (at object level):
+   Parser returns (FOOD, 200.00); FinanceManager stores it in budgets map. '/
+budgetEntry --> budgets : setBudget(key,value)
+
+/' Adding an expense (object placement into list) '/
+e1 --> expenses : addExpense(e1)
+
+/' Budget check semantics (captured as a note on fm):
+   On fm.addExpense(e):
+   - look up b = budgets.get(e.category)
+   - if b exists and totalBefore<=b and (totalBefore + e.amount) > b
+       => trigger budget exceeded alert
+'/
+
+
+/' Visual emphasis: budgets belongs to fm '/
+fm -[hidden]-> budgets
 
 @enduml
