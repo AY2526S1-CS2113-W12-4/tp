@@ -2,16 +2,12 @@
 title Sequence for one successful call of "summary-expense"
 
 actor User
-participant "FinTrack\n(dispatcher)" as FinTrack
-participant "FinanceManager" as FM
-participant "Ui" as Ui
+participant ":FinTrack" as FinTrack
+participant ":FinanceManager" as FM
+participant ":Ui" as Ui
 
 User -> FinTrack: Enter command "summary-expense"
 activate FinTrack
-
-note right of FinTrack
-Parses input and ensures there are no extra arguments.
-end note
 
 FinTrack -> FM: getExpenseByCategory()
 activate FM
@@ -39,10 +35,10 @@ else
   Ui -> Ui: print "Your most spent on category is: " + topCategory
 end
 Ui -> Ui: print footer line
-Ui --> FinTrack: done
+Ui --> FinTrack
 deactivate Ui
 
-FinTrack --> User: Command completes
+FinTrack --> User
 deactivate FinTrack
 
 @enduml

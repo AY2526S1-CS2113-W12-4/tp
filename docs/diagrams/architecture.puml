@@ -1,0 +1,24 @@
+@startuml
+title FinTrack
+
+actor User
+
+rectangle FinTrack
+rectangle Ui
+rectangle Parser
+rectangle FinanceManager
+rectangle Model
+rectangle Storage
+
+User --> Ui
+
+FinTrack --> Ui
+FinTrack --> Parser
+FinTrack --> FinanceManager
+
+Parser --> Ui
+
+FinanceManager <-- Model
+FinanceManager --> Storage
+
+@enduml
