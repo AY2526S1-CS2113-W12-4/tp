@@ -8,7 +8,6 @@ skinparam boxpadding 30
 participant ":FinTrack"
 participant ":Parser"
 
-activate ":Parser"
 ":FinTrack" -> ":Parser" : parseAddExpense("... a/10 c/food d/...")
 
 ' --- Argument Parsing --- '
@@ -29,5 +28,4 @@ end note
 ":Parser" -> ":Parser" : new Expense(10.0, category, date, "")
 
 ":Parser" --> ":FinTrack" : expense:Expense
-deactivate ":Parser"
 @enduml

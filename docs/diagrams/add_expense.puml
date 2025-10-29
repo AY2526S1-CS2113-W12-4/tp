@@ -7,34 +7,65 @@ participant ":FinanceManager" as FM
 
 activate FT
 FT -> UI: printWelcome()
+activate UI
+UI --> FT
+deactivate UI
 
 create FM
 FT -> FM: new FinanceManager()
+activate FM
+FM --> FT
+deactivate FM
 
 loop until "bye" command
     FT -> UI: waitForInput()
+    activate UI
     User -> UI: "add-expense a/10 c/food d/2025-10-12"
     UI --> FT: input
+    deactivate UI
 
     FT -> P: returnFirstWord(input)
+    activate P
     P --> FT: "add-expense"
+    deactivate P
 
     FT -> P: parseAddExpense(input)
+    activate P
     P --> FT: expense
+    deactivate P
 
     FT -> FM: addExpense(expense)
+    activate FM
     FM --> FT: isOverBudget
+    deactivate FM
 
     FT -> UI: printExpenseAdded(expense)
+    activate UI
+    UI --> FT
+    deactivate UI
 
     opt isOverBudget
         FT -> FM: getTotalExpenseForCategory(category)
+        activate FM
+        FM --> FT
+        deactivate FM
+
         FT -> FM: getBudgetForCategory(category)
+        activate FM
+        FM --> FT
+        deactivate FM
+
         FT -> UI: printBudgetExceededWarning(...)
+        activate UI
+        UI --> FT
+        deactivate UI
     end
 end
 
 FT -> UI: printExit()
+activate UI
+UI --> FT
+deactivate UI
 
 deactivate FT
 @enduml
