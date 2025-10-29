@@ -3,19 +3,11 @@ hide circle
 skinparam classAttributeIconSize 0
 
 class FinanceManager {
-    - incomes: IncomeList
-    - expenses: ExpenseList
     - budgets: Map<ExpenseCategory, Double>
-    + addIncome(income: Income)
-    + addExpense(expense: Expense): boolean
     + setBudget(category: ExpenseCategory, amount: double)
-    + deleteExpense(index: int): Expense
-    + deleteIncome(index: int): Income
     + modifyExpense(index: int, newExpense: Expense): boolean
     + modifyIncome(index: int, newIncome: Income)
     + getBalance(): double
-    + getExpensesView(): List<Expense>
-    + getIncomesView(): List<Income>
 }
 
 class Income {
@@ -23,10 +15,6 @@ class Income {
     - category: IncomeCategory
     - date: LocalDate
     - description: String
-    + getAmount(): double
-    + getCategory(): IncomeCategory
-    + getDate(): LocalDate
-    + getDescription(): String
 }
 
 class Expense {
@@ -34,25 +22,17 @@ class Expense {
     - category: ExpenseCategory
     - date: LocalDate
     - description: String
-    + getAmount(): double
-    + getCategory(): ExpenseCategory
-    + getDate(): LocalDate
-    + getDescription(): String
 }
 
 class IncomeList {
     + add(income: Income)
     + remove(index: int): Income
-    + get(index: int): Income
-    + size(): int
     + asUnmodifiableView(): List<Income>
 }
 
 class ExpenseList {
     + add(expense: Expense)
     + remove(index: int): Expense
-    + get(index: int): Expense
-    + size(): int
     + asUnmodifiableView(): List<Expense>
 }
 
@@ -74,8 +54,8 @@ enum IncomeCategory {
     GIFT
 }
 
-FinanceManager *-- IncomeList
-FinanceManager *-- ExpenseList
+FinanceManager *--> IncomeList
+FinanceManager *--> ExpenseList
 FinanceManager ..> ExpenseCategory
 IncomeList o-- Income
 ExpenseList o-- Expense
