@@ -2,9 +2,9 @@
 title Sequence for one successful call of "summary-expense"
 
 actor User
-participant "FinTrack\n(dispatcher)" as FinTrack
-participant "FinanceManager" as FM
-participant "Ui" as Ui
+participant ":FinTrack" as FinTrack
+participant ":FinanceManager" as FM
+participant ":Ui" as Ui
 
 User -> FinTrack: Enter command "summary-expense"
 activate FinTrack
