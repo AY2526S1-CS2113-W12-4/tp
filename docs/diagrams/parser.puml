@@ -5,29 +5,29 @@ skinparam roundcorner 10
 skinparam participantpadding 5
 skinparam boxpadding 30
 
-participant FinTrack
-participant Parser
+participant ":FinTrack"
+participant ":Parser"
 
-activate Parser
-FinTrack -> Parser : parseAddExpense("... a/10 c/food d/...")
+activate ":Parser"
+":FinTrack" -> ":Parser" : parseAddExpense("... a/10 c/food d/...")
 
 ' --- Argument Parsing --- '
-Parser -> Parser : args = input.substring(...)
-Parser -> Parser : amountStr = getValue(args, "a/")
-Parser -> Parser : categoryStr = getValue(args, "c/")
-Parser -> Parser : dateStr = getValue(args, "d/")
-Parser -> Parser : desc = getOptionalValue(args, "des/")
+":Parser" -> ":Parser" : args = input.substring(...)
+":Parser" -> ":Parser" : amountStr = getValue(args, "a/")
+":Parser" -> ":Parser" : categoryStr = getValue(args, "c/")
+":Parser" -> ":Parser" : dateStr = getValue(args, "d/")
+":Parser" -> ":Parser" : desc = getOptionalValue(args, "des/")
 
 ' --- Validation and Construction --- '
-note right of Parser
+note right of ":Parser"
     Performs type conversions:
     - Double.parseDouble("10")
     - ExpenseCategory.parse("food")
     - LocalDate.parse("2025-10-22")
 end note
 
-Parser -> Parser : new Expense(10.0, category, date, "")
+":Parser" -> ":Parser" : new Expense(10.0, category, date, "")
 
-Parser --> FinTrack : expense:Expense
-deactivate Parser
+":Parser" --> ":FinTrack" : expense:Expense
+deactivate ":Parser"
 @enduml
