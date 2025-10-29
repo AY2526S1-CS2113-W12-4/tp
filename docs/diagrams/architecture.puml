@@ -16,9 +16,7 @@ FinTrack --> Ui
 FinTrack --> Parser
 FinTrack --> FinanceManager
 
-Ui --> Parser
-Parser --> FinanceManager
-FinanceManager --> Ui
+Parser --> Ui
 
 FinanceManager <-- Model
 FinanceManager --> Storage
