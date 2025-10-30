@@ -295,7 +295,7 @@ public class FinTrackTest {
         mustContain(s, "Budget set for ENTERTAINMENT: $10.00");
         mustContain(s, "Expense at index 1 modified to:");
         mustContain(s, "Income at index 1 modified to:");
-        mustContain(s, "Error: Missing parameters.");
+        mustContain(s, "Error: Missing index.");
         mustContain(s, "Error: Income index must be a positive number.");
         mustContain(s, "Error: Income index must be a valid number.");
     }
