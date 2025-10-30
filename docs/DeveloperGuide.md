@@ -88,6 +88,10 @@ Why `FinTrack` was implemented this way:
 
 ### Ui Module (`Ui.java`)
 
+![UiClassDiagram.png](images/UiClassDiagram.png)
+
+The class diagram highlights how the static `Ui` utility coordinates with key collaborators. `TipsStorage` is owned by `Ui` for retrieving contextual tips, while `Expense`, `Income`, and their category enums are passed in from the model so renderer helpers can format domain objects without duplicating business logic.
+
 #### Console Basics
 `Ui` (`src/main/java/seedu/fintrack/Ui.java`) is the single entry point for all console interaction in FinTrack. The class is intentionally static: it exposes command keywords, reads raw user input, and renders every message shown to the user without requiring an object to be instantiated. This keeps the rest of the application (parser, command executors, and model layer) free from I/O concerns while guaranteeing that the console state is mutated from a single place.
 
@@ -97,7 +101,7 @@ All canonical command phrases and parameter prefixes (`HELP_COMMAND`, `ADD_EXPEN
 #### Reading User Input
 `waitForInput()` owns the blocking read from `System.in` via a shared `Scanner`. The method prints a consistent `> ` prompt, trims whitespace, and returns an empty string when the user simply presses enter. If the input stream is closed or the scanner encounters an illegal state, the method logs the failure (`SEVERE`) and returns `EXIT_COMMAND`; this sentinel gives the caller a deterministic way to trigger a graceful shutdown without duplicating exception handling logic. Unexpected runtime exceptions are rethrown after being logged so they can be surfaced during development.
 
-![img_1.png](images/img_1.png)
+![UiInputCycle.png](images/UiInputCycle.png)
 
 #### Output Formatters
 
@@ -116,8 +120,6 @@ All methods that print `Expense`, `Income`, or `ExpenseCategory` objects follow 
 #### List Views
 
 `printListOfIncomes(...)` and `printListOfExpenses(...)` render collections supplied by the model. Both methods iterate defensively: each entry is validated inside the loop, and malformed records are skipped with a `WARNING` log instead of aborting the entire render. Both incomes and expenses are shown newest first to surface recent cash flows. Each row is wrapped with a 80-character horizontal divider to improve readability, and dates are standardised to `yyyy-MM-dd` via a local `DateTimeFormatter`.
-
-![img.png](images/img.png)
 
 #### Logging and Diagnostics
 
