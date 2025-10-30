@@ -301,7 +301,7 @@ public class FinTrackTest {
     }
 
     @Test
-    void exportSuccessAndBadPath() throws Exception {
+    void exportSuccessAndAutoCreateDirectories() throws Exception {
         java.nio.file.Path tmp = java.nio.file.Files.createTempFile("fintrack_export_", ".csv");
         String bad = "nonexistent_dir" + java.io.File.separator + "out";
         String script = String.join("\n",
@@ -313,7 +313,8 @@ public class FinTrackTest {
         String s = run(script);
         mustContain(s, "Successfully exported data to:");
         assertTrue(java.nio.file.Files.exists(tmp));
-        mustContain(s, "Error: The directory '");
+        mustContain(s, "Successfully exported data to:");
+        assertTrue(java.nio.file.Files.exists(java.nio.file.Path.of(bad + ".csv")));
     }
 
     @Test
