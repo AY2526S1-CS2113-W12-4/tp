@@ -1,8 +1,26 @@
 # Developer Guide
 
+## Table of Contents
+- [Acknowledgements](#acknowledgements)
+- [Design](#design)
+    - [Architecture](#architecture)
+    - [FinTrack Module](#fintrack-module-fintrackjava)
+    - [Ui Module](#ui-module-uijava)
+    - [Parser Module](#parser-module-parserjava)
+    - [FinanceManager Module](#financemanager-module-financemanagerjava)
+- [Implementation](#implementation)
+  - [Feature: Monthly Filtering](#monthly-filtering-balance-list-expense-list-income)
+  - [Feature: Budget](#budget-budget-and-list-budget)
+  - [Feature: Summary](#summary-summary-expense-and-summary-income)
+  - [Feature: Export](#export-export)
+  - [Feature: Modify](#modify-modify-expense-and-modify-income)
+- [Appendix A: Product Scope](#appendix-a-product-scope)
+- [Appendix B: User Stories](#appendix-b-user-stories)
+- [Appendix C: Non-Functional Requirements](#appendix-c-non-functional-requirements)
+- [Appendix D: Glossary](#appendix-d-glossary)
+- [Appendix E: Instructions for Manual Testing](#appendix-e-instructions-for-manual-testing)
 ## Acknowledgements
 
-{list here sources of all reused/adapted ideas, code, documentation, and third-party libraries -- include links to the original source as well}
 We would like to thank our TA, Chen Siyu, and the rest of the CS2113 teaching team for their hard work and guidance!
 
 ## Design
