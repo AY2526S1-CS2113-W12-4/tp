@@ -736,7 +736,7 @@ public class Ui {
         System.out.println("2. Add an income:");
         System.out.println("   " + ADD_INCOME_COMMAND + " a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
         System.out.println("   Example: add-income a/2000 c/Salary d/2025-10-01 des/Monthly pay");
-        System.out.println("   Available categories: SALARY, SCHOLARSHIP, INVESTMENT, GIFT");
+        System.out.println("   Available categories: SALARY, SCHOLARSHIP, INVESTMENT, GIFT, OTHERS");
 
         System.out.println();
         System.out.println("3. View all expenses (from latest to earliest date):");
