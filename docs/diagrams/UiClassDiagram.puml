@@ -1,0 +1,42 @@
+@startuml UiClassDiagram
+hide circle
+skinparam classAttributeIconSize 0
+skinparam stereotypeFontStyle normal
+skinparam class {
+  BackgroundColor<<static>> #F2F2F2
+  BorderColor<<static>> #666666
+  StereotypeFontStyle normal
+}
+title Ui Module Responsibilities
+
+class Ui <<static>> {
+  -{static} uiScanner : Scanner
+  -{static} LOGGER : Logger
+  -{static} TIPS : TipsStorage
+  --
+  +{static} waitForInput() : String
+  +{static} printWelcome() : void
+  +{static} printError(message : String) : void
+  +{static} printListOfExpenses(expenses : List<Expense>) : void
+  +{static} printListOfIncomes(incomes : List<Income>) : void
+  +{static} printBalance(totalIncome : double, totalExpense : double, month : YearMonth) : void
+  +{static} printBudgetSet(category : ExpenseCategory, amount : double) : void
+  +{static} printTips() : void
+}
+
+class TipsStorage {
+  +getRandomTip() : String
+}
+
+class Expense
+class Income
+enum ExpenseCategory
+enum IncomeCategory
+
+Ui *-- TipsStorage : owns
+Ui ..> Expense : formats
+Ui ..> Income : formats
+Ui ..> ExpenseCategory : uses
+Ui ..> IncomeCategory : uses
+
+@enduml

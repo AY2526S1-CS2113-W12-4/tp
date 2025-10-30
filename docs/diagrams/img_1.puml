@@ -1,4 +1,5 @@
 @startuml UiExpenseListing
+skinparam stereotypeFontStyle normal
 skinparam participant {
   BackgroundColor<<static>> #F2F2F2
   BorderColor<<static>> #666666

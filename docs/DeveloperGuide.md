@@ -98,7 +98,9 @@ All methods that print `Expense`, `Income`, or `ExpenseCategory` objects follow 
 
 `printListOfIncomes(...)` and `printListOfExpenses(...)` render collections supplied by the model. Both methods iterate defensively: each entry is validated inside the loop, and malformed records are skipped with a `WARNING` log instead of aborting the entire render. Both incomes and expenses are shown newest first to surface recent cash flows. Each row is wrapped with a 80-character horizontal divider to improve readability, and dates are standardised to `yyyy-MM-dd` via a local `DateTimeFormatter`.
 
-![img_1.png](images/img_1.png)
+![UiClassDiagram.png](images/UiClassDiagram.png)
+
+The class diagram highlights how the static `Ui` utility coordinates with key collaborators. `TipsStorage` is owned by `Ui` for retrieving contextual tips, while `Expense`, `Income`, and their category enums are passed in from the model so renderer helpers can format domain objects without duplicating business logic.
 
 #### Logging and Diagnostics
 
