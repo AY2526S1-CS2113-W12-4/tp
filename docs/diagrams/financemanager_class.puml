@@ -36,7 +36,7 @@ class ExpenseList {
     + asUnmodifiableView(): List<Expense>
 }
 
-enum ExpenseCategory {
+class ExpenseCategory <<enumeration>> {
     FOOD
     STUDY
     TRANSPORT
@@ -47,11 +47,12 @@ enum ExpenseCategory {
     OTHERS
 }
 
-enum IncomeCategory {
+class IncomeCategory <<enumeration>> {
     SALARY
     SCHOLARSHIP
     INVESTMENT
     GIFT
+    OTHERS
 }
 
 FinanceManager *--> IncomeList

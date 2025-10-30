@@ -23,7 +23,7 @@ Tip: Type `help` after launch to see every available command.
 - Commands are **case-sensitive**. Use lowercase as shown in this guide (e.g., `add-expense`, not `Add-Expense`).
 - Parameters use prefixes:
     - `a/` for amount (non-negative number, decimals allowed).
-    - `c/` for category (single word or phrase without leading/trailing spaces).
+    - `c/` for category (must be from the valid list of categories).
     - `d/` for date in `YYYY-MM-DD` format.
     - `des/` for an optional description. If omitted, the entry has no description.
 - Compulsory parameters can be input in **any order**. For example, if `add-expense` requires the `a/<amount>`, `c/<category>` and `d/<YYYY-MM-DD>` parameters, it can be input in any order (e.g. `c/<category>`, `a/<amount>`, `d/<YYYY-MM-DD>`).
@@ -135,7 +135,7 @@ Creates a new expense. Expenses are automatically sorted so the newest date appe
   ```
   Expense added:
     Amount: 12.50
-    Category: Food
+    Category: FOOD
     Date: 2025-10-08
     Description: Lunch with friends
   ```
@@ -165,7 +165,7 @@ Records income that contributes to your balance.
   ```
   Income added:
     Amount: 3200.00
-    Category: Salary
+    Category: SALARY
     Date: 2025-10-01
     Description: October salary
   ```
@@ -192,13 +192,13 @@ Shows every expense in reverse chronological order (newest first) with numbered 
   #1
   Date: 2025-10-11
   Amount: $42.00
-  Category: Groceries
+  Category: GROCERIES
   Description: Weekly shop
   --------------------------------------------------
   #2
   Date: 2025-10-08
   Amount: $12.50
-  Category: Food
+  Category: FOOD
   Description: Lunch with friends
   --------------------------------------------------
   ```
@@ -238,13 +238,13 @@ Shows every income in reverse chronological order (newest first) with numbered e
   #1
   Date: 2025-10-15
   Amount: $500.00
-  Category: Freelance
+  Category: SALARY
   Description: Design project
   --------------------------------------------------
   #2
   Date: 2025-10-01
   Amount: $3200.00
-  Category: Salary
+  Category: SALARY
   Description: October salary
   --------------------------------------------------
   ```
@@ -260,7 +260,7 @@ For example, `list-income d/2025-12` lists only incomes recorded in **December 2
 - **Sample output:**
 
     ```
-    Incomes for the month 2025-10 (Newest first):
+    Incomes for the month 2025-12 (Newest first):
     --------------------------------------------------
     #1
     Date: 2025-12-01
@@ -294,8 +294,7 @@ For example, `balance d/2025-01` displays the total income, expenses, and balanc
 - **Sample output:**
 
     ```
-    Overall Balance for the month 2025-01:
-    Overall Balance: 3158.00
+    Overall Balance for the month 2025-01: 3158.00
     Total Income: 3200.00
     Total Expense: 42.00
     ```
@@ -311,7 +310,7 @@ Removes an expense by its 1-based index as seen in the most recent `list-expense
   ```
   Expense deleted (index 2):
     Amount: 12.50
-    Category: Food
+    Category: FOOD
     Date: 2025-10-08
     Description: Lunch with friends
   ```
@@ -329,7 +328,7 @@ Removes an expense by its 1-based index as seen in the most recent `list-income`
   ```
   Income deleted (index 1):
     Amount: 3200.00
-    Category: Salary
+    Category: SALARY
     Date: 2025-10-01
     Description: October salary
   ```
@@ -345,7 +344,7 @@ Updates an existing expense entry at a specified index. The new entry replaces t
   ```
   Expense at index 1 modified to:
     Amount: 1300.00
-    Category: Rent
+    Category: RENT
     Date: 2024-01-01
     Description: Monthly rent increased
   ```
@@ -366,7 +365,7 @@ Updates an existing income entry at a specified index. The new entry replaces th
   ```
   Income at index 3 modified to:
     Amount: 250.00
-    Category: Salary
+    Category: SALARY
     Date: 2024-01-15
     Description: Extra performance bonus
   ```
@@ -548,8 +547,8 @@ A: No. FinTrack currently requires ISO format `YYYY-MM-DD`.
 **Q: How can I review transactions for a specific month?**  
 A: Use the optional month filter on incomes (`list-income d/<YYYY-MM>`).
 
-**Q: Can categories or descriptions include spaces?**  
-A: Yes. Everything following a prefix is read until the next prefix, so `c/Office Supplies` and `des/New laptop bag` both work.
+**Q: Can descriptions include spaces?**  
+A: Yes. However, descriptions must be the last argument declared, as `des/` will consume the rest of the line.
 
 **Q: Why was my date rejected even though it looks correct?**  
 A: Ensure the date is valid on the calendar and in `YYYY-MM-DD` format.
@@ -574,6 +573,7 @@ A: Ensure the date is valid on the calendar and in `YYYY-MM-DD` format.
 | `summary-expense`          | `summary-expense`                                                        | `summary-expense`                                            |
 | `summary-income`           | `summary-income`                                                         | `summary-income`                                             |
 | `tips`                     | `tips`                                                                   | `tips`                                                       |
+| `export`                   | `export <filepath>`                                                      | `export financial_data.csv`                                  |
 | `bye`                      | `bye`                                                                    | `bye`                                                        |
 
 Stay tuned to the project repository for upcoming enhancements such as persistent storage and advanced summaries.
