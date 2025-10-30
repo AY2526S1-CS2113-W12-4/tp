@@ -674,16 +674,7 @@ final class Parser {
                 path = Paths.get(args + ".csv");
             }
 
-            // Ensure parent directory exists
-            Path parentDir = path.getParent();
-            if (parentDir != null && !java.nio.file.Files.exists(parentDir)) {
-                LOGGER.log(Level.WARNING, "Parent directory does not exist: {0}", parentDir);
-                throw new IllegalArgumentException(
-                        "The directory '" +
-                        parentDir +
-                        "' does not exist. Please create it first or choose a different location."
-                );
-            }
+            // Note: Parent directories will be automatically created by CsvStorage if needed
 
             return path.toAbsolutePath().normalize();
         } catch (InvalidPathException e) {
