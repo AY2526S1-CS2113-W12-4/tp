@@ -3,6 +3,7 @@
 ## Acknowledgements
 
 {list here sources of all reused/adapted ideas, code, documentation, and third-party libraries -- include links to the original source as well}
+We would like to thank our TA, Chen Siyu, and the rest of the CS2113 teaching team for their hard work and guidance!
 
 ## Design
 
