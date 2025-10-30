@@ -1,8 +1,27 @@
 # Developer Guide
 
+## Table of Contents
+- [Acknowledgements](#acknowledgements)
+- [Design](#design)
+    - [Architecture](#architecture)
+    - [FinTrack Module](#fintrack-module-fintrackjava)
+    - [Ui Module](#ui-module-uijava)
+    - [Parser Module](#parser-module-parserjava)
+    - [FinanceManager Module](#financemanager-module-financemanagerjava)
+- [Implementation](#implementation)
+  - [Feature: Monthly Filtering](#monthly-filtering-balance-list-expense-list-income)
+  - [Feature: Budget](#budget-budget-and-list-budget)
+  - [Feature: Summary](#summary-summary-expense-and-summary-income)
+  - [Feature: Export](#export-export)
+  - [Feature: Modify](#modify-modify-expense-and-modify-income)
+- [Appendix A: Product Scope](#appendix-a-product-scope)
+- [Appendix B: User Stories](#appendix-b-user-stories)
+- [Appendix C: Non-Functional Requirements](#appendix-c-non-functional-requirements)
+- [Appendix D: Glossary](#appendix-d-glossary)
+- [Appendix E: Instructions for Manual Testing](#appendix-e-instructions-for-manual-testing)
 ## Acknowledgements
 
-{list here sources of all reused/adapted ideas, code, documentation, and third-party libraries -- include links to the original source as well}
+We would like to thank our TA, Chen Siyu, and the rest of the CS2113 teaching team for their hard work and guidance!
 
 ## Design
 
@@ -413,7 +432,7 @@ Below is a sequence diagram illustrating the `modify-income` flow:
     - "Index out of range. Valid range: 1 to N" when the index is invalid
     - Helps users understand exactly what went wrong
 
-## Product scope
+## Appendix A: Product scope
 
 ### Target user profile
 
@@ -438,7 +457,7 @@ It lets you capture expenses and income in seconds, set custom categorical budge
 #### Outcome
 Manage day-to-day expenses and budgets with optimal efficiency, stay on top of good deals and the latest money-savvy tips and hacks, and make smarter money decisions—without the bloat of mobile apps or the friction of a mouse.
 
-## User Stories
+## Appendix B: User Stories
 
 | Priority | As a ... | I want to ... | So that I can ... |
 |----------|----------|---------------|--------------------|
@@ -455,7 +474,7 @@ Manage day-to-day expenses and budgets with optimal efficiency, stay on top of g
 | * * | FinTrack treasurer preparing a reimbursement report | export all transactions to CSV | share a clean spending report with supervisors without rewriting data |
 
 
-## Non-Functional Requirements
+## Appendix C: Non-Functional Requirements
 
 ### Performance
 - **Responsiveness**: All commands must provide feedback to the user (either a result or an error message) in under 1 second, assuming a data set of up to 10,000 entries (incomes + expenses). This ensures the CLI application feels instantaneous.
@@ -483,7 +502,7 @@ Manage day-to-day expenses and budgets with optimal efficiency, stay on top of g
 - **Local Data**: All user data is stored in-memory during runtime and is never transmitted over any network.
 - **File Access**: The application must only interact with the file system when explicitly requested by the user (e.g., via the `export` command) and must handle SecurityException if it lacks permission to write to a specified path.
 
-## Glossary
+## Appendix D: Glossary
 - _**Command word**_: First token that selects a feature (e.g., list-income).
 - _**Prefix**_: Short tag before a value that specifies the argument (e.g., a/12.50, c/FOOD, d/2025-10-08, des/Lunch).
 - _**Category**_: Enum describing type (Expense: FOOD, STUDY, …; Income: SALARY, …).
@@ -493,7 +512,7 @@ Manage day-to-day expenses and budgets with optimal efficiency, stay on top of g
 - _**Budget**_: Per-category expense limit; warnings shown when exceeded.
 - _**Balance**_: Net amount (income − expense).
 
-## Instructions for manual testing
+## Appendix E: Instructions for manual testing
 
 Follow these steps to manually test FinTrack and verify its features:
 
