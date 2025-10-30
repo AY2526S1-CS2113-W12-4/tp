@@ -78,7 +78,7 @@ All canonical command phrases and parameter prefixes (`HELP_COMMAND`, `ADD_EXPEN
 #### Reading User Input
 `waitForInput()` owns the blocking read from `System.in` via a shared `Scanner`. The method prints a consistent `> ` prompt, trims whitespace, and returns an empty string when the user simply presses enter. If the input stream is closed or the scanner encounters an illegal state, the method logs the failure (`SEVERE`) and returns `EXIT_COMMAND`; this sentinel gives the caller a deterministic way to trigger a graceful shutdown without duplicating exception handling logic. Unexpected runtime exceptions are rethrown after being logged so they can be surfaced during development.
 
-![img_1.png](images/img_1.png)
+![UiInputCycle.png](images/UiInputCycle.png)
 
 #### Output Formatters
 
@@ -98,7 +98,7 @@ All methods that print `Expense`, `Income`, or `ExpenseCategory` objects follow 
 
 `printListOfIncomes(...)` and `printListOfExpenses(...)` render collections supplied by the model. Both methods iterate defensively: each entry is validated inside the loop, and malformed records are skipped with a `WARNING` log instead of aborting the entire render. Both incomes and expenses are shown newest first to surface recent cash flows. Each row is wrapped with a 80-character horizontal divider to improve readability, and dates are standardised to `yyyy-MM-dd` via a local `DateTimeFormatter`.
 
-![img.png](images/img.png)
+![img_1.png](images/img_1.png)
 
 #### Logging and Diagnostics
 
