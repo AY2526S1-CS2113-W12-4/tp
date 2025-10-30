@@ -113,6 +113,17 @@ public class FinTrackTest {
     }
 
     @Test
+    void nonAsciiInput_rejectedWithError() throws Exception {
+        String script = String.join("\n",
+                "add-income a/200 c/Salary d/2025-10-01 des/\u5348\u9910",
+                "bye");
+        String s = run(script);
+        mustContain(s, "Error: Unsupported characters detected. Please use standard ASCII text only.");
+        mustNotContain(s, "Income added:");
+        mustContain(s, "Bye. Hope to see you again soon!");
+    }
+
+    @Test
     void addIncome_andBalance() throws Exception {
         String script = String.join("\n",
                 "add-income a/2000 c/Salary d/2025-10-01 des/Pay",

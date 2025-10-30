@@ -486,6 +486,7 @@ Manage day-to-day expenses and budgets with optimal efficiency, stay on top of g
 - **Error Feedback**: The application must never crash on invalid user input. All user errors (e.g., bad command syntax, invalid dates, non-numeric amounts) must be caught and reported with a clear, actionable error message via `Ui.printError()`.
 - **Learnability**: The command syntax must be consistent. All commands that take arguments must use the prefix-based system (e.g., `a/`, `c/`, `d/`) to minimise the user's cognitive load.
 - **Guidance**: A comprehensive `help` command must be available to list all available commands and their syntax.
+- **Input Encoding**: The CLI accepts ASCII characters only. Any Unicode input outside the ASCII range is rejected with a validation error before parsing.
 
 ### Maintainability
 - **Separation of Concerns (SoC)**: The architecture must strictly enforce SoC.
