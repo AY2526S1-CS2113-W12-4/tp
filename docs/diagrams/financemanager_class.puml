@@ -1,5 +1,6 @@
 @startuml
 hide circle
+skinparam classStereotypeFontStyle normal
 skinparam classAttributeIconSize 0
 
 class FinanceManager {
