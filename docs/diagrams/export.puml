@@ -6,57 +6,28 @@ participant ":FinanceManager" as FM
 participant ":Ui" as UI
 
 FT -> UI: waitForInput()
-activate FT
 UI --> FT: "export data.csv"
 
 FT -> P: returnFirstWord(input)
 P --> FT: "export"
 
-FT -> FT: switch(commandWord)
-
-note right of FT: Handle EXPORT_COMMAND
-
 FT -> P: parseExport(input)
-activate P
 P -> P: validate path format
 P -> P: ensure .csv extension
 P --> FT: exportPath
-deactivate P
 
 create CS
 FT -> CS: new CsvStorage()
 
 FT -> FM: getIncomesView()
-activate FM
-FM --> FT: incomes (List<Income>)
-deactivate FM
-
 FT -> FM: getExpensesView()
-activate FM
-FM --> FT: expenses (List<Expense>)
-deactivate FM
-
 FT -> FM: getTotalIncome()
-activate FM
-FM --> FT: totalIncome (double)
-deactivate FM
-
 FT -> FM: getTotalExpense()
-activate FM
-FM --> FT: totalExpense (double)
-deactivate FM
-
 FT -> FM: getBalance()
-activate FM
-FM --> FT: balance (double)
-deactivate FM
 
 FT -> CS: export(exportPath, incomes, expenses,\ntotalIncome, totalExpense, balance)
-activate CS
 
 CS -> CS: createDirectories(parentDir)
-
-note right of CS: Write CSV header:\nType,Date,Amount,Category,Description
 
 loop for each income
     CS -> CS: writeIncomeLine(income)
@@ -69,21 +40,10 @@ end
 CS -> CS: writeSummarySection(totalIncome,\ntotalExpense, balance)
 
 CS --> FT: success
-deactivate CS
 
 FT -> UI: printExportSuccess(exportPath)
 
-opt IOException
-    FT -> UI: printError("Failed to write the file: " + message)
-end
-
-opt SecurityException
-    FT -> UI: printError("Permission denied...")
-end
-
-opt IllegalArgumentException
+group Exception Handling
     FT -> UI: printError(message)
 end
-
-deactivate FT
 @enduml
