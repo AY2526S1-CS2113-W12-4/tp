@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDate;
 import java.util.Locale;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -85,9 +86,10 @@ public class FinTrackTest {
     }
 
     private String run(String script) throws Exception {
-        System.setIn(new java.io.ByteArrayInputStream(script.getBytes()));
+        byte[] bytes = script.getBytes(StandardCharsets.UTF_8);
+        System.setIn(new java.io.ByteArrayInputStream(bytes));
         // bind Ui's scanner to current System.in
-        Ui.test_setScanner(new java.util.Scanner(System.in));
+        Ui.test_setScanner(new java.util.Scanner(System.in, StandardCharsets.UTF_8.name()));
         FinTrack.main(new String[0]);
         return out();
     }

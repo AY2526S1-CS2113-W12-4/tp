@@ -297,16 +297,6 @@ public class FinTrack {
         return String.format(NO_ARGUMENTS_MESSAGE_TEMPLATE, commandWord);
     }
 
-    /**
-     * Ensures that the provided input contains only ASCII characters.
-     * <p>
-     * This guards the parser and downstream logic from unexpected Unicode inputs
-     * such as Chinese characters, which the application does not handle.
-     * </p>
-     *
-     * @param input user-supplied CLI input
-     * @return {@code true} if every character is within the ASCII range, otherwise {@code false}
-     */
     private static boolean isAsciiSafe(String input) {
         if (input == null || input.isEmpty()) {
             return true;
