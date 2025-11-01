@@ -22,12 +22,12 @@ public class Income {
      */
 
     public Income(double amount, IncomeCategory category, LocalDate date, String description) {
-        assert amount >= 0 : "Amount must be non-negative.";
+        assert amount > 0 : "Amount must be above 0.";
         assert category != null : "Category cannot be null.";
         assert date != null : "Date cannot be null.";
 
-        if (amount < 0) {
-            LOGGER.log(Level.WARNING, "Attempted to create Income with negative amount: {0}", amount);
+        if (amount <= 0) {
+            LOGGER.log(Level.WARNING, "Attempted to create Income with negative/zero amount: {0}", amount);
             throw new IllegalArgumentException("Amount must be non-negative.");
         }
         if (category == null) {
