@@ -154,6 +154,17 @@ How the `Parser` component works:
     - If all validations pass, they construct and return the new data object (e.g. `new Expense(...)`). If any validation fails (e.g. `NumberFormatException`), it is caught and re-thrown as an `IllegalArgumentException` with a user-friendly message.
 3. Methods like `parseDeleteExpense(input)` are simpler. The command word is simply stripped and the remaining string is parsed as a positive integer.
 
+#### Command Aliases
+
+The parser supports command aliases for faster typing through the `expandCommandAlias()` method. This feature allows users to use shorter abbreviations for frequently used commands:
+
+- **Core data entry commands**: `ae` → `add-expense`, `ai` → `add-income`, `le` → `list-expense`, `li` → `list-income`
+- **Modification commands**: `me` → `modify-expense`, `mi` → `modify-income`
+- **Deletion commands**: `de` → `delete-expense`, `di` → `delete-income`
+- **Other high-frequency commands**: `bg` → `budget`, `ex` → `export`, `b` → `balance`
+
+Aliases are automatically expanded in both `returnFirstWord()` and `expandAliasesInInput()` methods, ensuring that all downstream parsing logic receives the full command names while providing a lightning-fast keyboard workflow.
+
 The internal logic for `parseAddExpense` is shown below in this sequence diagram:
 
 ![parser.png](images/parser.png)
