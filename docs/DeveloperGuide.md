@@ -506,14 +506,27 @@ Manage day-to-day expenses and budgets with optimal efficiency, stay on top of g
 - **File Access**: The application must only interact with the file system when explicitly requested by the user (e.g., via the `export` command) and must handle SecurityException if it lacks permission to write to a specified path.
 
 ## Appendix D: Glossary
-- _**Command word**_: First token that selects a feature (e.g., list-income).
-- _**Prefix**_: Short tag before a value that specifies the argument (e.g., a/12.50, c/FOOD, d/2025-10-08, des/Lunch).
-- _**Category**_: Enum describing type (Expense: FOOD, STUDY, …; Income: SALARY, …).
-- _**Index**_ (1-based): Visible numbering in lists used by delete-expense 2, etc.
-- _**Month** filter_: Optional d/YYYY-MM for list-expense, list-income, balance.
-- _**Newest**-first_: Display order where the most recent item appears first.
-- _**Budget**_: Per-category expense limit; warnings shown when exceeded.
-- _**Balance**_: Net amount (income − expense).
+- **Program specific terminology:**
+  - _**Command word**_: First token that selects a feature (e.g., list-income).
+  - _**Prefix**_: Short tag before a value that specifies the argument (e.g., `a/12.50`, `c/FOOD`, `d/2025-10-08`, `des/Lunch`).
+  - _**Enum**_ (Enumeration): A fixed set of named constants
+  - _**Category**_: Enum describing type (Expense: FOOD, STUDY, …; Income: SALARY, …).
+  - _**Index (1-based)**_: Visible numbering in lists that starts from 1. Used by delete-expense, etc.
+  - _**Month filter**_: Optional d/YYYY-MM for list-expense, list-income, balance.
+  - **_YearMonth_**: A date value representing just the year and month, used for monthly filtering.
+  - _**Newest-first**_: Display order where the most recent item appears first.
+  - _**Budget**_: Per-category expense limit; warnings shown when exceeded.
+  - _**Balance**_: Net amount (income − expense).
+- **General terminology:**
+  - **_CLI (Command-Line Interface)_**: Text-based interface where users type commands and see textual output.
+  - **_REPL (Read–Evaluate–Print Loop)_**: The continuous loop that reads a command, executes it, prints the result, and repeats until program is exited.
+  - **_Separation of Concerns (SoC)_**: Software design principle that divides a system into distinct sections, each handling a separate "concern" or aspect of the application.
+  - **_Single Responsibility Principle (SRP)_**: Each class/module has one reason to change (e.g. FinanceManager only handles manipulating financial data).
+  - **_In-memory_**: Data stored only in temporary memory during program execution (lost when the app exits unless exported).
+  - _**Persistence**_: Writing data to durable storage so the program remembers data across runs.
+  - **_CSV (Comma-Separated Values)_**: A text file format where each row is a record and fields are separated by commas. Commonly used in spreadsheets.
+  - _**Logger**_: Internal diagnostic output (e.g., INFO/WARNING/SEVERE) used for troubleshooting; not meant for end-user display.
+  - _**Assertion**_: Development-time check that halts in debug/assertion-enabled runs if an invariant (a condition that should always be true) is violated.
 
 ## Appendix E: Instructions for manual testing
 
