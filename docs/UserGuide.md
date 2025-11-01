@@ -535,6 +535,12 @@ A: Modify the entry (`modify-expense` or `modify-income`) with the correct forma
 **Q: Why do I see "Amount must be a valid number"?**  
 A: FinTrack only accepts standard numbers without currency symbols (e.g., use `a/15.90`, not `a/$15.90`).
 
+**Q: I input a high-precision decimal, and it is being rounded. Why does this happen?**
+A: As a finance tracker, we show our amounts up to 2 decimal points.
+
+**Q: Why does my percentage in summary show as 0.00% even though I have input some amount?**
+A: Our percentages are shown to 2 decimal points and hence any precision below 2 decimal points may get rounded down to 0.00%. Similarly, if a category takes up a significantly large percentage, it may be shown as 100.00% due to the percentage being rounded up to the closest 2 decimal points.
+
 **Q: Can I enter dates in other formats such as DD-MM-YYYY?**  
 A: No. FinTrack currently requires ISO format `YYYY-MM-DD`.
 
