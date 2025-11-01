@@ -306,11 +306,46 @@ public class Ui {
     static void printBudgetExceededWarning(ExpenseCategory category, double budget, double totalSpent) {
         System.out.println();
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ BUDGET ALERT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        System.out.printf("Warning: You've exceeded your budget of $%.2f for the %s category.%n", budget, category);
-        System.out.printf("You have now spent a total of $%.2f in this category.%n", totalSpent);
-        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        if (budget == 0) {
+            System.out.printf("Warning: You've set a $0 budget for the %s category.%n", category);
+            System.out.printf("You have now spent a total of $%.2f in this category.%n", totalSpent);
+            System.out.println("Consider setting a reasonable budget or reducing your spending!");
+        } else {
+            System.out.printf("Warning: You are over budget for the %s category!%n", category);
+            System.out.printf("Budget: $%.2f | Total Spent: $%.2f | Overspent: $%.2f%n",
+                    budget, totalSpent, totalSpent - budget);
+            System.out.println();
+            System.out.println("REMINDER: You have already exceeded your budget.");
+            System.out.println("Please start spending less to get back on track with your finances.");
+        }
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         System.out.println();
         LOGGER.fine("Printed budget exceeded warning.");
+    }
+
+    /**
+     * Prints a warning that the user is approaching their budget limit for a category.
+     * This warning appears when spending reaches 90% or more of the budget.
+     *
+     * @param category The category for which the budget is nearly exceeded.
+     * @param budget The budget amount.
+     * @param totalSpent The new total amount spent in that category.
+     */
+    static void printBudgetNearWarning(ExpenseCategory category, double budget, double totalSpent) {
+        double percentUsed = (totalSpent / budget) * 100.0;
+        double remaining = budget - totalSpent;
+
+        System.out.println();
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~ BUDGET CAUTION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        System.out.printf("Caution: You're approaching your budget limit for the %s category!%n", category);
+        System.out.printf("Budget: $%.2f | Total Spent: $%.2f (%.1f%%) | Remaining: $%.2f%n",
+                budget, totalSpent, percentUsed, remaining);
+        System.out.println();
+        System.out.println("TIP: Consider saving your money and reducing unnecessary expenses");
+        System.out.println("     to avoid going over budget.");
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        System.out.println();
+        LOGGER.fine("Printed budget near warning.");
     }
 
     /**
