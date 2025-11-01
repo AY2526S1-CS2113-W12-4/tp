@@ -621,6 +621,24 @@ final class Parser {
             throw new IllegalArgumentException("Missing expense index. Usage: delete-expense <index>");
         }
 
+        // Check if the number is clearly beyond Java's long range by string length
+        if (isBeyondLongRange(args)) {
+            throw new IllegalArgumentException("Expense index is too large. " +
+                    "Please use a smaller number (maximum: " + Integer.MAX_VALUE + ").");
+        }
+
+        // Check if the number is within long range but outside int range
+        if (isOutsideIntRange(args)) {
+            long testValue = Long.parseLong(args);
+            if (testValue > Integer.MAX_VALUE) {
+                throw new IllegalArgumentException("Expense index is too large. " +
+                        "Please use a smaller number (maximum: " + Integer.MAX_VALUE + ").");
+            } else {
+                throw new IllegalArgumentException("Expense index is too small. " +
+                        "Please use a larger number (minimum: 1).");
+            }
+        }
+
         try {
             int id = Integer.parseInt(args);
             if (id <= 0) {
@@ -631,21 +649,6 @@ final class Parser {
             return id;
         } catch (NumberFormatException e) {
             LOGGER.log(Level.WARNING, "Invalid index for delete-expense command: {0}", args);
-            // Check if the number is too large or too small for Java's integer range
-            try {
-                long testValue = Long.parseLong(args);
-                if (testValue > Integer.MAX_VALUE) {
-                    throw new IllegalArgumentException("Expense index is too large. " +
-                            "Please use a smaller number (maximum: " + Integer.MAX_VALUE + ").");
-                } else if (testValue < Integer.MIN_VALUE) {
-                    throw new IllegalArgumentException("Expense index is too small. " +
-                            "Please use a larger number (minimum: 1).");
-                }
-            } catch (NumberFormatException e2) {
-                // If Long.parseLong also fails, it's not a valid number at all
-                throw new IllegalArgumentException("Expense index must be a valid number.");
-            }
-            // If we get here, it's a valid long but outside int range
             throw new IllegalArgumentException("Expense index must be a valid number.");
         }
     }
@@ -668,6 +671,24 @@ final class Parser {
             throw new IllegalArgumentException("Missing income index. Usage: delete-income <index>");
         }
 
+        // Check if the number is clearly beyond Java's long range by string length
+        if (isBeyondLongRange(args)) {
+            throw new IllegalArgumentException("Income index is too large. " +
+                    "Please use a smaller number (maximum: " + Integer.MAX_VALUE + ").");
+        }
+
+        // Check if the number is within long range but outside int range
+        if (isOutsideIntRange(args)) {
+            long testValue = Long.parseLong(args);
+            if (testValue > Integer.MAX_VALUE) {
+                throw new IllegalArgumentException("Income index is too large. " +
+                        "Please use a smaller number (maximum: " + Integer.MAX_VALUE + ").");
+            } else {
+                throw new IllegalArgumentException("Income index is too small. " +
+                        "Please use a larger number (minimum: 1).");
+            }
+        }
+
         try {
             int id = Integer.parseInt(args);
             if (id <= 0) {
@@ -677,21 +698,6 @@ final class Parser {
             return id;
         } catch (NumberFormatException e) {
             LOGGER.log(Level.WARNING, "Invalid index for delete-income command: {0}", args);
-            // Check if the number is too large or too small for Java's integer range
-            try {
-                long testValue = Long.parseLong(args);
-                if (testValue > Integer.MAX_VALUE) {
-                    throw new IllegalArgumentException("Income index is too large. " +
-                            "Please use a smaller number (maximum: " + Integer.MAX_VALUE + ").");
-                } else if (testValue < Integer.MIN_VALUE) {
-                    throw new IllegalArgumentException("Income index is too small. " +
-                            "Please use a larger number (minimum: 1).");
-                }
-            } catch (NumberFormatException e2) {
-                // If Long.parseLong also fails, it's not a valid number at all
-                throw new IllegalArgumentException("Income index must be a valid number.");
-            }
-            // If we get here, it's a valid long but outside int range
             throw new IllegalArgumentException("Income index must be a valid number.");
         }
     }
@@ -799,6 +805,24 @@ final class Parser {
 
         String indexStr = (split == -1) ? args : args.substring(0, split);
 
+        // Check if the number is clearly beyond Java's long range by string length
+        if (isBeyondLongRange(indexStr)) {
+            throw new IllegalArgumentException("Expense index is too large. " +
+                    "Please use a smaller number (maximum: " + Integer.MAX_VALUE + ").");
+        }
+
+        // Check if the number is within long range but outside int range
+        if (isOutsideIntRange(indexStr)) {
+            long testValue = Long.parseLong(indexStr);
+            if (testValue > Integer.MAX_VALUE) {
+                throw new IllegalArgumentException("Expense index is too large. " +
+                        "Please use a smaller number (maximum: " + Integer.MAX_VALUE + ").");
+            } else {
+                throw new IllegalArgumentException("Expense index is too small. " +
+                        "Please use a larger number (minimum: 1).");
+            }
+        }
+
         int index;
         try {
             index = Integer.parseInt(indexStr);
@@ -808,21 +832,6 @@ final class Parser {
             }
         } catch (NumberFormatException e) {
             LOGGER.log(Level.WARNING, "Invalid index for modify-expense command: {0}", indexStr);
-            // Check if the number is too large or too small for Java's integer range
-            try {
-                long testValue = Long.parseLong(indexStr);
-                if (testValue > Integer.MAX_VALUE) {
-                    throw new IllegalArgumentException("Expense index is too large. " +
-                            "Please use a smaller number (maximum: " + Integer.MAX_VALUE + ").");
-                } else if (testValue < Integer.MIN_VALUE) {
-                    throw new IllegalArgumentException("Expense index is too small. " +
-                            "Please use a larger number (minimum: 1).");
-                }
-            } catch (NumberFormatException e2) {
-                // If Long.parseLong also fails, it's not a valid number at all
-                throw new IllegalArgumentException("Expense index must be a valid number.");
-            }
-            // If we get here, it's a valid long but outside int range
             throw new IllegalArgumentException("Expense index must be a valid number.");
         }
 
@@ -939,6 +948,24 @@ final class Parser {
 
         String indexStr = (split == -1) ? args : args.substring(0, split);
 
+        // Check if the number is clearly beyond Java's long range by string length
+        if (isBeyondLongRange(indexStr)) {
+            throw new IllegalArgumentException("Income index is too large. " +
+                    "Please use a smaller number (maximum: " + Integer.MAX_VALUE + ").");
+        }
+
+        // Check if the number is within long range but outside int range
+        if (isOutsideIntRange(indexStr)) {
+            long testValue = Long.parseLong(indexStr);
+            if (testValue > Integer.MAX_VALUE) {
+                throw new IllegalArgumentException("Income index is too large. " +
+                        "Please use a smaller number (maximum: " + Integer.MAX_VALUE + ").");
+            } else {
+                throw new IllegalArgumentException("Income index is too small. " +
+                        "Please use a larger number (minimum: 1).");
+            }
+        }
+
         int index;
         try {
             index = Integer.parseInt(indexStr);
@@ -948,21 +975,6 @@ final class Parser {
             }
         } catch (NumberFormatException e) {
             LOGGER.log(Level.WARNING, "Invalid index for modify-income command: {0}", indexStr);
-            // Check if the number is too large or too small for Java's integer range
-            try {
-                long testValue = Long.parseLong(indexStr);
-                if (testValue > Integer.MAX_VALUE) {
-                    throw new IllegalArgumentException("Income index is too large. " +
-                            "Please use a smaller number (maximum: " + Integer.MAX_VALUE + ").");
-                } else if (testValue < Integer.MIN_VALUE) {
-                    throw new IllegalArgumentException("Income index is too small. " +
-                            "Please use a larger number (minimum: 1).");
-                }
-            } catch (NumberFormatException e2) {
-                // If Long.parseLong also fails, it's not a valid number at all
-                throw new IllegalArgumentException("Income index must be a valid number.");
-            }
-            // If we get here, it's a valid long but outside int range
             throw new IllegalArgumentException("Income index must be a valid number.");
         }
 
@@ -1108,5 +1120,47 @@ final class Parser {
         // Allow letters, numbers, hyphens, underscores, and dots
         // Disallow directory separators, control characters, and other special characters
         return filename.matches("^[a-zA-Z0-9._-]+$");
+    }
+
+    /**
+     * Checks if a string represents a number that is clearly beyond Java's long range
+     * by examining its string length and content.
+     *
+     * @param numberStr The string to check
+     * @return true if the number is beyond Java's long range, false otherwise
+     */
+    private static boolean isBeyondLongRange(String numberStr) {
+        // Remove any leading minus sign for length calculation
+        String absNumberStr = numberStr.startsWith("-") ? numberStr.substring(1) : numberStr;
+
+        // Check if the number has more digits than the maximum possible Java long
+        // Long.MAX_VALUE = 9223372036854775807 (19 digits)
+        // Any number with more than 19 digits is definitely beyond Java's long range
+        if (absNumberStr.length() > 19) {
+            return true;
+        }
+
+        // For numbers with exactly 19 digits, check if they exceed Long.MAX_VALUE
+        if (absNumberStr.length() == 19) {
+            // Compare with Long.MAX_VALUE as string to avoid parsing
+            return absNumberStr.compareTo("9223372036854775807") > 0;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if a string represents a number that is within long range but outside int range.
+     *
+     * @param numberStr The string to check
+     * @return true if the number is outside int range but within long range, false otherwise
+     */
+    private static boolean isOutsideIntRange(String numberStr) {
+        try {
+            long testValue = Long.parseLong(numberStr);
+            return testValue > Integer.MAX_VALUE || testValue < Integer.MIN_VALUE;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 }
