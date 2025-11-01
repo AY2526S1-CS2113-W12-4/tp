@@ -434,4 +434,19 @@ public class FinanceManager {
         LOGGER.log(Level.INFO, "Expense for each Category calculated successfully.");
         return incomeByCategory;
     }
+
+    public static double calculatePercentage(double amount, double totalAmount) {
+        assert !Double.isNaN(amount) : "Amount should be a number.";
+        assert !Double.isNaN(totalAmount) : "Total amount should be a number.";
+
+        if (totalAmount <= 0) {
+            LOGGER.log(Level.INFO, "calculatePercentage returns 0 to prevent NaN error.");
+            return 0.0;
+        }
+
+        double percent = (amount / totalAmount) * 100.0;
+        assert !Double.isNaN(percent) : "Percent should be a number.";
+        LOGGER.log(Level.INFO, "calculatePercentage called successfully.");
+        return percent;
+    }
 }

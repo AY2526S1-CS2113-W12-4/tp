@@ -316,9 +316,9 @@ final class Parser {
             LOGGER.log(Level.WARNING, "Non-finite amount provided: {0}.", amount);
             throw new IllegalArgumentException("Amount must be finite.");
         }
-        if (amount < 0) {
-            LOGGER.log(Level.WARNING, "Negative amount provided: {0}.", amount);
-            throw new IllegalArgumentException("Amount must be non-negative.");
+        if (amount <= 0) {
+            LOGGER.log(Level.WARNING, "Negative/Zero amount provided: {0}.", amount);
+            throw new IllegalArgumentException("Amount must be more than 0.");
         }
 
         LocalDate date;
@@ -379,9 +379,9 @@ final class Parser {
             LOGGER.log(Level.WARNING, "Non-finite amount provided: {0}.", amount);
             throw new IllegalArgumentException("Amount must be finite.");
         }
-        if (amount < 0) {
-            LOGGER.log(Level.WARNING, "Negative amount provided: {0}.", amount);
-            throw new IllegalArgumentException("Amount must be non-negative.");
+        if (amount <= 0) {
+            LOGGER.log(Level.WARNING, "Negative/Zero amount provided: {0}.", amount);
+            throw new IllegalArgumentException("Amount must be more than 0.");
         }
 
         LocalDate date;
@@ -627,9 +627,9 @@ final class Parser {
                     LOGGER.log(Level.WARNING, "Non-finite amount provided: {0}.", amount);
                     throw new IllegalArgumentException("Amount must be finite.");
                 }
-                if (amount < 0) {
-                    LOGGER.log(Level.WARNING, "Negative amount provided: {0}.", amount);
-                    throw new IllegalArgumentException("Amount must be non-negative.");
+                if (amount <= 0) {
+                    LOGGER.log(Level.WARNING, "Negative/Zero amount provided: {0}.", amount);
+                    throw new IllegalArgumentException("Amount must be more than 0.");
                 }
             } catch (NumberFormatException e) {
                 LOGGER.log(Level.WARNING, "Invalid amount format: {0}.", amountStr);
@@ -752,9 +752,9 @@ final class Parser {
                     LOGGER.log(Level.WARNING, "Non-finite amount provided: {0}.", amount);
                     throw new IllegalArgumentException("Amount must be finite.");
                 }
-                if (amount < 0) {
-                    LOGGER.log(Level.WARNING, "Negative amount provided: {0}.", amount);
-                    throw new IllegalArgumentException("Amount must be non-negative.");
+                if (amount <= 0) {
+                    LOGGER.log(Level.WARNING, "Negative/Zero amount provided: {0}.", amount);
+                    throw new IllegalArgumentException("Amount must be more than 0.");
                 }
             } catch (NumberFormatException e) {
                 LOGGER.log(Level.WARNING, "Invalid amount format: {0}.", amountStr);

@@ -634,8 +634,7 @@ public class Ui {
         try {
             printHorizontalLine(80);
             System.out.println("Here is an overall summary of your expenses!");
-            System.out.print("Total Expense: ");
-            System.out.println(totalExpense);
+            System.out.printf("Total Expense: %.2f%n", totalExpense);
             printNextLine();
             System.out.println("Here is a breakdown of your expense:");
             printExpenseByCategory(totalExpense, expenseByCategory);
@@ -694,8 +693,7 @@ public class Ui {
         try {
             printHorizontalLine(80);
             System.out.println("Here is an overall summary of your income!");
-            System.out.print("Total Income: ");
-            System.out.println(totalIncome);
+            System.out.printf("Total Income: %.2f%n", totalIncome);
             printNextLine();
             System.out.println("Here is a breakdown of your income:");
             printIncomeByCategory(totalIncome, incomeByCategory);

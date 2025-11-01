@@ -590,7 +590,7 @@ public class ParserTest {
             Parser.parseModifyExpenseWithDefaults(input, oldExpense);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Amount must be non-negative.", e.getMessage());
+            assertEquals("Amount must be more than 0.", e.getMessage());
         }
 
         // Non-finite amount
@@ -851,7 +851,7 @@ public class ParserTest {
             Parser.parseModifyIncomeWithDefaults(input, oldIncome);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Amount must be non-negative.", e.getMessage());
+            assertEquals("Amount must be more than 0.", e.getMessage());
         }
 
         // Non-finite amount
@@ -934,7 +934,7 @@ public class ParserTest {
             Parser.parseAddExpense(negative);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Amount must be non-negative.", e.getMessage());
+            assertEquals("Amount must be more than 0.", e.getMessage());
         }
     }
 
@@ -1065,7 +1065,7 @@ public class ParserTest {
             Parser.parseAddIncome(negative);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Amount must be non-negative.", e.getMessage());
+            assertEquals("Amount must be more than 0.", e.getMessage());
         }
 
         try {
