@@ -228,7 +228,9 @@ final class Parser {
         int firstIdx = Integer.MAX_VALUE;
         for (String p : allowedSet) {
             int idx = findFirstPrefixIndex(argsToValidate, p);
-            if (idx >= 0 && idx < firstIdx) firstIdx = idx;
+            if (idx >= 0 && idx < firstIdx) {
+                firstIdx = idx;
+            }
         }
         if (firstIdx != Integer.MAX_VALUE) {
             String before = argsToValidate.substring(0, firstIdx);

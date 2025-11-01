@@ -192,7 +192,8 @@ public class ParserTest {
             Parser.parseAddExpense(input2);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Missing required parameter: d/. Usage: add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
+            assertEquals("Missing required parameter: d/. " +
+                    "Usage: add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
         }
 
         // Missing amount
@@ -200,7 +201,8 @@ public class ParserTest {
             Parser.parseAddExpense(input3);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Missing required parameter: a/. Usage: add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
+            assertEquals("Missing required parameter: a/. " +
+                    "Usage: add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
         }
 
         // Missing category
@@ -208,7 +210,8 @@ public class ParserTest {
             Parser.parseAddExpense(input4);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Missing required parameter: c/. Usage: add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
+            assertEquals("Missing required parameter: c/. " +
+                    "Usage: add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
         }
     }
 
@@ -232,21 +235,24 @@ public class ParserTest {
             Parser.parseAddExpense(input1);
             fail("Should have failed due to empty amount");
         } catch (IllegalArgumentException e) {
-            assertEquals("Missing required parameter: a/. Usage: add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
+            assertEquals("Missing required parameter: a/. " +
+                    "Usage: add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
         }
 
         try {
             Parser.parseAddExpense(input2);
             fail("Should have failed due to empty category");
         } catch (IllegalArgumentException e) {
-            assertEquals("Missing required parameter: c/. Usage: add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
+            assertEquals("Missing required parameter: c/. " +
+                    "Usage: add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
         }
 
         try {
             Parser.parseAddExpense(input3);
             fail("Should have failed due to empty date");
         } catch (IllegalArgumentException e) {
-            assertEquals("Missing required parameter: d/. Usage: add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
+            assertEquals("Missing required parameter: d/. " +
+                    "Usage: add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
         }
     }
 
@@ -915,21 +921,24 @@ public class ParserTest {
             Parser.parseAddIncome(input2);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Missing required parameter: d/. Usage: add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
+            assertEquals("Missing required parameter: d/. " +
+                    "Usage: add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
         }
 
         try {
             Parser.parseAddIncome(input3);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Missing required parameter: a/. Usage: add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
+            assertEquals("Missing required parameter: a/. " +
+                    "Usage: add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
         }
 
         try {
             Parser.parseAddIncome(input4);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Missing required parameter: c/. Usage: add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
+            assertEquals("Missing required parameter: c/. " +
+                    "Usage: add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
         }
     }
 
