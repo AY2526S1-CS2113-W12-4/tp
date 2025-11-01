@@ -324,7 +324,7 @@ Here is how `export` works:
     - Single header row: `Type,Date,Amount,Category,Description`
     - All incomes and expenses in one unified table with a `Type` column distinguishing between "INCOME" and "EXPENSE"
     - Summary section at the end with total income, total expenses, and balance
-5. If successful, `Ui` calls `printExportSuccess()` to confirm the export. Any errors (IOException, SecurityException, IllegalArgumentException) are caught and displayed to the user via `printError()`.
+5. If successful, `Ui` calls `printExportSuccess()` to confirm the export. Any errors are caught and displayed to the user via `printError()`.
 
 Below is a sequence diagram to illustrate how the export command works:
 ![export.png](images/export.png)
