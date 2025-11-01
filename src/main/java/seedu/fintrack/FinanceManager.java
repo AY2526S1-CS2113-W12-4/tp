@@ -435,7 +435,7 @@ public class FinanceManager {
         return incomeByCategory;
     }
 
-    public static double calculatePercentage(double amount, double totalAmount) {
+    public double calculatePercentage(double amount, double totalAmount) {
         assert !Double.isNaN(amount) : "Amount should be a number.";
         assert !Double.isNaN(totalAmount) : "Total amount should be a number.";
 
@@ -448,5 +448,43 @@ public class FinanceManager {
         assert !Double.isNaN(percent) : "Percent should be a number.";
         LOGGER.log(Level.INFO, "calculatePercentage called successfully.");
         return percent;
+    }
+
+    public Map<ExpenseCategory, Double>getExpensePercentageByCategory(
+            Map<ExpenseCategory, Double>expenseByCategory, double totalExpense) {
+        assert expenseByCategory != null : "expenseByCategory map should not be null.";
+        assert !Double.isNaN(totalExpense) : "totalAmount should be a number.";
+
+        Map<ExpenseCategory, Double> expensePercentageByCategory = new HashMap<>();
+        for (Map.Entry<ExpenseCategory, Double> mapEntry : expenseByCategory.entrySet()) {
+            ExpenseCategory category = mapEntry.getKey();
+            Double amount = mapEntry.getValue();
+            assert !Double.isNaN(amount) : "amount should be a number";
+
+            double percent = calculatePercentage(amount, totalExpense);
+            expensePercentageByCategory.put(category, percent);
+        }
+
+        LOGGER.log(Level.INFO,"getExpenseByCategory called successfully.");
+        return expensePercentageByCategory;
+    }
+
+    public Map<IncomeCategory, Double>getIncomePercentageByCategory(
+            Map<IncomeCategory, Double>incomeByCategory, double totalIncome) {
+        assert incomeByCategory != null : "incomeByCategory map should not be null.";
+        assert !Double.isNaN(totalIncome) : "totalAmount should be a number.";
+
+        Map<IncomeCategory, Double> incomePercentageByCategory = new HashMap<>();
+        for (Map.Entry<IncomeCategory, Double> mapEntry : incomeByCategory.entrySet()) {
+            IncomeCategory category = mapEntry.getKey();
+            Double amount = mapEntry.getValue();
+            assert !Double.isNaN(amount) : "amount should be a number";
+
+            double percent = calculatePercentage(amount, totalIncome);
+            incomePercentageByCategory.put(category, percent);
+        }
+
+        LOGGER.log(Level.INFO,"getIncomeByCategory called successfully.");
+        return incomePercentageByCategory;
     }
 }

@@ -245,7 +245,9 @@ public class FinTrack {
 
                     Map<ExpenseCategory, Double> expenseByCategory = fm.getExpenseByCategory();
                     double totalExpense = fm.getTotalExpense();
-                    Ui.printSummaryExpense(totalExpense, expenseByCategory);
+                    Map<ExpenseCategory, Double>expensePercentByCategory = fm.getExpensePercentageByCategory(
+                            expenseByCategory, totalExpense);
+                    Ui.printSummaryExpense(totalExpense, expenseByCategory, expensePercentByCategory);
                 } catch (IllegalArgumentException e) {
                     Ui.printError(e.getMessage());
                 }
@@ -259,7 +261,9 @@ public class FinTrack {
 
                     Map<IncomeCategory, Double> incomeByCategory = fm.getIncomeByCategory();
                     double totalIncome = fm.getTotalIncome();
-                    Ui.printSummaryIncome(totalIncome, incomeByCategory);
+                    Map<IncomeCategory, Double> incomePercentByCategory = fm.getIncomePercentageByCategory(
+                            incomeByCategory, totalIncome);
+                    Ui.printSummaryIncome(totalIncome, incomeByCategory, incomePercentByCategory);
                 } catch (IllegalArgumentException e) {
                     Ui.printError(e.getMessage());
                 }
