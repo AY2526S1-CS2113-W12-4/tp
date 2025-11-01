@@ -100,27 +100,27 @@ final class Parser {
      */
     private static String expandCommandAlias(String command) {
         return switch (command) {
-            // Core data entry commands (highest frequency)
-            case "ae" -> "add-expense";
-            case "ai" -> "add-income";
-            case "le" -> "list-expense";
-            case "li" -> "list-income";
+        // Core data entry commands (highest frequency)
+        case "ae" -> "add-expense";
+        case "ai" -> "add-income";
+        case "le" -> "list-expense";
+        case "li" -> "list-income";
 
-            // Modification commands
-            case "me" -> "modify-expense";
-            case "mi" -> "modify-income";
+        // Modification commands
+        case "me" -> "modify-expense";
+        case "mi" -> "modify-income";
 
-            // Deletion commands
-            case "de" -> "delete-expense";
-            case "di" -> "delete-income";
+        // Deletion commands
+        case "de" -> "delete-expense";
+        case "di" -> "delete-income";
 
-            // Other high-frequency commands
-            case "bg" -> "budget";
-            case "ex" -> "export";
-            case "b" -> "balance";
+        // Other high-frequency commands
+        case "bg" -> "budget";
+        case "ex" -> "export";
+        case "b" -> "balance";
 
-            // Commands that are already short enough
-            default -> command;
+        // Commands that are already short enough
+        default -> command;
         };
     }
 
