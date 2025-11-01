@@ -316,7 +316,7 @@ public class FinanceManager {
             }
             throw new IndexOutOfBoundsException("Expense index out of range. Valid range: 1 to " + expenses.size());
         }
-        
+
         try {
             return addExpense(newExpense);
         } catch (Exception e) {
@@ -324,6 +324,23 @@ public class FinanceManager {
             expenses.add(oldExpense);
             throw e;
         }
+    }
+
+    /**
+     * Retrieves an expense at the specified index without removing it.
+     *
+     * @param index The 1-based index of the expense to retrieve
+     * @return The expense at the specified index
+     * @throws IndexOutOfBoundsException If the index is invalid
+     */
+    public Expense getExpense(int index) {
+        if (expenses.size() == 0) {
+            throw new IndexOutOfBoundsException("Cannot get expense: The expense list is empty");
+        }
+        if (index < 1 || index > expenses.size()) {
+            throw new IndexOutOfBoundsException("Expense index out of range. Valid range: 1 to " + expenses.size());
+        }
+        return expenses.get(index - 1);
     }
 
     /**
@@ -344,7 +361,7 @@ public class FinanceManager {
             }
             throw new IndexOutOfBoundsException("Income index out of range. Valid range: 1 to " + incomes.size());
         }
-        
+
         try {
             addIncome(newIncome);
         } catch (Exception e) {
@@ -352,6 +369,23 @@ public class FinanceManager {
             incomes.add(oldIncome);
             throw e;
         }
+    }
+
+    /**
+     * Retrieves an income at the specified index without removing it.
+     *
+     * @param index The 1-based index of the income to retrieve
+     * @return The income at the specified index
+     * @throws IndexOutOfBoundsException If the index is invalid
+     */
+    public Income getIncome(int index) {
+        if (incomes.size() == 0) {
+            throw new IndexOutOfBoundsException("Cannot get income: The income list is empty");
+        }
+        if (index < 1 || index > incomes.size()) {
+            throw new IndexOutOfBoundsException("Income index out of range. Valid range: 1 to " + incomes.size());
+        }
+        return incomes.get(index - 1);
     }
 
     /**
@@ -399,5 +433,20 @@ public class FinanceManager {
 
         LOGGER.log(Level.INFO, "Expense for each Category calculated successfully.");
         return incomeByCategory;
+    }
+
+    public static double calculatePercentage(double amount, double totalAmount) {
+        assert !Double.isNaN(amount) : "Amount should be a number.";
+        assert !Double.isNaN(totalAmount) : "Total amount should be a number.";
+
+        if (totalAmount <= 0) {
+            LOGGER.log(Level.INFO, "calculatePercentage returns 0 to prevent NaN error.");
+            return 0.0;
+        }
+
+        double percent = (amount / totalAmount) * 100.0;
+        assert !Double.isNaN(percent) : "Percent should be a number.";
+        LOGGER.log(Level.INFO, "calculatePercentage called successfully.");
+        return percent;
     }
 }

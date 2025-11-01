@@ -443,9 +443,9 @@ final class Parser {
             LOGGER.log(Level.WARNING, "Non-finite amount provided: {0}.", amount);
             throw new IllegalArgumentException("Amount must be finite.");
         }
-        if (amount < 0) {
-            LOGGER.log(Level.WARNING, "Negative amount provided: {0}.", amount);
-            throw new IllegalArgumentException("Amount must be non-negative.");
+        if (amount <= 0) {
+            LOGGER.log(Level.WARNING, "Negative/Zero amount provided: {0}.", amount);
+            throw new IllegalArgumentException("Amount must be more than 0.");
         }
 
         LocalDate date;
@@ -514,9 +514,9 @@ final class Parser {
             LOGGER.log(Level.WARNING, "Non-finite amount provided: {0}.", amount);
             throw new IllegalArgumentException("Amount must be finite.");
         }
-        if (amount < 0) {
-            LOGGER.log(Level.WARNING, "Negative amount provided: {0}.", amount);
-            throw new IllegalArgumentException("Amount must be non-negative.");
+        if (amount <= 0) {
+            LOGGER.log(Level.WARNING, "Negative/Zero amount provided: {0}.", amount);
+            throw new IllegalArgumentException("Amount must be more than 0.");
         }
 
         LocalDate date;
@@ -670,26 +670,26 @@ final class Parser {
     }
 
     /**
-     * Parses a modify-expense command into an index and new expense data.
-     * Expected format: {@code modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<text>]}
+     * Parses a modify-expense command and extracts the index only.
+     * Expected format: {@code modify-expense <index> [a/<amount>] [c/<category>] [d/<YYYY-MM-DD>] [des/<text>]}
      *
      * @param input The full command string. Must not be null.
-     * @return A pair containing the 1-based index and the new expense object.
-     * @throws IllegalArgumentException If any required parameters are missing or invalid.
+     * @return The 1-based index of the expense to modify.
+     * @throws IllegalArgumentException If the index is missing or invalid.
      */
-    public static Map.Entry<Integer, Expense> parseModifyExpense(String input) {
+    public static int parseModifyExpenseIndex(String input) {
         assert input != null : "Input for parsing modify-expense cannot be null.";
-        LOGGER.log(Level.INFO, "Parsing modify-expense input: ''{0}''.", input);
+        LOGGER.log(Level.INFO, "Parsing modify-expense index from input: ''{0}''.", input);
 
         String args = extractArgumentsAfterCommand(input, Ui.MODIFY_EXPENSE_COMMAND);
         if (args.isEmpty()) {
-            LOGGER.log(Level.WARNING, "Missing parameters for modify-expense command.");
+            LOGGER.log(Level.WARNING, "Missing index for modify-expense command.");
             throw new IllegalArgumentException(
-                    "Missing parameters. Usage: modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD>"
+                    "Missing index. Usage: modify-expense <index> [a/<amount>] [c/<category>] [d/<YYYY-MM-DD>]"
             );
         }
 
-        // Extract the index
+        // Extract the index (first token)
         int split = -1;
         for (int i = 0; i < args.length(); i++) {
             if (Character.isWhitespace(args.charAt(i))) {
@@ -697,15 +697,8 @@ final class Parser {
                 break;
             }
         }
-        if (split == -1) {
-            LOGGER.log(Level.WARNING, "Missing parameters after index in modify-expense command.");
-            throw new IllegalArgumentException(
-                    "Missing parameters. Usage: modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD>"
-            );
-        }
 
-        String indexStr = args.substring(0, split);
-        String remainingArgs = args.substring(split).stripLeading();
+        String indexStr = (split == -1) ? args : args.substring(0, split);
 
         int index;
         try {
@@ -719,32 +712,26 @@ final class Parser {
             throw new IllegalArgumentException("Expense index must be a valid number.");
         }
 
-        // Parse the new expense data using existing add-expense logic
-        Expense newExpense = parseAddExpense(Ui.ADD_EXPENSE_COMMAND + " " + remainingArgs);
-        return Map.entry(index, newExpense);
+        return index;
     }
 
     /**
-     * Parses a modify-income command into an index and new income data.
-     * Expected format: {@code modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<text>]}
+     * Parses a modify-expense command with optional fields, merging with old expense values.
+     * Expected format: {@code modify-expense <index> [a/<amount>] [c/<category>] [d/<YYYY-MM-DD>] [des/<text>]}
      *
      * @param input The full command string. Must not be null.
-     * @return A pair containing the 1-based index and the new income object.
-     * @throws IllegalArgumentException If any required parameters are missing or invalid.
+     * @param oldExpense The existing expense to use as defaults for unspecified fields.
+     * @return A new Expense object with updated fields merged with old values.
+     * @throws IllegalArgumentException If any provided parameters are invalid.
      */
-    public static Map.Entry<Integer, Income> parseModifyIncome(String input) {
-        assert input != null : "Input for parsing modify-income cannot be null.";
-        LOGGER.log(Level.INFO, "Parsing modify-income input: ''{0}''.", input);
+    public static Expense parseModifyExpenseWithDefaults(String input, Expense oldExpense) {
+        assert input != null : "Input for parsing modify-expense cannot be null.";
+        assert oldExpense != null : "Old expense cannot be null.";
+        LOGGER.log(Level.INFO, "Parsing modify-expense with defaults: ''{0}''.", input);
 
-        String args = extractArgumentsAfterCommand(input, Ui.MODIFY_INCOME_COMMAND);
-        if (args.isEmpty()) {
-            LOGGER.log(Level.WARNING, "Missing parameters for modify-income command.");
-            throw new IllegalArgumentException(
-                    "Missing parameters. Usage: modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD>"
-            );
-        }
+        String args = extractArgumentsAfterCommand(input, Ui.MODIFY_EXPENSE_COMMAND);
 
-        // Extract the index
+        // Skip the index to get to the field arguments
         int split = -1;
         for (int i = 0; i < args.length(); i++) {
             if (Character.isWhitespace(args.charAt(i))) {
@@ -752,15 +739,91 @@ final class Parser {
                 break;
             }
         }
-        if (split == -1) {
-            LOGGER.log(Level.WARNING, "Missing parameters after index in modify-income command.");
+
+        String remainingArgs = (split == -1) ? "" : args.substring(split).stripLeading();
+
+        // Parse optional fields
+        String amountStr = getValue(remainingArgs, Ui.AMOUNT_PREFIX);
+        String categoryString = getValue(remainingArgs, Ui.CATEGORY_PREFIX);
+        String dateStr = getValue(remainingArgs, Ui.DATE_PREFIX);
+        String description = getValue(remainingArgs, Ui.DESCRIPTION_PREFIX);
+
+        // Use old values as defaults
+        double amount = oldExpense.getAmount();
+        ExpenseCategory category = oldExpense.getCategory();
+        LocalDate date = oldExpense.getDate();
+        String finalDescription = oldExpense.getDescription();
+
+        // Override with new values if provided
+        if (amountStr != null) {
+            try {
+                amount = Double.parseDouble(amountStr);
+                if (!Double.isFinite(amount)) {
+                    LOGGER.log(Level.WARNING, "Non-finite amount provided: {0}.", amount);
+                    throw new IllegalArgumentException("Amount must be finite.");
+                }
+                if (amount <= 0) {
+                    LOGGER.log(Level.WARNING, "Negative/Zero amount provided: {0}.", amount);
+                    throw new IllegalArgumentException("Amount must be more than 0.");
+                }
+            } catch (NumberFormatException e) {
+                LOGGER.log(Level.WARNING, "Invalid amount format: {0}.", amountStr);
+                throw new IllegalArgumentException("Amount must be a valid number.");
+            }
+        }
+
+        if (categoryString != null) {
+            category = ExpenseCategory.parse(categoryString);
+        }
+
+        if (dateStr != null) {
+            try {
+                date = LocalDate.parse(dateStr);
+            } catch (DateTimeParseException e) {
+                LOGGER.log(Level.WARNING, "Invalid date format: {0}.", dateStr);
+                throw new IllegalArgumentException("Date must be in YYYY-MM-DD format.");
+            }
+        }
+
+        if (description != null) {
+            finalDescription = description.isBlank() ? null : description;
+        }
+
+        Expense newExpense = new Expense(amount, category, date, finalDescription);
+        LOGGER.log(Level.INFO, "Successfully parsed modified expense with merged values.");
+        return newExpense;
+    }
+
+    /**
+     * Parses a modify-income command and extracts the index only.
+     * Expected format: {@code modify-income <index> [a/<amount>] [c/<category>] [d/<YYYY-MM-DD>] [des/<text>]}
+     *
+     * @param input The full command string. Must not be null.
+     * @return The 1-based index of the income to modify.
+     * @throws IllegalArgumentException If the index is missing or invalid.
+     */
+    public static int parseModifyIncomeIndex(String input) {
+        assert input != null : "Input for parsing modify-income cannot be null.";
+        LOGGER.log(Level.INFO, "Parsing modify-income index from input: ''{0}''.", input);
+
+        String args = extractArgumentsAfterCommand(input, Ui.MODIFY_INCOME_COMMAND);
+        if (args.isEmpty()) {
+            LOGGER.log(Level.WARNING, "Missing index for modify-income command.");
             throw new IllegalArgumentException(
-                    "Missing parameters. Usage: modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD>"
+                    "Missing index. Usage: modify-income <index> [a/<amount>] [c/<category>] [d/<YYYY-MM-DD>]"
             );
         }
 
-        String indexStr = args.substring(0, split);
-        String remainingArgs = args.substring(split).stripLeading();
+        // Extract the index (first token)
+        int split = -1;
+        for (int i = 0; i < args.length(); i++) {
+            if (Character.isWhitespace(args.charAt(i))) {
+                split = i;
+                break;
+            }
+        }
+
+        String indexStr = (split == -1) ? args : args.substring(0, split);
 
         int index;
         try {
@@ -774,18 +837,95 @@ final class Parser {
             throw new IllegalArgumentException("Income index must be a valid number.");
         }
 
-        // Parse the new income data using existing add-income logic
-        Income newIncome = parseAddIncome(Ui.ADD_INCOME_COMMAND + " " + remainingArgs);
-        return Map.entry(index, newIncome);
+        return index;
     }
 
     /**
-     * Parses the export command input to extract the file path.
-     * Expected format: export {@code <filepath>}
+     * Parses a modify-income command with optional fields, merging with old income values.
+     * Expected format: {@code modify-income <index> [a/<amount>] [c/<category>] [d/<YYYY-MM-DD>] [des/<text>]}
+     *
+     * @param input The full command string. Must not be null.
+     * @param oldIncome The existing income to use as defaults for unspecified fields.
+     * @return A new Income object with updated fields merged with old values.
+     * @throws IllegalArgumentException If any provided parameters are invalid.
+     */
+    public static Income parseModifyIncomeWithDefaults(String input, Income oldIncome) {
+        assert input != null : "Input for parsing modify-income cannot be null.";
+        assert oldIncome != null : "Old income cannot be null.";
+        LOGGER.log(Level.INFO, "Parsing modify-income with defaults: ''{0}''.", input);
+
+        String args = extractArgumentsAfterCommand(input, Ui.MODIFY_INCOME_COMMAND);
+
+        // Skip the index to get to the field arguments
+        int split = -1;
+        for (int i = 0; i < args.length(); i++) {
+            if (Character.isWhitespace(args.charAt(i))) {
+                split = i;
+                break;
+            }
+        }
+
+        String remainingArgs = (split == -1) ? "" : args.substring(split).stripLeading();
+
+        // Parse optional fields
+        String amountStr = getValue(remainingArgs, Ui.AMOUNT_PREFIX);
+        String categoryString = getValue(remainingArgs, Ui.CATEGORY_PREFIX);
+        String dateStr = getValue(remainingArgs, Ui.DATE_PREFIX);
+        String description = getValue(remainingArgs, Ui.DESCRIPTION_PREFIX);
+
+        // Use old values as defaults
+        double amount = oldIncome.getAmount();
+        IncomeCategory category = oldIncome.getCategory();
+        LocalDate date = oldIncome.getDate();
+        String finalDescription = oldIncome.getDescription();
+
+        // Override with new values if provided
+        if (amountStr != null) {
+            try {
+                amount = Double.parseDouble(amountStr);
+                if (!Double.isFinite(amount)) {
+                    LOGGER.log(Level.WARNING, "Non-finite amount provided: {0}.", amount);
+                    throw new IllegalArgumentException("Amount must be finite.");
+                }
+                if (amount <= 0) {
+                    LOGGER.log(Level.WARNING, "Negative/Zero amount provided: {0}.", amount);
+                    throw new IllegalArgumentException("Amount must be more than 0.");
+                }
+            } catch (NumberFormatException e) {
+                LOGGER.log(Level.WARNING, "Invalid amount format: {0}.", amountStr);
+                throw new IllegalArgumentException("Amount must be a valid number.");
+            }
+        }
+
+        if (categoryString != null) {
+            category = IncomeCategory.parse(categoryString);
+        }
+
+        if (dateStr != null) {
+            try {
+                date = LocalDate.parse(dateStr);
+            } catch (DateTimeParseException e) {
+                LOGGER.log(Level.WARNING, "Invalid date format: {0}.", dateStr);
+                throw new IllegalArgumentException("Date must be in YYYY-MM-DD format.");
+            }
+        }
+
+        if (description != null) {
+            finalDescription = description.isBlank() ? null : description;
+        }
+
+        Income newIncome = new Income(amount, category, date, finalDescription);
+        LOGGER.log(Level.INFO, "Successfully parsed modified income with merged values.");
+        return newIncome;
+    }
+
+    /**
+     * Parses the export command input to extract the filename.
+     * Expected format: export {@code <filename>}
      *
      * @param input The full export command input
-     * @return The Path object representing the export file path
-     * @throws IllegalArgumentException if the command format is invalid or path is invalid
+     * @return The Path object representing the export file in current directory
+     * @throws IllegalArgumentException if the command format is invalid or filename is invalid
      */
     public static Path parseExport(String input) {
         assert input != null : "Input cannot be null.";
@@ -793,33 +933,51 @@ final class Parser {
 
         String args = input.substring(Ui.EXPORT_COMMAND.length()).trim();
         if (args.isEmpty()) {
-            LOGGER.log(Level.WARNING, "Missing file path for export command.");
-            throw new IllegalArgumentException("Missing file path. Usage: export <filepath>");
+            LOGGER.log(Level.WARNING, "Missing filename for export command.");
+            throw new IllegalArgumentException("Missing filename. Usage: export <filename>");
+        }
+
+        // Validate that it's just a filename (no directory separators)
+        if (args.contains(java.io.File.separator) || args.contains("/") || args.contains("\\")) {
+            LOGGER.log(Level.WARNING, "Path contains directory separators: {0}", args);
+            throw new IllegalArgumentException(
+                    "Invalid filename. Please provide only a filename (no paths). Usage: export <filename>"
+            );
+        }
+
+        // Validate filename format
+        if (!isValidFilename(args)) {
+            LOGGER.log(Level.WARNING, "Invalid filename format: {0}", args);
+            throw new IllegalArgumentException(
+                    "Invalid filename. Please use only letters, numbers, hyphens, underscores, and dots."
+            );
         }
 
         try {
-            // Handle home directory expansion
-            if (args.startsWith("~" + java.io.File.separator) || args.equals("~")) {
-                String home = System.getProperty("user.home");
-                args = args.replace("~", home);
+            String filename = args;
+            if (!filename.toLowerCase().endsWith(".csv")) {
+                filename = filename + ".csv";
             }
 
-            Path path = Paths.get(args);
-            if (!args.toLowerCase().endsWith(".csv")) {
-                path = Paths.get(args + ".csv");
-            }
-
-            // Note: Parent directories will be automatically created by CsvStorage if needed
-
+            // Create path in current working directory
+            Path path = Paths.get(filename);
             return path.toAbsolutePath().normalize();
         } catch (InvalidPathException e) {
-            LOGGER.log(Level.WARNING, "Invalid file path provided: {0}", args);
-            throw new IllegalArgumentException("Invalid file path. Please provide a valid path for the CSV file.");
-        } catch (SecurityException e) {
-            LOGGER.log(Level.WARNING, "Security error accessing path: {0}", args);
-            throw new IllegalArgumentException(
-                    "Access denied. Please choose a different location where you have write permission."
-            );
+            LOGGER.log(Level.WARNING, "Invalid filename provided: {0}", args);
+            throw new IllegalArgumentException("Invalid filename. Please provide a valid filename for the CSV file.");
         }
+    }
+
+    /**
+     * Validates that a filename contains only safe characters.
+     * Allows letters, numbers, hyphens, underscores, and dots.
+     *
+     * @param filename The filename to validate
+     * @return true if the filename is valid, false otherwise
+     */
+    private static boolean isValidFilename(String filename) {
+        // Allow letters, numbers, hyphens, underscores, and dots
+        // Disallow directory separators, control characters, and other special characters
+        return filename.matches("^[a-zA-Z0-9._-]+$");
     }
 }

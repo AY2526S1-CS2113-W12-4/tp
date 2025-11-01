@@ -1,6 +1,8 @@
 package seedu.fintrack;
 
+import seedu.fintrack.model.Expense;
 import seedu.fintrack.model.ExpenseCategory;
+import seedu.fintrack.model.Income;
 import seedu.fintrack.model.IncomeCategory;
 import seedu.fintrack.storage.CsvStorage;
 import seedu.fintrack.storage.Storage;
@@ -157,9 +159,9 @@ public class FinTrack {
                 break;
             case Ui.MODIFY_EXPENSE_COMMAND:
                 try {
-                    var parsed = Parser.parseModifyExpense(input);
-                    int index = parsed.getKey();
-                    var newExpense = parsed.getValue();
+                    int index = Parser.parseModifyExpenseIndex(input);
+                    Expense oldExpense = fm.getExpense(index);
+                    Expense newExpense = Parser.parseModifyExpenseWithDefaults(input, oldExpense);
                     boolean isOverBudget = fm.modifyExpense(index, newExpense);
                     Ui.printExpenseModified(newExpense, index);
                     if (isOverBudget) {
@@ -173,9 +175,9 @@ public class FinTrack {
                 break;
             case Ui.MODIFY_INCOME_COMMAND:
                 try {
-                    var parsed = Parser.parseModifyIncome(input);
-                    int index = parsed.getKey();
-                    var newIncome = parsed.getValue();
+                    int index = Parser.parseModifyIncomeIndex(input);
+                    Income oldIncome = fm.getIncome(index);
+                    Income newIncome = Parser.parseModifyIncomeWithDefaults(input, oldIncome);
                     fm.modifyIncome(index, newIncome);
                     Ui.printIncomeModified(newIncome, index);
                 } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
@@ -226,12 +228,8 @@ public class FinTrack {
                                  fm.getTotalExpense(),
                                  fm.getBalance());
                     Ui.printExportSuccess(exportPath);
-                } catch (SecurityException e) {
-                    Ui.printError("Permission denied. Please ensure you have access to write to this location.");
                 } catch (IllegalArgumentException e) {
                     Ui.printError(e.getMessage());
-                } catch (IOException e) {
-                    Ui.printError("Failed to write the file: " + e.getMessage());
                 }
                 break;
             case Ui.SUMMARY_EXPENSE_COMMAND:

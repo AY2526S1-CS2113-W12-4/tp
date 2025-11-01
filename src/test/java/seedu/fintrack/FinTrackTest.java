@@ -308,26 +308,22 @@ public class FinTrackTest {
         mustContain(s, "Budget set for ENTERTAINMENT: $10.00");
         mustContain(s, "Expense at index 1 modified to:");
         mustContain(s, "Income at index 1 modified to:");
-        mustContain(s, "Error: Missing parameters.");
+        mustContain(s, "Error: Missing index.");
         mustContain(s, "Error: Income index must be a positive number.");
         mustContain(s, "Error: Income index must be a valid number.");
     }
 
     @Test
     void exportSuccessAndAutoCreateDirectories() throws Exception {
-        java.nio.file.Path tmp = java.nio.file.Files.createTempFile("fintrack_export_", ".csv");
-        String bad = "nonexistent_dir" + java.io.File.separator + "out";
+        String filename = "test_export_" + System.currentTimeMillis() + ".csv";
         String script = String.join("\n",
                 "add-income a/11 c/Salary d/2025-10-01",
                 "add-expense a/3 c/Food d/2025-10-02",
-                "export " + tmp,
-                "export " + bad,
+                "export " + filename,
                 "bye");
         String s = run(script);
         mustContain(s, "Successfully exported data to:");
-        assertTrue(java.nio.file.Files.exists(tmp));
-        mustContain(s, "Successfully exported data to:");
-        assertTrue(java.nio.file.Files.exists(java.nio.file.Path.of(bad + ".csv")));
+        assertTrue(java.nio.file.Files.exists(java.nio.file.Path.of(filename)));
     }
 
     @Test
@@ -453,24 +449,34 @@ public class FinTrackTest {
 
     @Test
     void export_parentPathIsAFile_triggersIOExceptionCatch() throws Exception {
-        // Base temp dir
-        java.nio.file.Path base = java.nio.file.Files.createTempDirectory("fintrack_base_");
+        // This test is no longer relevant since we only allow filenames in current directory
+        // Replacing with a test for path validation
+        String script = String.join("\n",
+                "add-income a/11 c/Salary d/2025-10-01",
+                "add-expense a/3 c/Food d/2025-10-02",
+                "export path/to/file.csv",
+                "bye");
+        String s = run(script);
 
-        // Create a *file* named "blocker" inside base
-        java.nio.file.Path blocker = base.resolve("blocker");
-        java.nio.file.Files.writeString(blocker, "I am a file, not a directory");
+        // Should trigger filename validation error
+        mustContain(s, "Error: Invalid filename. Please provide only a filename (no paths). Usage: export <filename>");
+    }
 
-        // Now try to export to blocker/out.csv — parent is a *file*, not a dir
-        java.nio.file.Path target = blocker.resolve("out.csv");
+    @Test
+    void export_fileAlreadyExists_showsError() throws Exception {
+        // Create a file first
+        String filename = "existing_file.csv";
+        java.nio.file.Files.write(java.nio.file.Path.of(filename), "test content".getBytes());
 
         String script = String.join("\n",
                 "add-income a/11 c/Salary d/2025-10-01",
                 "add-expense a/3 c/Food d/2025-10-02",
-                "export " + target.toAbsolutePath(),
+                "export " + filename,
                 "bye");
         String s = run(script);
 
-        // FinTrack's (IOException) catch should handle this
-        mustContain(s, "Error: Failed to write the file:");
+        mustContain(s, "Error: Export failed. File already exists:");
+        mustContain(s, "Please choose a different filename.");
+        mustNotContain(s, "Successfully exported data to:");
     }
 }
