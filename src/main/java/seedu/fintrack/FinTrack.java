@@ -230,11 +230,6 @@ public class FinTrack {
                     Ui.printExportSuccess(exportPath);
                 } catch (IllegalArgumentException e) {
                     Ui.printError(e.getMessage());
-                } catch (Exception e) {
-                    Ui.printError("Export failed. Please check that:"
-                            + "\n- The file is not open in another program"
-                            + "\n- You have write permissions in this directory"
-                            + "\n- The filename is valid and not too long");
                 }
                 break;
             case Ui.SUMMARY_EXPENSE_COMMAND:

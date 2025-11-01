@@ -1,7 +1,6 @@
 package seedu.fintrack.storage;
 
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.time.format.DateTimeFormatter;
@@ -35,11 +34,11 @@ public class CsvStorage implements Storage {
      * @param totalIncome Total sum of all incomes
      * @param totalExpense Total sum of all expenses
      * @param balance Current balance (income - expense)
-     * @throws IOException If there is an error writing to the file
+     * @throws IllegalArgumentException If there is an error writing to the file
      */
     @Override
     public void export(Path filePath, List<Income> incomes, List<Expense> expenses,
-                      double totalIncome, double totalExpense, double balance) throws IOException {
+                      double totalIncome, double totalExpense, double balance) {
         LOGGER.log(Level.INFO, "Exporting data to CSV: " + filePath);
 
         // Note: No directory creation needed since we only write to current directory
@@ -69,9 +68,12 @@ public class CsvStorage implements Storage {
             writeSummarySection(writer, totalIncome, totalExpense, balance);
 
             LOGGER.log(Level.INFO, "Successfully exported data to CSV");
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Failed to export data to CSV", e);
-            throw e;
+            throw new IllegalArgumentException("Export failed. Please check that:"
+                    + "\n- The file is not open in another program"
+                    + "\n- You have write permissions in this directory"
+                    + "\n- The filename is valid and not too long");
         }
     }
 
