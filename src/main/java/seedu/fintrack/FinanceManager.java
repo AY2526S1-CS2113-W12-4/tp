@@ -15,7 +15,6 @@ import seedu.fintrack.model.ExpenseCategory;
 import seedu.fintrack.model.IncomeCategory;
 import seedu.fintrack.model.Income;
 import seedu.fintrack.model.Expense;
-import seedu.fintrack.model.BudgetStatus;
 
 /**
  * Manages all financial data including incomes and expenses.

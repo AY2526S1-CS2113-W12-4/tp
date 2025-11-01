@@ -2,7 +2,8 @@ package seedu.fintrack.model;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Unit tests for the BudgetStatus class.
@@ -10,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BudgetStatusTest {
 
     @Test
-    public void testConstructor_OverBudget() {
+    public void constructor_overBudgetOnly_setsFlagsCorrectly() {
         BudgetStatus budgetStatus = new BudgetStatus(true, false);
 
         // Check if isOverBudget returns true
@@ -21,7 +22,7 @@ public class BudgetStatusTest {
     }
 
     @Test
-    public void testConstructor_NearBudget() {
+    public void constructor_nearBudgetOnly_setsFlagsCorrectly() {
         BudgetStatus budgetStatus = new BudgetStatus(false, true);
 
         // Check if isOverBudget returns false
@@ -32,7 +33,7 @@ public class BudgetStatusTest {
     }
 
     @Test
-    public void testConstructor_NoBudgetIssues() {
+    public void constructor_noFlagsSet_setsFlagsCorrectly() {
         BudgetStatus budgetStatus = new BudgetStatus(false, false);
 
         // Check if isOverBudget returns false
@@ -43,7 +44,7 @@ public class BudgetStatusTest {
     }
 
     @Test
-    public void testConstructor_AllFlagsTrue() {
+    public void constructor_allFlagsSet_setsFlagsCorrectly() {
         BudgetStatus budgetStatus = new BudgetStatus(true, true);
 
         // Check if isOverBudget returns true
