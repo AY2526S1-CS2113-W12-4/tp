@@ -609,7 +609,7 @@ final class Parser {
      * @param input The full command string from the user. Must not be null.
      * @return The 1-based index of the expense to delete.
      * @throws IllegalArgumentException If the format is invalid, the index is missing,
-     *     not a number, or not a positive integer.
+     *     not a number, not a positive integer, or exceeds the computer's integer range.
      */
     public static int parseDeleteExpense(String input) throws IllegalArgumentException {
         assert input != null : "Input for parsing delete-expense cannot be null.";
@@ -631,6 +631,21 @@ final class Parser {
             return id;
         } catch (NumberFormatException e) {
             LOGGER.log(Level.WARNING, "Invalid index for delete-expense command: {0}", args);
+            // Check if the number is too large or too small for Java's integer range
+            try {
+                long testValue = Long.parseLong(args);
+                if (testValue > Integer.MAX_VALUE) {
+                    throw new IllegalArgumentException("Expense index is too large. " +
+                            "Please use a smaller number (maximum: " + Integer.MAX_VALUE + ").");
+                } else if (testValue < Integer.MIN_VALUE) {
+                    throw new IllegalArgumentException("Expense index is too small. " +
+                            "Please use a larger number (minimum: 1).");
+                }
+            } catch (NumberFormatException e2) {
+                // If Long.parseLong also fails, it's not a valid number at all
+                throw new IllegalArgumentException("Expense index must be a valid number.");
+            }
+            // If we get here, it's a valid long but outside int range
             throw new IllegalArgumentException("Expense index must be a valid number.");
         }
     }
@@ -642,7 +657,7 @@ final class Parser {
      * @param input The full command string from the user. Must not be null.
      * @return The 1-based index of the income to delete.
      * @throws IllegalArgumentException If the format is invalid, the index is missing,
-     *     not a number, or not a positive integer.
+     *     not a number, not a positive integer, or exceeds the computer's integer range.
      */
     public static int parseDeleteIncome(String input) throws IllegalArgumentException {
         assert input != null : "Input for parsing delete-income cannot be null.";
@@ -662,6 +677,21 @@ final class Parser {
             return id;
         } catch (NumberFormatException e) {
             LOGGER.log(Level.WARNING, "Invalid index for delete-income command: {0}", args);
+            // Check if the number is too large or too small for Java's integer range
+            try {
+                long testValue = Long.parseLong(args);
+                if (testValue > Integer.MAX_VALUE) {
+                    throw new IllegalArgumentException("Income index is too large. " +
+                            "Please use a smaller number (maximum: " + Integer.MAX_VALUE + ").");
+                } else if (testValue < Integer.MIN_VALUE) {
+                    throw new IllegalArgumentException("Income index is too small. " +
+                            "Please use a larger number (minimum: 1).");
+                }
+            } catch (NumberFormatException e2) {
+                // If Long.parseLong also fails, it's not a valid number at all
+                throw new IllegalArgumentException("Income index must be a valid number.");
+            }
+            // If we get here, it's a valid long but outside int range
             throw new IllegalArgumentException("Income index must be a valid number.");
         }
     }
@@ -778,6 +808,21 @@ final class Parser {
             }
         } catch (NumberFormatException e) {
             LOGGER.log(Level.WARNING, "Invalid index for modify-expense command: {0}", indexStr);
+            // Check if the number is too large or too small for Java's integer range
+            try {
+                long testValue = Long.parseLong(indexStr);
+                if (testValue > Integer.MAX_VALUE) {
+                    throw new IllegalArgumentException("Expense index is too large. " +
+                            "Please use a smaller number (maximum: " + Integer.MAX_VALUE + ").");
+                } else if (testValue < Integer.MIN_VALUE) {
+                    throw new IllegalArgumentException("Expense index is too small. " +
+                            "Please use a larger number (minimum: 1).");
+                }
+            } catch (NumberFormatException e2) {
+                // If Long.parseLong also fails, it's not a valid number at all
+                throw new IllegalArgumentException("Expense index must be a valid number.");
+            }
+            // If we get here, it's a valid long but outside int range
             throw new IllegalArgumentException("Expense index must be a valid number.");
         }
 
@@ -903,6 +948,21 @@ final class Parser {
             }
         } catch (NumberFormatException e) {
             LOGGER.log(Level.WARNING, "Invalid index for modify-income command: {0}", indexStr);
+            // Check if the number is too large or too small for Java's integer range
+            try {
+                long testValue = Long.parseLong(indexStr);
+                if (testValue > Integer.MAX_VALUE) {
+                    throw new IllegalArgumentException("Income index is too large. " +
+                            "Please use a smaller number (maximum: " + Integer.MAX_VALUE + ").");
+                } else if (testValue < Integer.MIN_VALUE) {
+                    throw new IllegalArgumentException("Income index is too small. " +
+                            "Please use a larger number (minimum: 1).");
+                }
+            } catch (NumberFormatException e2) {
+                // If Long.parseLong also fails, it's not a valid number at all
+                throw new IllegalArgumentException("Income index must be a valid number.");
+            }
+            // If we get here, it's a valid long but outside int range
             throw new IllegalArgumentException("Income index must be a valid number.");
         }
 
