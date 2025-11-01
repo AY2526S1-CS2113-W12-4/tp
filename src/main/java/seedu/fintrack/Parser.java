@@ -623,8 +623,14 @@ final class Parser {
 
         // Check if the number is clearly beyond Java's long range by string length
         if (isBeyondLongRange(args)) {
-            throw new IllegalArgumentException("Expense index is too large. " +
-                    "Please use a smaller number (maximum: " + Integer.MAX_VALUE + ").");
+            boolean isNegative = args.startsWith("-");
+            if (isNegative) {
+                throw new IllegalArgumentException("Expense index is too small. " +
+                        "Please use a larger number (minimum: 1).");
+            } else {
+                throw new IllegalArgumentException("Expense index is too large. " +
+                        "Please use a smaller number (maximum: " + Integer.MAX_VALUE + ").");
+            }
         }
 
         // Check if the number is within long range but outside int range
@@ -673,8 +679,14 @@ final class Parser {
 
         // Check if the number is clearly beyond Java's long range by string length
         if (isBeyondLongRange(args)) {
-            throw new IllegalArgumentException("Income index is too large. " +
-                    "Please use a smaller number (maximum: " + Integer.MAX_VALUE + ").");
+            boolean isNegative = args.startsWith("-");
+            if (isNegative) {
+                throw new IllegalArgumentException("Income index is too small. " +
+                        "Please use a larger number (minimum: 1).");
+            } else {
+                throw new IllegalArgumentException("Income index is too large. " +
+                        "Please use a smaller number (maximum: " + Integer.MAX_VALUE + ").");
+            }
         }
 
         // Check if the number is within long range but outside int range
@@ -807,8 +819,14 @@ final class Parser {
 
         // Check if the number is clearly beyond Java's long range by string length
         if (isBeyondLongRange(indexStr)) {
-            throw new IllegalArgumentException("Expense index is too large. " +
-                    "Please use a smaller number (maximum: " + Integer.MAX_VALUE + ").");
+            boolean isNegative = indexStr.startsWith("-");
+            if (isNegative) {
+                throw new IllegalArgumentException("Expense index is too small. " +
+                        "Please use a larger number (minimum: 1).");
+            } else {
+                throw new IllegalArgumentException("Expense index is too large. " +
+                        "Please use a smaller number (maximum: " + Integer.MAX_VALUE + ").");
+            }
         }
 
         // Check if the number is within long range but outside int range
@@ -950,8 +968,14 @@ final class Parser {
 
         // Check if the number is clearly beyond Java's long range by string length
         if (isBeyondLongRange(indexStr)) {
-            throw new IllegalArgumentException("Income index is too large. " +
-                    "Please use a smaller number (maximum: " + Integer.MAX_VALUE + ").");
+            boolean isNegative = indexStr.startsWith("-");
+            if (isNegative) {
+                throw new IllegalArgumentException("Income index is too small. " +
+                        "Please use a larger number (minimum: 1).");
+            } else {
+                throw new IllegalArgumentException("Income index is too large. " +
+                        "Please use a smaller number (maximum: " + Integer.MAX_VALUE + ").");
+            }
         }
 
         // Check if the number is within long range but outside int range
@@ -1130,20 +1154,28 @@ final class Parser {
      * @return true if the number is beyond Java's long range, false otherwise
      */
     private static boolean isBeyondLongRange(String numberStr) {
-        // Remove any leading minus sign for length calculation
-        String absNumberStr = numberStr.startsWith("-") ? numberStr.substring(1) : numberStr;
+        // Check if the number is negative
+        boolean isNegative = numberStr.startsWith("-");
+        String absNumberStr = isNegative ? numberStr.substring(1) : numberStr;
 
         // Check if the number has more digits than the maximum possible Java long
         // Long.MAX_VALUE = 9223372036854775807 (19 digits)
+        // Long.MIN_VALUE = -9223372036854775808 (19 digits + minus sign)
         // Any number with more than 19 digits is definitely beyond Java's long range
         if (absNumberStr.length() > 19) {
             return true;
         }
 
-        // For numbers with exactly 19 digits, check if they exceed Long.MAX_VALUE
+        // For numbers with exactly 19 digits, check if they exceed long range
         if (absNumberStr.length() == 19) {
-            // Compare with Long.MAX_VALUE as string to avoid parsing
-            return absNumberStr.compareTo("9223372036854775807") > 0;
+            if (isNegative) {
+                // For negative numbers, check if they exceed Long.MIN_VALUE
+                // Long.MIN_VALUE = -9223372036854775808
+                return absNumberStr.compareTo("9223372036854775808") > 0;
+            } else {
+                // For positive numbers, check if they exceed Long.MAX_VALUE
+                return absNumberStr.compareTo("9223372036854775807") > 0;
+            }
         }
 
         return false;

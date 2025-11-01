@@ -593,7 +593,7 @@ public class FinTrackTest {
     @Test
     void deleteExpenseAlias_veryLargeNegative_showSpecificError() throws Exception {
         String s = run("de -99999999999999999999\nbye\n");
-        mustContain(s, "Expense index is too large. Please use a smaller number (maximum: 2147483647).");
+        mustContain(s, "Expense index is too small. Please use a larger number (minimum: 1).");
     }
 
     @Test
@@ -635,7 +635,7 @@ public class FinTrackTest {
     @Test
     void deleteIncomeAlias_veryLargeNegative_showSpecificError() throws Exception {
         String s = run("di -99999999999999999999\nbye\n");
-        mustContain(s, "Income index is too large. Please use a smaller number (maximum: 2147483647).");
+        mustContain(s, "Income index is too small. Please use a larger number (minimum: 1).");
     }
 
     @Test
@@ -677,7 +677,7 @@ public class FinTrackTest {
     @Test
     void modifyExpenseAlias_veryLargeNegative_showSpecificError() throws Exception {
         String s = run("me -99999999999999999999\nbye\n");
-        mustContain(s, "Expense index is too large. Please use a smaller number (maximum: 2147483647).");
+        mustContain(s, "Expense index is too small. Please use a larger number (minimum: 1).");
     }
 
     @Test
@@ -719,7 +719,7 @@ public class FinTrackTest {
     @Test
     void modifyIncomeAlias_veryLargeNegative_showSpecificError() throws Exception {
         String s = run("mi -99999999999999999999\nbye\n");
-        mustContain(s, "Income index is too large. Please use a smaller number (maximum: 2147483647).");
+        mustContain(s, "Income index is too small. Please use a larger number (minimum: 1).");
     }
 
     @Test
