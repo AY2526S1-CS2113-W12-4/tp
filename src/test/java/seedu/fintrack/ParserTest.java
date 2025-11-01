@@ -192,7 +192,7 @@ public class ParserTest {
             Parser.parseAddExpense(input2);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Required fields: a/<amount> c/<category> d/<YYYY-MM-DD>.", e.getMessage());
+            assertEquals("Missing required parameter: d/. Usage: add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
         }
 
         // Missing amount
@@ -200,7 +200,7 @@ public class ParserTest {
             Parser.parseAddExpense(input3);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Required fields: a/<amount> c/<category> d/<YYYY-MM-DD>.", e.getMessage());
+            assertEquals("Missing required parameter: a/. Usage: add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
         }
 
         // Missing category
@@ -208,7 +208,7 @@ public class ParserTest {
             Parser.parseAddExpense(input4);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Required fields: a/<amount> c/<category> d/<YYYY-MM-DD>.", e.getMessage());
+            assertEquals("Missing required parameter: c/. Usage: add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
         }
     }
 
@@ -232,21 +232,21 @@ public class ParserTest {
             Parser.parseAddExpense(input1);
             fail("Should have failed due to empty amount");
         } catch (IllegalArgumentException e) {
-            assertEquals(expectedMsg, e.getMessage());
+            assertEquals("Missing required parameter: a/. Usage: add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
         }
 
         try {
             Parser.parseAddExpense(input2);
             fail("Should have failed due to empty category");
         } catch (IllegalArgumentException e) {
-            assertEquals(expectedMsg, e.getMessage());
+            assertEquals("Missing required parameter: c/. Usage: add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
         }
 
         try {
             Parser.parseAddExpense(input3);
             fail("Should have failed due to empty date");
         } catch (IllegalArgumentException e) {
-            assertEquals(expectedMsg, e.getMessage());
+            assertEquals("Missing required parameter: d/. Usage: add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
         }
     }
 
@@ -348,6 +348,110 @@ public class ParserTest {
 
         Expense e = Parser.parseAddExpense(input);
         assertEquals("Gym c/membership renewal a/15 d/2025-10-12 c/MISC", e.getDescription());
+    }
+
+    @Test
+    public void parseAddExpense_unknownPrefix_throws() {
+        String input = Ui.ADD_EXPENSE_COMMAND + " a/10 c/Food d/2025-10-01 x/unknown";
+        try {
+            Parser.parseAddExpense(input);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains("Unexpected argument prefix: x/"));
+        }
+    }
+
+    @Test
+    public void parseAddExpense_duplicatePrefix_throws() {
+        String input = Ui.ADD_EXPENSE_COMMAND + " a/10 a/20 c/Food d/2025-10-01";
+        try {
+            Parser.parseAddExpense(input);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains("Duplicate argument: a/"));
+        }
+    }
+
+    @Test
+    public void parseAddExpense_textBeforeFirstPrefix_throws() {
+        String input = Ui.ADD_EXPENSE_COMMAND + " random text a/10 c/Food d/2025-10-01";
+        try {
+            Parser.parseAddExpense(input);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains("Unexpected text before arguments"));
+        }
+    }
+
+    @Test
+    public void parseAddExpense_descriptionBeforeAmount_throws() {
+        String input = Ui.ADD_EXPENSE_COMMAND + " des/test a/10 c/Food d/2025-10-01";
+        try {
+            Parser.parseAddExpense(input);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Description (des/) must be the last parameter.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void parseAddExpense_descriptionBeforeCategory_throws() {
+        String input = Ui.ADD_EXPENSE_COMMAND + " a/10 des/test c/Food d/2025-10-01";
+        try {
+            Parser.parseAddExpense(input);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Description (des/) must be the last parameter.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void parseAddExpense_prefixAtStringStart_detected() {
+        String input = Ui.ADD_EXPENSE_COMMAND + " a/10 c/Food d/2025-10-01";
+        Expense e = Parser.parseAddExpense(input);
+        assertEquals(10.0, e.getAmount(), 1e-9);
+    }
+
+    @Test
+    public void parseAddExpense_prefixAfterTab_detected() {
+        String input = Ui.ADD_EXPENSE_COMMAND + "\ta/10\tc/Food\td/2025-10-01";
+        Expense e = Parser.parseAddExpense(input);
+        assertEquals(10.0, e.getAmount(), 1e-9);
+    }
+
+    @Test
+    public void parseAddExpense_descriptionWithEmbeddedPrefix_preserved() {
+        String input = Ui.ADD_EXPENSE_COMMAND + " a/10 c/Food d/2025-10-01 des/Bought a/bottle";
+        Expense e = Parser.parseAddExpense(input);
+        assertEquals("Bought a/bottle", e.getDescription());
+    }
+
+    @Test
+    public void parseAddExpense_emptyDescriptionValue_treatedAsNull() {
+        String input = Ui.ADD_EXPENSE_COMMAND + " a/10 c/Food d/2025-10-01 des/";
+        Expense e = Parser.parseAddExpense(input);
+        assertEquals(null, e.getDescription());
+    }
+
+    @Test
+    public void parseAddExpense_descriptionWithOnlySpaces_trimmed() {
+        String input = Ui.ADD_EXPENSE_COMMAND + " a/10 c/Food d/2025-10-01 des/   ";
+        Expense e = Parser.parseAddExpense(input);
+        assertEquals(null, e.getDescription());
+    }
+
+    @Test
+    public void parseAddExpense_veryLargeAmount_accepted() {
+        String input = Ui.ADD_EXPENSE_COMMAND + " a/999999999.99 c/Food d/2025-10-01";
+        Expense e = Parser.parseAddExpense(input);
+        assertEquals(999999999.99, e.getAmount(), 1e-9);
+    }
+
+    @Test
+    public void parseAddExpense_verySmallAmount_accepted() {
+        String input = Ui.ADD_EXPENSE_COMMAND + " a/0.01 c/Food d/2025-10-01";
+        Expense e = Parser.parseAddExpense(input);
+        assertEquals(0.01, e.getAmount(), 1e-9);
     }
 
     /**
@@ -811,21 +915,21 @@ public class ParserTest {
             Parser.parseAddIncome(input2);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Required fields: a/<amount> c/<category> d/<YYYY-MM-DD>.", e.getMessage());
+            assertEquals("Missing required parameter: d/. Usage: add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
         }
 
         try {
             Parser.parseAddIncome(input3);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Required fields: a/<amount> c/<category> d/<YYYY-MM-DD>.", e.getMessage());
+            assertEquals("Missing required parameter: a/. Usage: add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
         }
 
         try {
             Parser.parseAddIncome(input4);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Required fields: a/<amount> c/<category> d/<YYYY-MM-DD>.", e.getMessage());
+            assertEquals("Missing required parameter: c/. Usage: add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]", e.getMessage());
         }
     }
 
@@ -960,6 +1064,63 @@ public class ParserTest {
 
         Income income = Parser.parseAddIncome(input);
         assertEquals("Bonus with a/500 c/SALARY \t d/2025-11-30", income.getDescription());
+    }
+
+    @Test
+    public void parseAddIncome_unknownPrefix_throws() {
+        String input = Ui.ADD_INCOME_COMMAND + " a/100 c/Salary d/2025-10-01 z/invalid";
+        try {
+            Parser.parseAddIncome(input);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains("Unexpected argument prefix: z/"));
+        }
+    }
+
+    @Test
+    public void parseAddIncome_duplicatePrefix_throws() {
+        String input = Ui.ADD_INCOME_COMMAND + " c/Salary c/Gift a/100 d/2025-10-01";
+        try {
+            Parser.parseAddIncome(input);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains("Duplicate argument: c/"));
+        }
+    }
+
+    public void parseAddIncome_descriptionBeforeAmount_throws() {
+        String input = Ui.ADD_INCOME_COMMAND + " des/test a/100 c/Salary d/2025-10-01";
+        try {
+            Parser.parseAddIncome(input);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Description (des/) must be the last parameter.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void parseAddIncome_descriptionBeforeCategory_throws() {
+        String input = Ui.ADD_INCOME_COMMAND + " a/100 des/test c/Salary d/2025-10-01";
+        try {
+            Parser.parseAddIncome(input);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Description (des/) must be the last parameter.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void parseAddIncome_descriptionWithEmbeddedPrefix_preserved() {
+        String input = Ui.ADD_INCOME_COMMAND + " a/100 c/Salary d/2025-10-01 des/Salary c/2025";
+        Income i = Parser.parseAddIncome(input);
+        assertEquals("Salary c/2025", i.getDescription());
+    }
+
+    @Test
+    public void parseAddIncome_emptyDescriptionValue_treatedAsNull() {
+        String input = Ui.ADD_INCOME_COMMAND + " a/100 c/Salary d/2025-10-01 des/";
+        Income i = Parser.parseAddIncome(input);
+        assertEquals(null, i.getDescription());
     }
 
     /*
@@ -1304,7 +1465,7 @@ public class ParserTest {
             Parser.parseSetBudget(Ui.BUDGET_COMMAND + " " + Ui.CATEGORY_PREFIX + "food");
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals(usageMsg, e.getMessage());
+            assertEquals("Missing required parameter: a/. Usage: budget c/<category> a/<amount>", e.getMessage());
         }
 
         // Missing category
@@ -1312,7 +1473,7 @@ public class ParserTest {
             Parser.parseSetBudget(Ui.BUDGET_COMMAND + " " + Ui.AMOUNT_PREFIX + "100");
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals(usageMsg, e.getMessage());
+            assertEquals("Missing required parameter: c/. Usage: budget c/<category> a/<amount>", e.getMessage());
         }
     }
 
@@ -1353,6 +1514,39 @@ public class ParserTest {
                             "\nAvailable categories:" +
                                 " [FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS]",
                     e.getMessage());
+        }
+    }
+
+    @Test
+    public void parseSetBudget_duplicatePrefix_throws() {
+        String input = Ui.BUDGET_COMMAND + " c/Food c/Transport a/100";
+        try {
+            Parser.parseSetBudget(input);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains("Duplicate argument: c/"));
+        }
+    }
+
+    @Test
+    public void parseSetBudget_unknownPrefix_throws() {
+        String input = Ui.BUDGET_COMMAND + " c/Food a/100 x/unknown";
+        try {
+            Parser.parseSetBudget(input);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains("Unexpected argument prefix: x/"));
+        }
+    }
+
+    @Test
+    public void parseSetBudget_textBeforeFirstPrefix_throws() {
+        String input = Ui.BUDGET_COMMAND + " extra text c/Food a/100";
+        try {
+            Parser.parseSetBudget(input);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains("Unexpected text before arguments"));
         }
     }
 
