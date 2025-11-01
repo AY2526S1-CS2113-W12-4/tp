@@ -1,6 +1,5 @@
 package seedu.fintrack.storage;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -23,8 +22,8 @@ public interface Storage {
      * @param totalIncome Total sum of all incomes
      * @param totalExpense Total sum of all expenses
      * @param balance Current balance (income - expense)
-     * @throws IOException If there is an error writing to the file
+     * @throws IllegalArgumentException If there is an error writing to the file
      */
     void export(Path filePath, List<Income> incomes, List<Expense> expenses,
-                double totalIncome, double totalExpense, double balance) throws IOException;
+                double totalIncome, double totalExpense, double balance);
 }

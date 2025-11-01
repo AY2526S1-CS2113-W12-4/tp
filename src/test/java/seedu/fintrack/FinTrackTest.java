@@ -315,8 +315,7 @@ public class FinTrackTest {
 
     @Test
     void exportSuccessAndAutoCreateDirectories() throws Exception {
-        java.nio.file.Path tmp = java.nio.file.Files.createTempFile("fintrack_export_", ".csv");
-        String filename = "export_data.csv";
+        String filename = "test_export_" + System.currentTimeMillis() + ".csv";
         String script = String.join("\n",
                 "add-income a/11 c/Salary d/2025-10-01",
                 "add-expense a/3 c/Food d/2025-10-02",
@@ -461,5 +460,23 @@ public class FinTrackTest {
 
         // Should trigger filename validation error
         mustContain(s, "Error: Invalid filename. Please provide only a filename (no paths). Usage: export <filename>");
+    }
+
+    @Test
+    void export_fileAlreadyExists_showsError() throws Exception {
+        // Create a file first
+        String filename = "existing_file.csv";
+        java.nio.file.Files.write(java.nio.file.Path.of(filename), "test content".getBytes());
+
+        String script = String.join("\n",
+                "add-income a/11 c/Salary d/2025-10-01",
+                "add-expense a/3 c/Food d/2025-10-02",
+                "export " + filename,
+                "bye");
+        String s = run(script);
+
+        mustContain(s, "Error: Export failed. File already exists:");
+        mustContain(s, "Please choose a different filename.");
+        mustNotContain(s, "Successfully exported data to:");
     }
 }

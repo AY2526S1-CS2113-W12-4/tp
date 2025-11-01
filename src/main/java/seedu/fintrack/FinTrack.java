@@ -228,12 +228,8 @@ public class FinTrack {
                                  fm.getTotalExpense(),
                                  fm.getBalance());
                     Ui.printExportSuccess(exportPath);
-                } catch (SecurityException e) {
-                    Ui.printError("Permission denied. Please ensure you have access to write to this location.");
                 } catch (IllegalArgumentException e) {
                     Ui.printError(e.getMessage());
-                } catch (IOException e) {
-                    Ui.printError("Failed to write the file: " + e.getMessage());
                 }
                 break;
             case Ui.SUMMARY_EXPENSE_COMMAND:
