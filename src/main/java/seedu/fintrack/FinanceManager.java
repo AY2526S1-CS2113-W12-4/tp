@@ -125,6 +125,28 @@ public class FinanceManager {
     }
 
     /**
+     * Deletes the budget for a specific expense category.
+     *
+     * @param category The expense category to delete the budget for.
+     * @throws IllegalArgumentException if the category is null or no budget was set for it.
+     */
+    public void deleteBudget(ExpenseCategory category) {
+        if (category == null) {
+            LOGGER.log(Level.WARNING, "deleteBudget called with null category");
+            throw new IllegalArgumentException("Category cannot be null");
+        }
+
+        if (!budgets.containsKey(category)) {
+            LOGGER.log(Level.WARNING, "deleteBudget called for category with no budget: {0}", category);
+            throw new IllegalArgumentException("No budget was set for category: " + category);
+        }
+
+        budgets.remove(category);
+        LOGGER.log(Level.INFO, "Budget deleted for {0}", category);
+        assert !budgets.containsKey(category) : "Budget should have been removed.";
+    }
+
+    /**
      * Returns an unmodifiable view of the current budgets.
      *
      * @return An unmodifiable map of expense categories to their budget amounts.

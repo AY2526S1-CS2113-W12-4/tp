@@ -146,6 +146,15 @@ public class FinTrack {
                 }
                 Ui.printBudgets(fm.getBudgetsView());
                 break;
+            case Ui.DELETE_BUDGET_COMMAND:
+                try {
+                    ExpenseCategory category = Parser.parseDeleteBudget(expandedInput);
+                    fm.deleteBudget(category);
+                    Ui.printBudgetDeleted(category);
+                } catch (IllegalArgumentException e) {
+                    Ui.printError(e.getMessage());
+                }
+                break;
             case Ui.DELETE_EXPENSE_COMMAND:
                 try {
                     int expenseIndex = Parser.parseDeleteExpense(expandedInput);

@@ -711,6 +711,58 @@ public class FinanceManagerTest {
         assertEquals(92.0, fm.getTotalExpenseForCategory(ExpenseCategory.FOOD));
     }
 
+    @Test
+    void deleteBudget_valid_deletesSuccessfully() {
+        fm.setBudget(ExpenseCategory.FOOD, 100.0);
+        assertEquals(100.0, fm.getBudgetForCategory(ExpenseCategory.FOOD));
+
+        fm.deleteBudget(ExpenseCategory.FOOD);
+
+        assertNull(fm.getBudgetForCategory(ExpenseCategory.FOOD));
+        assertFalse(fm.getBudgetsView().containsKey(ExpenseCategory.FOOD));
+    }
+
+    @Test
+    void deleteBudget_multipleBudgets_deletesOnlyOne() {
+        fm.setBudget(ExpenseCategory.FOOD, 100.0);
+        fm.setBudget(ExpenseCategory.RENT, 500.0);
+
+        fm.deleteBudget(ExpenseCategory.FOOD);
+
+        assertNull(fm.getBudgetForCategory(ExpenseCategory.FOOD));
+        assertEquals(500.0, fm.getBudgetForCategory(ExpenseCategory.RENT));
+        assertEquals(1, fm.getBudgetsView().size());
+    }
+
+    @Test
+    void deleteBudget_nullCategory_throwsException() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            fm.deleteBudget(null);
+        });
+        assertEquals("Category cannot be null", exception.getMessage());
+    }
+
+    @Test
+    void deleteBudget_nonExistentBudget_throwsException() {
+        // No budget set for TRANSPORT
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            fm.deleteBudget(ExpenseCategory.TRANSPORT);
+        });
+        assertEquals("No budget was set for category: TRANSPORT", exception.getMessage());
+    }
+
+    @Test
+    void deleteBudget_deleteTwice_throwsException() {
+        fm.setBudget(ExpenseCategory.BILLS, 50.0);
+        fm.deleteBudget(ExpenseCategory.BILLS); // First delete is fine
+
+        // Second delete should fail
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            fm.deleteBudget(ExpenseCategory.BILLS);
+        });
+        assertEquals("No budget was set for category: BILLS", exception.getMessage());
+    }
+
     // ============ Tests for modifyExpense ============
 
     @Test
