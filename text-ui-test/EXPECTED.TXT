@@ -465,7 +465,7 @@ Description: Monthly salary
    Available categories: FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS
 
 2. Add an income:
-   add-incomea/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
+   add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
    Example: add-income a/2000 c/Salary d/2025-10-01 des/Monthly pay
    Available categories: SALARY, SCHOLARSHIP, INVESTMENT, GIFT, OTHERS
 
