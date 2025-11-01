@@ -570,4 +570,22 @@ A: Ensure the date is valid on the calendar and in `YYYY-MM-DD` format.
 | `export`                   | `export <filepath>`                                                      | `export financial_data.csv`                                  |
 | `bye`                      | `bye`                                                                    | `bye`                                                        |
 
+### Command Aliases
+
+For faster typing, you can use these shortcuts:
+
+| Alias | Full Command     | Example Usage           |
+|-------|------------------|-------------------------|
+| `ae`  | `add-expense`    | `ae a/12.50 c/Food d/2025-10-08` |
+| `ai`  | `add-income`     | `ai a/3200 c/Salary d/2025-10-01` |
+| `le`  | `list-expense`   | `le`                     |
+| `li`  | `list-income`    | `li`                     |
+| `me`  | `modify-expense` | `me 1 a/15.00 c/Food`    |
+| `mi`  | `modify-income`  | `mi 2 a/3500 c/Salary`   |
+| `de`  | `delete-expense` | `de 1`                   |
+| `di`  | `delete-income`  | `di 2`                   |
+| `bg`  | `budget`         | `bg c/Food a/500`        |
+| `ex`  | `export`         | `ex financial_data.csv`  |
+| `b`   | `balance`        | `b`                      |
+
 Stay tuned to the project repository for upcoming enhancements such as persistent storage and advanced summaries.

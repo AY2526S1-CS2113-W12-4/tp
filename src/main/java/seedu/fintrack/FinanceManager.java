@@ -343,13 +343,43 @@ public class FinanceManager {
             throw new IndexOutOfBoundsException("Expense index out of range. Valid range: 1 to " + expenses.size());
         }
 
+        Expense originalExpense = expenses.get(index - 1);
+        ExpenseCategory newCategory = newExpense.getCategory();
+        double previousTotalForCategory = getTotalExpenseForCategory(newCategory);
+
+        boolean hasBudget = budgets.containsKey(newCategory);
+        double budget = 0.0;
+        boolean categoryAlreadyExceeded = false;
+        if (hasBudget) {
+            budget = budgets.get(newCategory);
+            categoryAlreadyExceeded = previousTotalForCategory > budget;
+        }
+
+        Expense removedExpense = deleteExpense(index);
+        assert removedExpense.equals(originalExpense) : "modifyExpense should remove the targeted expense";
+
+        double totalBeforeNewExpense = getTotalExpenseForCategory(newCategory);
+        boolean budgetExceeded = false;
+
         try {
-            return addExpense(newExpense);
+            expenses.add(newExpense);
+            LOGGER.log(Level.INFO, "Expense modified");
+            assert expenses.contains(newExpense) : "Modified expense should be present after update";
         } catch (Exception e) {
-            // Restore the old expense if adding the new one fails
-            expenses.add(oldExpense);
+            expenses.add(removedExpense);
             throw e;
         }
+
+        if (hasBudget) {
+            double newTotalForCategory = totalBeforeNewExpense + newExpense.getAmount();
+            if (!categoryAlreadyExceeded
+                    && totalBeforeNewExpense <= budget
+                    && newTotalForCategory > budget) {
+                budgetExceeded = true;
+            }
+        }
+
+        return budgetExceeded;
     }
 
     /**
@@ -461,7 +491,7 @@ public class FinanceManager {
         return incomeByCategory;
     }
 
-    public static double calculatePercentage(double amount, double totalAmount) {
+    public double calculatePercentage(double amount, double totalAmount) {
         assert !Double.isNaN(amount) : "Amount should be a number.";
         assert !Double.isNaN(totalAmount) : "Total amount should be a number.";
 
@@ -474,5 +504,43 @@ public class FinanceManager {
         assert !Double.isNaN(percent) : "Percent should be a number.";
         LOGGER.log(Level.INFO, "calculatePercentage called successfully.");
         return percent;
+    }
+
+    public Map<ExpenseCategory, Double>getExpensePercentageByCategory(
+            Map<ExpenseCategory, Double>expenseByCategory, double totalExpense) {
+        assert expenseByCategory != null : "expenseByCategory map should not be null.";
+        assert !Double.isNaN(totalExpense) : "totalAmount should be a number.";
+
+        Map<ExpenseCategory, Double> expensePercentageByCategory = new HashMap<>();
+        for (Map.Entry<ExpenseCategory, Double> mapEntry : expenseByCategory.entrySet()) {
+            ExpenseCategory category = mapEntry.getKey();
+            Double amount = mapEntry.getValue();
+            assert !Double.isNaN(amount) : "amount should be a number";
+
+            double percent = calculatePercentage(amount, totalExpense);
+            expensePercentageByCategory.put(category, percent);
+        }
+
+        LOGGER.log(Level.INFO,"getExpenseByCategory called successfully.");
+        return expensePercentageByCategory;
+    }
+
+    public Map<IncomeCategory, Double>getIncomePercentageByCategory(
+            Map<IncomeCategory, Double>incomeByCategory, double totalIncome) {
+        assert incomeByCategory != null : "incomeByCategory map should not be null.";
+        assert !Double.isNaN(totalIncome) : "totalAmount should be a number.";
+
+        Map<IncomeCategory, Double> incomePercentageByCategory = new HashMap<>();
+        for (Map.Entry<IncomeCategory, Double> mapEntry : incomeByCategory.entrySet()) {
+            IncomeCategory category = mapEntry.getKey();
+            Double amount = mapEntry.getValue();
+            assert !Double.isNaN(amount) : "amount should be a number";
+
+            double percent = calculatePercentage(amount, totalIncome);
+            incomePercentageByCategory.put(category, percent);
+        }
+
+        LOGGER.log(Level.INFO,"getIncomeByCategory called successfully.");
+        return incomePercentageByCategory;
     }
 }

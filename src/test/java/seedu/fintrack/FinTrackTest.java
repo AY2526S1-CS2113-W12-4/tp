@@ -479,4 +479,85 @@ public class FinTrackTest {
         mustContain(s, "Please choose a different filename.");
         mustNotContain(s, "Successfully exported data to:");
     }
+
+    @Test
+    void aliases_workForCoreCommands() throws Exception {
+        String script = String.join("\n",
+                // Using aliases for data entry
+                "ae a/25 c/Food d/2025-10-10 des/Lunch",
+                "ai a/100 c/Salary d/2025-10-01 des/Pay",
+
+                // Using aliases for listing
+                "le",
+                "li",
+
+                // Using alias for balance
+                "b",
+
+                // Using aliases for modification
+                "me 1 a/30 c/Food d/2025-10-10 des/Dinner",
+                "mi 1 a/120 c/Salary d/2025-10-01 des/Raise",
+
+                // Using aliases for deletion
+                "de 1",
+                "di 1",
+
+                "bye");
+        String s = run(script);
+
+        // Verify all alias commands worked
+        mustContain(s, "Expense added:");
+        mustContain(s, "Income added:");
+        mustContain(s, "Expenses (Newest first):");
+        mustContain(s, "Incomes (Newest first):");
+        mustContain(s, "Overall Balance:");
+        mustContain(s, "Expense at index 1 modified to:");
+        mustContain(s, "Income at index 1 modified to:");
+        mustContain(s, "Expense deleted");
+        mustContain(s, "Income deleted");
+    }
+
+    @Test
+    void aliases_workForBudgetAndExport() throws Exception {
+        String filename = "test_alias_export_" + System.currentTimeMillis() + ".csv";
+        String script = String.join("\n",
+                // Using budget alias
+                "bg c/Food a/50",
+                "ae a/30 c/Food d/2025-10-10",
+
+                // Using export alias
+                "ex " + filename,
+
+                "bye");
+        String s = run(script);
+
+        // Verify budget and export aliases worked
+        mustContain(s, "Budget set for FOOD: $50.00");
+        mustContain(s, "Expense added:");
+        mustContain(s, "Successfully exported data to:");
+        assertTrue(java.nio.file.Files.exists(java.nio.file.Path.of(filename)));
+    }
+
+    @Test
+    void aliases_workWithMonthFilters() throws Exception {
+        String script = String.join("\n",
+                "ae a/10 c/Food d/2025-09-30 des/Sept",
+                "ae a/20 c/Food d/2025-10-01 des/Oct",
+                "ai a/100 c/Salary d/2025-09-30 des/Sept",
+                "ai a/200 c/Salary d/2025-10-01 des/Oct",
+
+                // Using aliases with month filters
+                "le d/2025-09",
+                "li d/2025-09",
+                "b d/2025-09",
+
+                "bye");
+        String s = run(script);
+
+        // Verify aliases work with month filters
+        mustContain(s, "Expenses for the month 2025-09");
+        mustContain(s, "Incomes for the month 2025-09");
+        mustContain(s, "Overall Balance for the month 2025-09:");
+    }
+
 }

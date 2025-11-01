@@ -334,8 +334,11 @@ public class UiTest {
         Map<ExpenseCategory, Double> testMap = new HashMap<>();
         testMap.put(ExpenseCategory.FOOD, 12.50);
         testMap.put(ExpenseCategory.TRANSPORT, 5.00);
+        Map<ExpenseCategory, Double> testPercentMap = new HashMap<>();
+        testPercentMap.put(ExpenseCategory.FOOD, 12.50/totalExpense * 100.0);
+        testPercentMap.put(ExpenseCategory.TRANSPORT, 5.00/totalExpense * 100.0);
 
-        Ui.printExpenseByCategory(totalExpense, testMap);
+        Ui.printExpenseByCategory(totalExpense, testMap, testPercentMap);
         String out = out();
 
         assertTrue(out.contains("FOOD: 12.50 (71.43%)"));
@@ -345,11 +348,11 @@ public class UiTest {
 
     @Test
     void printExpenseByCategory_emptyOrNegative_printsMessage() {
-        Ui.printExpenseByCategory(0.0, Map.of());
+        Ui.printExpenseByCategory(0.0, Map.of(), Map.of());
         String out1 = out();
         assertTrue(out1.contains("You have not spent anything yet!"));
 
-        Ui.printExpenseByCategory(-1.0, Map.of(ExpenseCategory.FOOD, 10.0));
+        Ui.printExpenseByCategory(-1.0, Map.of(ExpenseCategory.FOOD, 10.0), Map.of());
         String out2 = out();
         assertTrue(out2.contains("You have not spent anything yet!"));
     }
@@ -360,8 +363,11 @@ public class UiTest {
         Map<ExpenseCategory, Double> testMap = new HashMap<>();
         testMap.put(ExpenseCategory.FOOD, 12.50);
         testMap.put(ExpenseCategory.TRANSPORT, 5.00);
+        Map<ExpenseCategory, Double> testPercentMap = new HashMap<>();
+        testPercentMap.put(ExpenseCategory.FOOD, 12.50/totalExpense * 100.0);
+        testPercentMap.put(ExpenseCategory.TRANSPORT, 5.00/totalExpense * 100.0);
 
-        Ui.printSummaryExpense(totalExpense, testMap);
+        Ui.printSummaryExpense(totalExpense, testMap, testPercentMap);
         String out = out();
 
         assertTrue(out.contains("Here is an overall summary of your expenses!"));
@@ -376,7 +382,7 @@ public class UiTest {
     @Test
     void printSummaryExpense_printsHeaderToNoExpenseMessage() {
         Map<ExpenseCategory, Double> testMap = new HashMap<>();
-        Ui.printSummaryExpense(0.0, testMap);
+        Ui.printSummaryExpense(0.0, testMap, testMap);
         String out = out();
 
         assertTrue(out.contains("Here is an overall summary of your expenses!"));
@@ -389,7 +395,7 @@ public class UiTest {
     @Test
     void printSummaryExpense_zeroTotalsWithEntries_doesNotPrintNaN() {
         Map<ExpenseCategory, Double> testMap = Map.of(ExpenseCategory.FOOD, 0.0);
-        Ui.printSummaryExpense(0.0, testMap);
+        Ui.printSummaryExpense(0.0, testMap, testMap);
         String out = out();
 
         assertTrue(out.contains("You have not spent anything yet!"));
@@ -402,8 +408,11 @@ public class UiTest {
         Map<IncomeCategory, Double> testMap = new HashMap<>();
         testMap.put(IncomeCategory.SALARY, 1500.00);
         testMap.put(IncomeCategory.INVESTMENT, 50.50);
+        Map<IncomeCategory, Double> testPercentMap = new HashMap<>();
+        testPercentMap.put(IncomeCategory.SALARY, 1500/totalIncome * 100.0);
+        testPercentMap.put(IncomeCategory.INVESTMENT, 50.50/totalIncome * 100.0);
 
-        Ui.printIncomeByCategory(totalIncome, testMap);
+        Ui.printIncomeByCategory(totalIncome, testMap, testPercentMap);
         String out = out();
 
         assertTrue(out.contains("SALARY: 1500.00 (96.74%)"));
@@ -413,11 +422,11 @@ public class UiTest {
 
     @Test
     void printIncomeByCategory_emptyOrNegative_printsFriendlyMessage() {
-        Ui.printIncomeByCategory(0.0, Map.of());
+        Ui.printIncomeByCategory(0.0, Map.of(), Map.of());
         String out1 = out();
         assertTrue(out1.contains("You have not recorded any income yet!"));
 
-        Ui.printIncomeByCategory(-1.0, Map.of(IncomeCategory.SALARY, 1.0));
+        Ui.printIncomeByCategory(-1.0, Map.of(IncomeCategory.SALARY, 1.0), Map.of());
         String out2 = out();
         assertTrue(out2.contains("You have not recorded any income yet!"));
     }
@@ -428,8 +437,11 @@ public class UiTest {
         Map<IncomeCategory, Double> testMap = new HashMap<>();
         testMap.put(IncomeCategory.SALARY, 1500.00);
         testMap.put(IncomeCategory.INVESTMENT, 50.50);
+        Map<IncomeCategory, Double> testPercentMap = new HashMap<>();
+        testPercentMap.put(IncomeCategory.SALARY, 1500/totalIncome * 100.0);
+        testPercentMap.put(IncomeCategory.INVESTMENT, 50.50/totalIncome * 100.0);
 
-        Ui.printSummaryIncome(totalIncome, testMap);
+        Ui.printSummaryIncome(totalIncome, testMap, testPercentMap);
         String out = out();
 
         assertTrue(out.contains("Here is an overall summary of your income!"));
@@ -444,7 +456,7 @@ public class UiTest {
     @Test
     void printSummaryExpense_printsHeaderToNoIncomeMessage() {
         Map<IncomeCategory, Double> testMap = new HashMap<>();
-        Ui.printSummaryIncome(0.0, testMap);
+        Ui.printSummaryIncome(0.0, testMap, testMap);
         String out = out();
 
         assertTrue(out.contains("Here is an overall summary of your income!"));
@@ -457,7 +469,7 @@ public class UiTest {
     @Test
     void printSummaryIncome_zeroTotalsWithEntries_doesNotPrintNaN() {
         Map<IncomeCategory, Double> testMap = Map.of(IncomeCategory.GIFT, 0.0);
-        Ui.printSummaryIncome(0.0, testMap);
+        Ui.printSummaryIncome(0.0, testMap, testMap);
         String out = out();
 
         assertTrue(out.contains("You have not recorded any income yet!"));
