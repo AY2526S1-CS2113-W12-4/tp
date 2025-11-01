@@ -785,12 +785,12 @@ final class Parser {
     }
 
     /**
-     * Parses the export command input to extract the file path.
-     * Expected format: export {@code <filepath>}
+     * Parses the export command input to extract the filename.
+     * Expected format: export {@code <filename>}
      *
      * @param input The full export command input
-     * @return The Path object representing the export file path
-     * @throws IllegalArgumentException if the command format is invalid or path is invalid
+     * @return The Path object representing the export file in current directory
+     * @throws IllegalArgumentException if the command format is invalid or filename is invalid
      */
     public static Path parseExport(String input) {
         assert input != null : "Input cannot be null.";
@@ -798,33 +798,51 @@ final class Parser {
 
         String args = input.substring(Ui.EXPORT_COMMAND.length()).trim();
         if (args.isEmpty()) {
-            LOGGER.log(Level.WARNING, "Missing file path for export command.");
-            throw new IllegalArgumentException("Missing file path. Usage: export <filepath>");
+            LOGGER.log(Level.WARNING, "Missing filename for export command.");
+            throw new IllegalArgumentException("Missing filename. Usage: export <filename>");
+        }
+
+        // Validate that it's just a filename (no directory separators)
+        if (args.contains(java.io.File.separator) || args.contains("/") || args.contains("\\")) {
+            LOGGER.log(Level.WARNING, "Path contains directory separators: {0}", args);
+            throw new IllegalArgumentException(
+                    "Invalid filename. Please provide only a filename (no paths). Usage: export <filename>"
+            );
+        }
+
+        // Validate filename format
+        if (!isValidFilename(args)) {
+            LOGGER.log(Level.WARNING, "Invalid filename format: {0}", args);
+            throw new IllegalArgumentException(
+                    "Invalid filename. Please use only letters, numbers, hyphens, underscores, and dots."
+            );
         }
 
         try {
-            // Handle home directory expansion
-            if (args.startsWith("~" + java.io.File.separator) || args.equals("~")) {
-                String home = System.getProperty("user.home");
-                args = args.replace("~", home);
+            String filename = args;
+            if (!filename.toLowerCase().endsWith(".csv")) {
+                filename = filename + ".csv";
             }
 
-            Path path = Paths.get(args);
-            if (!args.toLowerCase().endsWith(".csv")) {
-                path = Paths.get(args + ".csv");
-            }
-
-            // Note: Parent directories will be automatically created by CsvStorage if needed
-
+            // Create path in current working directory
+            Path path = Paths.get(filename);
             return path.toAbsolutePath().normalize();
         } catch (InvalidPathException e) {
-            LOGGER.log(Level.WARNING, "Invalid file path provided: {0}", args);
-            throw new IllegalArgumentException("Invalid file path. Please provide a valid path for the CSV file.");
-        } catch (SecurityException e) {
-            LOGGER.log(Level.WARNING, "Security error accessing path: {0}", args);
-            throw new IllegalArgumentException(
-                    "Access denied. Please choose a different location where you have write permission."
-            );
+            LOGGER.log(Level.WARNING, "Invalid filename provided: {0}", args);
+            throw new IllegalArgumentException("Invalid filename. Please provide a valid filename for the CSV file.");
         }
+    }
+
+    /**
+     * Validates that a filename contains only safe characters.
+     * Allows letters, numbers, hyphens, underscores, and dots.
+     *
+     * @param filename The filename to validate
+     * @return true if the filename is valid, false otherwise
+     */
+    private static boolean isValidFilename(String filename) {
+        // Allow letters, numbers, hyphens, underscores, and dots
+        // Disallow directory separators, control characters, and other special characters
+        return filename.matches("^[a-zA-Z0-9._-]+$");
     }
 }

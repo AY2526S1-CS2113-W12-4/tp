@@ -42,23 +42,12 @@ public class CsvStorage implements Storage {
                       double totalIncome, double totalExpense, double balance) throws IOException {
         LOGGER.log(Level.INFO, "Exporting data to CSV: " + filePath);
 
-        // Create parent directories if they don't exist
-        Path parentDir = filePath.getParent();
-        if (parentDir != null && !java.nio.file.Files.exists(parentDir)) {
-            try {
-                java.nio.file.Files.createDirectories(parentDir);
-                LOGGER.log(Level.INFO, "Created directory: " + parentDir);
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "Failed to create directory: " + parentDir, e);
-                throw new IOException("Could not create directory " + parentDir 
-                        + ". Please check your permissions.");
-            }
-        }
+        // Note: No directory creation needed since we only write to current directory
 
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath.toFile()))) {
             // Write CSV header
             writer.println("Type,Date,Amount,Category,Description");
-            
+
             // Write all income entries
             for (Income income : incomes) {
                 writer.printf("INCOME,%s,%.2f,%s,%s%n",
@@ -67,7 +56,7 @@ public class CsvStorage implements Storage {
                     income.getCategory(),
                     escapeCommas(income.getDescription()));
             }
-            
+
             // Write all expense entries
             for (Expense expense : expenses) {
                 writer.printf("EXPENSE,%s,%.2f,%s,%s%n",
@@ -78,7 +67,7 @@ public class CsvStorage implements Storage {
             }
 
             writeSummarySection(writer, totalIncome, totalExpense, balance);
-            
+
             LOGGER.log(Level.INFO, "Successfully exported data to CSV");
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Failed to export data to CSV", e);
