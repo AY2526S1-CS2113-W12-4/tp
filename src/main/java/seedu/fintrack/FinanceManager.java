@@ -26,9 +26,31 @@ import seedu.fintrack.model.Expense;
  */
 public class FinanceManager {
     private static final Logger LOGGER = Logger.getLogger(FinanceManager.class.getName());
+    private static final double WARNING_THRESHOLD = 0.90; // Warn at 90% of budget
     private final IncomeList incomes = new IncomeList();
     private final ExpenseList expenses = new ExpenseList(); // always newest->oldest
     private final Map<ExpenseCategory, Double> budgets = new HashMap<>();
+
+    /**
+     * Budget status information returned after adding an expense.
+     */
+    public static class BudgetStatus {
+        private final boolean isOverBudget;
+        private final boolean isNearBudget;
+
+        public BudgetStatus(boolean isOverBudget, boolean isNearBudget) {
+            this.isOverBudget = isOverBudget;
+            this.isNearBudget = isNearBudget;
+        }
+
+        public boolean isOverBudget() {
+            return isOverBudget;
+        }
+
+        public boolean isNearBudget() {
+            return isNearBudget;
+        }
+    }
 
     public void addIncome(Income income) {
         if (income == null) {
@@ -47,29 +69,35 @@ public class FinanceManager {
      * @return {@code true} if adding this expense causes the total spending in its
      *     category to exceed the set budget for the first time, {@code false} otherwise.
      */
-    public boolean addExpense(Expense expense) {
+    public BudgetStatus addExpense(Expense expense) {
         if (expense == null) {
             LOGGER.log(Level.WARNING, "addExpense called with null");
             throw new IllegalArgumentException("Expense cannot be null");
         }
 
         ExpenseCategory category = expense.getCategory();
-        boolean budgetExceeded = false;
+        boolean isOverBudget = false;
+        boolean isNearBudget = false;
 
         if (budgets.containsKey(category)) {
             double budget = budgets.get(category);
             double totalBefore = getTotalExpenseForCategory(category);
             double newTotal = totalBefore + expense.getAmount();
 
-            if (totalBefore <= budget && newTotal > budget) {
-                budgetExceeded = true;
+            // Check if over budget (including zero budget case)
+            if (newTotal > budget) {
+                isOverBudget = true;
+            }
+            // Check if near budget (only if not already over and budget > 0)
+            else if (budget > 0 && newTotal >= budget * WARNING_THRESHOLD) {
+                isNearBudget = true;
             }
         }
 
         expenses.add(expense);
         LOGGER.log(Level.INFO, "Expense added");
         assert expenses.contains(expense);
-        return budgetExceeded;
+        return new BudgetStatus(isOverBudget, isNearBudget);
     }
 
     /**
@@ -306,7 +334,7 @@ public class FinanceManager {
      * @return True if adding the new expense exceeds its category's budget
      * @throws IndexOutOfBoundsException If the index is invalid
      */
-    public boolean modifyExpense(int index, Expense newExpense) {
+    public BudgetStatus modifyExpense(int index, Expense newExpense) {
         Expense oldExpense;
         try {
             oldExpense = deleteExpense(index); // This will throw if index is invalid
