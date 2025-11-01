@@ -593,7 +593,9 @@ public class Ui {
      * @param expenseByCategory map of each category to its total amount
      */
 
-    static void printExpenseByCategory(Double totalExpense, Map<ExpenseCategory, Double> expenseByCategory) {
+    static void printExpenseByCategory(Double totalExpense,
+            Map<ExpenseCategory, Double> expenseByCategory,
+            Map<ExpenseCategory, Double> expensePercentageByCategory) {
         if (totalExpense <= 0 || expenseByCategory.isEmpty()) {
             System.out.println("You have not spent anything yet!");
             return;
@@ -605,7 +607,7 @@ public class Ui {
         for (Map.Entry<ExpenseCategory, Double> mapEntry : expenseByCategory.entrySet()) {
             ExpenseCategory category = mapEntry.getKey();
             double amount = (mapEntry.getValue());
-            double percentOfTotal = totalExpense == 0.0 ? 0.0 : (amount / totalExpense) * 100.0;
+            double percentOfTotal = expensePercentageByCategory.get(category);
             System.out.printf("%s: %.2f (%.2f%%)%n", category, amount, percentOfTotal);
 
             if (amount > topAmount) {
@@ -630,14 +632,16 @@ public class Ui {
      * @param expenseByCategory   a map of each ExpenseCategory to its aggregated amount
      * @throws NullPointerException if totalExpense or expenseByCategory is null
      */
-    static void printSummaryExpense(Double totalExpense, Map<ExpenseCategory, Double> expenseByCategory) {
+    static void printSummaryExpense(Double totalExpense,
+            Map<ExpenseCategory, Double> expenseByCategory,
+            Map<ExpenseCategory, Double> expensePercentageByCategory) {
         try {
             printHorizontalLine(80);
             System.out.println("Here is an overall summary of your expenses!");
             System.out.printf("Total Expense: %.2f%n", totalExpense);
             printNextLine();
             System.out.println("Here is a breakdown of your expense:");
-            printExpenseByCategory(totalExpense, expenseByCategory);
+            printExpenseByCategory(totalExpense, expenseByCategory, expensePercentageByCategory);
             printHorizontalLine(80);
             LOGGER.log(Level.INFO, "summary-expense called successfully.");
         } catch (NullPointerException e) {
@@ -652,7 +656,9 @@ public class Ui {
      * @param totalIncome      total amount spent (used to compute percentages)
      * @param incomeByCategory map of each category to its total amount
      */
-    static void printIncomeByCategory(Double totalIncome, Map<IncomeCategory, Double> incomeByCategory) {
+    static void printIncomeByCategory(Double totalIncome,
+            Map<IncomeCategory, Double> incomeByCategory,
+            Map<IncomeCategory, Double> incomePercentByCategory) {
         if (totalIncome <= 0 || incomeByCategory.isEmpty()) {
             System.out.println("You have not recorded any income yet!");
             return;
@@ -664,7 +670,7 @@ public class Ui {
         for (Map.Entry<IncomeCategory, Double> mapEntry : incomeByCategory.entrySet()) {
             IncomeCategory category = mapEntry.getKey();
             double amount = (mapEntry.getValue());
-            double percentOfTotal = totalIncome == 0.0 ? 0.0 : (amount / totalIncome) * 100.0;
+            double percentOfTotal = incomePercentByCategory.get(category);
             System.out.printf("%s: %.2f (%.2f%%)%n", category, amount, percentOfTotal);
 
             if (amount > topAmount) {
@@ -689,14 +695,16 @@ public class Ui {
      * @param incomeByCategory   a map of each IncomeCategory to its aggregated amount
      * @throws NullPointerException if totalIncome or incomeByCategory is null
      */
-    static void printSummaryIncome(double totalIncome, Map<IncomeCategory, Double> incomeByCategory) {
+    static void printSummaryIncome(double totalIncome,
+            Map<IncomeCategory, Double> incomeByCategory,
+            Map<IncomeCategory, Double> incomePercentByCategory) {
         try {
             printHorizontalLine(80);
             System.out.println("Here is an overall summary of your income!");
             System.out.printf("Total Income: %.2f%n", totalIncome);
             printNextLine();
             System.out.println("Here is a breakdown of your income:");
-            printIncomeByCategory(totalIncome, incomeByCategory);
+            printIncomeByCategory(totalIncome, incomeByCategory, incomePercentByCategory);
             printHorizontalLine(80);
             LOGGER.log(Level.INFO, "summary-income called successfully.");
         } catch (NullPointerException e) {
