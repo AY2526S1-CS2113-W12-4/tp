@@ -26,7 +26,7 @@ Tip: Type `help` after launch to see every available command.
 - FinTrack is fully keyboard-driven. Each command is entered on a single line and confirmed with Enter.
 - Commands are **case-sensitive**. Use lowercase as shown in this guide (e.g., `add-expense`, not `Add-Expense`).
 - Parameters use prefixes:
-  - `a/` for amount (positive number, decimals allowed).
+  - `a/` for amount (decimals allowed; for expenses and incomes the amount must be positive, for budgets the amount must be non-negative).
   - `c/` for category (must be from the valid list of categories).
   - `d/` for date in `YYYY-MM-DD` format.
   - `des/` for an optional description. If omitted, the entry has no description.
