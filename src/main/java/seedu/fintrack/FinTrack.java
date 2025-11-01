@@ -77,10 +77,13 @@ public class FinTrack {
                 }
                 break;
             }
+
+            String expandedInput = Parser.expandAliasesInInput(input);
+
             switch (firstWord) {
             case Ui.ADD_EXPENSE_COMMAND:
                 try {
-                    var expense = Parser.parseAddExpense(input);
+                    var expense = Parser.parseAddExpense(expandedInput);
                     boolean isOverBudget = fm.addExpense(expense);
                     Ui.printExpenseAdded(expense);
 
@@ -95,7 +98,7 @@ public class FinTrack {
                 break;
             case Ui.ADD_INCOME_COMMAND:
                 try {
-                    var income = Parser.parseAddIncome(input);
+                    var income = Parser.parseAddIncome(expandedInput);
                     fm.addIncome(income);
                     Ui.printIncomeAdded(income);
                 } catch (IllegalArgumentException e) {
@@ -104,7 +107,7 @@ public class FinTrack {
                 break;
             case Ui.BALANCE_COMMAND:
                 try {
-                    Optional<YearMonth> ymOpt = Parser.parseOptionalMonthForBalance(input); // parses optional YYYY-MM
+                    Optional<YearMonth> ymOpt = Parser.parseOptionalMonthForBalance(expandedInput);
                     if (ymOpt.isPresent()) {
                         YearMonth ym = ymOpt.get();
                         double monthlyIncome = fm.getIncomesViewForMonth(ym).stream()
@@ -125,7 +128,7 @@ public class FinTrack {
                 break;
             case Ui.BUDGET_COMMAND:
                 try {
-                    var budgetInfo = Parser.parseSetBudget(input);
+                    var budgetInfo = Parser.parseSetBudget(expandedInput);
                     fm.setBudget(budgetInfo.getKey(), budgetInfo.getValue());
                     Ui.printBudgetSet(budgetInfo.getKey(), budgetInfo.getValue());
                 } catch (IllegalArgumentException e) {
@@ -141,7 +144,7 @@ public class FinTrack {
                 break;
             case Ui.DELETE_EXPENSE_COMMAND:
                 try {
-                    int expenseIndex = Parser.parseDeleteExpense(input);
+                    int expenseIndex = Parser.parseDeleteExpense(expandedInput);
                     var deletedExpense = fm.deleteExpense(expenseIndex);
                     Ui.printExpenseDeleted(deletedExpense, expenseIndex);
                 } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
@@ -150,7 +153,7 @@ public class FinTrack {
                 break;
             case Ui.DELETE_INCOME_COMMAND:
                 try {
-                    int incomeIndex = Parser.parseDeleteIncome(input);
+                    int incomeIndex = Parser.parseDeleteIncome(expandedInput);
                     var deletedIncome = fm.deleteIncome(incomeIndex);
                     Ui.printIncomeDeleted(deletedIncome, incomeIndex);
                 } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
@@ -159,9 +162,9 @@ public class FinTrack {
                 break;
             case Ui.MODIFY_EXPENSE_COMMAND:
                 try {
-                    int index = Parser.parseModifyExpenseIndex(input);
+                    int index = Parser.parseModifyExpenseIndex(expandedInput);
                     Expense oldExpense = fm.getExpense(index);
-                    Expense newExpense = Parser.parseModifyExpenseWithDefaults(input, oldExpense);
+                    Expense newExpense = Parser.parseModifyExpenseWithDefaults(expandedInput, oldExpense);
                     boolean isOverBudget = fm.modifyExpense(index, newExpense);
                     Ui.printExpenseModified(newExpense, index);
                     if (isOverBudget) {
@@ -175,9 +178,9 @@ public class FinTrack {
                 break;
             case Ui.MODIFY_INCOME_COMMAND:
                 try {
-                    int index = Parser.parseModifyIncomeIndex(input);
+                    int index = Parser.parseModifyIncomeIndex(expandedInput);
                     Income oldIncome = fm.getIncome(index);
-                    Income newIncome = Parser.parseModifyIncomeWithDefaults(input, oldIncome);
+                    Income newIncome = Parser.parseModifyIncomeWithDefaults(expandedInput, oldIncome);
                     fm.modifyIncome(index, newIncome);
                     Ui.printIncomeModified(newIncome, index);
                 } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
@@ -186,7 +189,7 @@ public class FinTrack {
                 break;
             case Ui.LIST_EXPENSE_COMMAND:
                 try {
-                    Optional<YearMonth> ymOpt = Parser.parseOptionalMonthForExpenseList(input);
+                    Optional<YearMonth> ymOpt = Parser.parseOptionalMonthForExpenseList(expandedInput);
                     if (ymOpt.isPresent()) {
                         YearMonth ym = ymOpt.get();
                         Ui.printListOfExpenses(fm.getExpensesViewForMonth(ym), ym);
@@ -199,7 +202,7 @@ public class FinTrack {
                 break;
             case Ui.LIST_INCOME_COMMAND:
                 try {
-                    Optional<YearMonth> ymOpt = Parser.parseOptionalMonthForIncomeList(input);
+                    Optional<YearMonth> ymOpt = Parser.parseOptionalMonthForIncomeList(expandedInput);
                     if (ymOpt.isPresent()) {
                         YearMonth ym = ymOpt.get();
                         Ui.printListOfIncomes(fm.getIncomesViewForMonth(ym), ym);
@@ -219,7 +222,7 @@ public class FinTrack {
                 break;
             case Ui.EXPORT_COMMAND:
                 try {
-                    var exportPath = Parser.parseExport(input);
+                    var exportPath = Parser.parseExport(expandedInput);
                     Storage storage = new CsvStorage();
                     storage.export(exportPath, 
                                  fm.getIncomesView(), 
