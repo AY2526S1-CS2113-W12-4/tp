@@ -51,10 +51,10 @@ public class IncomeList extends ReverseChronoList<Income> {
         Objects.requireNonNull(income.getDate(), "Income date cannot be null");
 
         double amount = income.getAmount();
-        if (!Double.isFinite(amount) || amount < 0.0) {
+        if (!Double.isFinite(amount) || amount <= 1e-9) {
             LOGGER.log(Level.WARNING, "Invalid amount {0} for income at pos={1}",
                     new Object[]{amount, positionHint});
-            throw new IllegalArgumentException("Income amount must be a finite, non-negative number");
+            throw new IllegalArgumentException("Income amount must be a finite, positive number");
         }
     }
 
