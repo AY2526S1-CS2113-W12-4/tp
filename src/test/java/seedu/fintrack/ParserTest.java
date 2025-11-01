@@ -1574,45 +1574,105 @@ public class ParserTest {
     // ============ Tests for parseExport ============
 
     @Test
-    public void parseExport_validPath_ok() {
+    public void parseExport_validFilename_ok() {
         String input = Ui.EXPORT_COMMAND + " data.csv";
         java.nio.file.Path path = Parser.parseExport(input);
         assertTrue(path.endsWith("data.csv"));
     }
 
     @Test
-    public void parseExport_validPathNoExtension_appendsCsv() {
+    public void parseExport_validFilenameNoExtension_appendsCsv() {
         String input = Ui.EXPORT_COMMAND + " myDataFile";
         java.nio.file.Path path = Parser.parseExport(input);
         assertTrue(path.endsWith("myDataFile.csv"));
     }
 
     @Test
-    public void parseExport_missingPath_throws() {
+    public void parseExport_validFilenameWithUnderscores_ok() {
+        String input = Ui.EXPORT_COMMAND + " my_data_file.csv";
+        java.nio.file.Path path = Parser.parseExport(input);
+        assertTrue(path.endsWith("my_data_file.csv"));
+    }
+
+    @Test
+    public void parseExport_validFilenameWithDots_ok() {
+        String input = Ui.EXPORT_COMMAND + " my.data.file.csv";
+        java.nio.file.Path path = Parser.parseExport(input);
+        assertTrue(path.endsWith("my.data.file.csv"));
+    }
+
+    @Test
+    public void parseExport_validFilenameWithHyphens_ok() {
+        String input = Ui.EXPORT_COMMAND + " my-data-file.csv";
+        java.nio.file.Path path = Parser.parseExport(input);
+        assertTrue(path.endsWith("my-data-file.csv"));
+    }
+
+    @Test
+    public void parseExport_missingFilename_throws() {
         try {
             Parser.parseExport(Ui.EXPORT_COMMAND);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Missing file path. Usage: export <filepath>", e.getMessage());
+            assertEquals("Missing filename. Usage: export <filename>", e.getMessage());
         }
 
         try {
             Parser.parseExport(Ui.EXPORT_COMMAND + "   ");
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Missing file path. Usage: export <filepath>", e.getMessage());
+            assertEquals("Missing filename. Usage: export <filename>", e.getMessage());
         }
     }
 
     @Test
-    public void parseExport_invalidPathChars_throws() {
-        // Using a null character, which is invalid in most filesystems
-        String input = Ui.EXPORT_COMMAND + " data\0.csv";
+    public void parseExport_pathWithDirectorySeparator_throws() {
+        // Test with forward slash
         try {
-            Parser.parseExport(input);
+            Parser.parseExport(Ui.EXPORT_COMMAND + " path/to/file.csv");
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Invalid file path. Please provide a valid path for the CSV file.", e.getMessage());
+            assertEquals("Invalid filename. Please provide only a filename (no paths). "
+                    + "Usage: export <filename>", e.getMessage());
+        }
+
+        // Test with backslash
+        try {
+            Parser.parseExport(Ui.EXPORT_COMMAND + " path\\to\\file.csv");
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Invalid filename. Please provide only a filename (no paths). "
+                    + "Usage: export <filename>", e.getMessage());
+        }
+    }
+
+    @Test
+    public void parseExport_invalidFilenameChars_throws() {
+        // Test with spaces
+        try {
+            Parser.parseExport(Ui.EXPORT_COMMAND + " my file.csv");
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Invalid filename. Please use only letters, numbers, hyphens, "
+                    + "underscores, and dots.", e.getMessage());
+        }
+
+        // Test with special characters
+        try {
+            Parser.parseExport(Ui.EXPORT_COMMAND + " file@name.csv");
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Invalid filename. Please use only letters, numbers, hyphens, "
+                    + "underscores, and dots.", e.getMessage());
+        }
+
+        // Test with null character
+        try {
+            Parser.parseExport(Ui.EXPORT_COMMAND + " data\0.csv");
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Invalid filename. Please use only letters, numbers, hyphens, "
+                    + "underscores, and dots.", e.getMessage());
         }
     }
 }
