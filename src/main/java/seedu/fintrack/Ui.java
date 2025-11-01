@@ -732,7 +732,7 @@ public class Ui {
         printHorizontalLine(80);
 
         System.out.println("1. Add an expense:");
-        System.out.print("   " + ADD_EXPENSE_COMMAND + " a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
+        System.out.println("   " + ADD_EXPENSE_COMMAND + " a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
         System.out.println("   Example: add-expense a/12.50 c/Food d/2025-10-08 des/Lunch");
         System.out.println("   Available categories: " +
                 "FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS");
