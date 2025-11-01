@@ -461,12 +461,11 @@ Description: Monthly salary
 > === FinTrack Command Summary ===
 --------------------------------------------------------------------------------
 1. Add an expense:
-   add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
-   Example: add-expense a/12.50 c/Food d/2025-10-08 des/Lunch
+   add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]   Example: add-expense a/12.50 c/Food d/2025-10-08 des/Lunch
    Available categories: FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS
 
 2. Add an income:
-   add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
+   add-incomea/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
    Example: add-income a/2000 c/Salary d/2025-10-01 des/Monthly pay
    Available categories: SALARY, SCHOLARSHIP, INVESTMENT, GIFT, OTHERS
 
