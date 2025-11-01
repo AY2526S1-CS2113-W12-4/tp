@@ -61,6 +61,37 @@ final class Parser {
     }
 
     /**
+     * Expands command aliases in the input string to their full command names.
+     * This ensures that parsing methods receive the full command name.
+     *
+     * @param input The user input string that may contain aliases
+     * @return Input string with aliases expanded to full command names
+     */
+    public static String expandAliasesInInput(String input) {
+        assert input != null : "Input cannot be null.";
+
+        // Normalize tabs and multiple spaces to single spaces
+        String normalized = input.stripLeading().replaceAll("\\s+", " ");
+        int firstSpaceIndex = normalized.indexOf(' ');
+
+        String commandWord;
+        String restOfInput;
+        if (firstSpaceIndex == -1) {
+            commandWord = normalized; // Only one token (command only)
+            restOfInput = "";
+        } else {
+            commandWord = normalized.substring(0, firstSpaceIndex);
+            restOfInput = normalized.substring(firstSpaceIndex);
+        }
+
+        // Map aliases to full command names
+        String expandedCommand = expandCommandAlias(commandWord);
+
+        // Return the full input with expanded command
+        return expandedCommand + restOfInput;
+    }
+
+    /**
      * Expands command aliases to their full command names.
      * Supports lightning-fast keyboard-first workflow with minimal typing.
      *
@@ -86,6 +117,7 @@ final class Parser {
             // Other high-frequency commands
             case "bg" -> "budget";
             case "ex" -> "export";
+            case "b" -> "balance";
 
             // Commands that are already short enough
             default -> command;
