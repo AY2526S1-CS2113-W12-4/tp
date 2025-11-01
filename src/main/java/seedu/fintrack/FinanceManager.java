@@ -307,23 +307,57 @@ public class FinanceManager {
      * @throws IndexOutOfBoundsException If the index is invalid
      */
     public boolean modifyExpense(int index, Expense newExpense) {
-        Expense oldExpense;
-        try {
-            oldExpense = deleteExpense(index); // This will throw if index is invalid
-        } catch (IndexOutOfBoundsException e) {
-            if (expenses.size() == 0) {
-                throw new IndexOutOfBoundsException("Cannot modify expense: The expense list is empty");
-            }
+        if (newExpense == null) {
+            LOGGER.log(Level.WARNING, "modifyExpense called with null");
+            throw new IllegalArgumentException("Expense cannot be null");
+        }
+
+        if (expenses.size() == 0) {
+            LOGGER.log(Level.WARNING, "modifyExpense called on empty expense list");
+            throw new IndexOutOfBoundsException("Cannot modify expense: The expense list is empty");
+        }
+        if (index < 1 || index > expenses.size()) {
+            LOGGER.log(Level.WARNING, "modifyExpense called with out of range index");
             throw new IndexOutOfBoundsException("Expense index out of range. Valid range: 1 to " + expenses.size());
         }
 
+        Expense originalExpense = expenses.get(index - 1);
+        ExpenseCategory newCategory = newExpense.getCategory();
+        double previousTotalForCategory = getTotalExpenseForCategory(newCategory);
+
+        boolean hasBudget = budgets.containsKey(newCategory);
+        double budget = 0.0;
+        boolean categoryAlreadyExceeded = false;
+        if (hasBudget) {
+            budget = budgets.get(newCategory);
+            categoryAlreadyExceeded = previousTotalForCategory > budget;
+        }
+
+        Expense removedExpense = deleteExpense(index);
+        assert removedExpense.equals(originalExpense) : "modifyExpense should remove the targeted expense";
+
+        double totalBeforeNewExpense = getTotalExpenseForCategory(newCategory);
+        boolean budgetExceeded = false;
+
         try {
-            return addExpense(newExpense);
+            expenses.add(newExpense);
+            LOGGER.log(Level.INFO, "Expense modified");
+            assert expenses.contains(newExpense) : "Modified expense should be present after update";
         } catch (Exception e) {
-            // Restore the old expense if adding the new one fails
-            expenses.add(oldExpense);
+            expenses.add(removedExpense);
             throw e;
         }
+
+        if (hasBudget) {
+            double newTotalForCategory = totalBeforeNewExpense + newExpense.getAmount();
+            if (!categoryAlreadyExceeded
+                    && totalBeforeNewExpense <= budget
+                    && newTotalForCategory > budget) {
+                budgetExceeded = true;
+            }
+        }
+
+        return budgetExceeded;
     }
 
     /**
