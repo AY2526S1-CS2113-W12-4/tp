@@ -462,15 +462,17 @@ public class ParserTest {
      */
     @Test
     public void parseModifyExpenseWithDefaults_onlyDate_keepsOtherFields() {
+        LocalDate originalDate = LocalDate.now().minusDays(10);
+        LocalDate updatedDate = LocalDate.now().minusDays(1);
         Expense oldExpense = new Expense(200, ExpenseCategory.ENTERTAINMENT,
-                LocalDate.of(2025, 3, 10), "concert");
+                originalDate, "concert");
 
-        String input = Ui.MODIFY_EXPENSE_COMMAND + " 1 d/2025-12-25";
+        String input = Ui.MODIFY_EXPENSE_COMMAND + " 1 d/" + updatedDate;
         Expense e = Parser.parseModifyExpenseWithDefaults(input, oldExpense);
 
         assertEquals(200, e.getAmount(), 1e-9);
         assertEquals(ExpenseCategory.ENTERTAINMENT, e.getCategory());
-        assertEquals(LocalDate.of(2025, 12, 25), e.getDate());
+        assertEquals(updatedDate, e.getDate());
         assertEquals("concert", e.getDescription());
     }
 
@@ -1167,9 +1169,10 @@ public class ParserTest {
      */
     @Test
     public void parseAddIncome_parameterOrder_ok() {
+        LocalDate pastDate = LocalDate.now().minusDays(1);
         String input = Ui.ADD_INCOME_COMMAND + " "
                 + Ui.CATEGORY_PREFIX + "Gift "
-                + Ui.DATE_PREFIX + "2025-12-24 "
+                + Ui.DATE_PREFIX + pastDate + " "
                 + Ui.AMOUNT_PREFIX + "88.8 "
                 + Ui.DESCRIPTION_PREFIX + "Reordered prefixes ";
 
@@ -1177,7 +1180,7 @@ public class ParserTest {
         Income income = Parser.parseAddIncome(input);
         assertEquals(88.8, income.getAmount(), 1e-9);
         assertEquals(IncomeCategory.GIFT, income.getCategory());
-        assertEquals(LocalDate.of(2025, 12, 24), income.getDate());
+        assertEquals(pastDate, income.getDate());
         assertEquals("Reordered prefixes", income.getDescription());
     }
 
@@ -1235,14 +1238,15 @@ public class ParserTest {
      */
     @Test
     public void parseAddIncome_descriptionWithPrefixes_textPreserved() {
+        LocalDate pastDate = LocalDate.now().minusDays(1);
         String input = addIncome(
                 "2500",
                 "salary",
-                "2025-11-30",
-                "Bonus with a/500 c/SALARY \t d/2025-11-30");
+                pastDate.toString(),
+                "Bonus with a/500 c/SALARY \t d/" + pastDate);
 
         Income income = Parser.parseAddIncome(input);
-        assertEquals("Bonus with a/500 c/SALARY \t d/2025-11-30", income.getDescription());
+        assertEquals("Bonus with a/500 c/SALARY \t d/" + pastDate, income.getDescription());
     }
 
     /*
