@@ -21,6 +21,12 @@ Tip: Type `help` after launch to see every available command.
 
 - FinTrack is fully keyboard-driven. Each command is entered on a single line and confirmed with Enter.
 - Commands are **case-sensitive**. Use lowercase as shown in this guide (e.g., `add-expense`, not `Add-Expense`).
+- **Command Aliases**: For faster typing, you can use these shortcuts:
+    - `ae` → `add-expense`, `ai` → `add-income`
+    - `le` → `list-expense`, `li` → `list-income`
+    - `me` → `modify-expense`, `mi` → `modify-income`
+    - `de` → `delete-expense`, `di` → `delete-income`
+    - `bg` → `budget`, `ex` → `export`, `b` → `balance`
 - Parameters use prefixes:
     - `a/` for amount (non-negative number, decimals allowed).
     - `c/` for category (must be from the valid list of categories).
