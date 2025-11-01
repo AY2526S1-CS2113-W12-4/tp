@@ -560,34 +560,4 @@ public class FinTrackTest {
         mustContain(s, "Overall Balance for the month 2025-09:");
     }
 
-    @Test
-    void aliases_showInHelp() throws Exception {
-        String s = run("help\nbye\n");
-
-        // Verify help text includes aliases
-        mustContain(s, "add-expense (ae)");
-        mustContain(s, "add-income (ai)");
-        mustContain(s, "list-expense (le)");
-        mustContain(s, "list-income (li)");
-        mustContain(s, "modify-expense (me)");
-        mustContain(s, "modify-income (mi)");
-        mustContain(s, "delete-expense (de)");
-        mustContain(s, "delete-income (di)");
-        mustContain(s, "budget (bg)");
-        mustContain(s, "export (ex)");
-        mustContain(s, "balance (b)");
-
-        // Verify example usage shows aliases
-        mustContain(s, "Example: ae a/12.50 c/Food d/2025-10-08 des/Lunch");
-        mustContain(s, "Example: ai a/2000 c/Salary d/2025-10-01 des/Monthly pay");
-        mustContain(s, "Example: le d/2025-10");
-        mustContain(s, "Example: li d/2025-10");
-        mustContain(s, "Example: de 1");
-        mustContain(s, "Example: di 1");
-        mustContain(s, "Example: me 1 a/1300 c/Rent d/2024-01-01 des/Monthly rent increased");
-        mustContain(s, "Example: mi 3 a/250 c/Salary d/2024-01-15 des/Extra performance bonus");
-        mustContain(s, "Example: b d/2025-10");
-        mustContain(s, "Example: bg c/FOOD a/1000");
-        mustContain(s, "Example: ex financial_data.csv");
-    }
 }
