@@ -115,6 +115,37 @@ public class ParserTest {
         assertEquals(Ui.ADD_INCOME_COMMAND, first);
     }
 
+    /**
+     * Tests {@code returnFirstWord} with command aliases for faster typing.
+     * Verifies that short aliases expand to full command names.
+     */
+    @Test
+    public void returnFirstWord_commandAliases_expandCorrectly() {
+        // Core data entry aliases
+        assertEquals("add-expense", Parser.returnFirstWord("ae a/10 c/Food d/2025-01-01"));
+        assertEquals("add-income", Parser.returnFirstWord("ai a/100 c/Salary d/2025-01-01"));
+        assertEquals("list-expense", Parser.returnFirstWord("le"));
+        assertEquals("list-income", Parser.returnFirstWord("li"));
+
+        // Modification aliases
+        assertEquals("modify-expense", Parser.returnFirstWord("me 1 a/15 c/Food d/2025-01-01"));
+        assertEquals("modify-income", Parser.returnFirstWord("mi 1 a/150 c/Salary d/2025-01-01"));
+
+        // Deletion aliases
+        assertEquals("delete-expense", Parser.returnFirstWord("de 1"));
+        assertEquals("delete-income", Parser.returnFirstWord("di 1"));
+
+        // Other high-frequency aliases
+        assertEquals("budget", Parser.returnFirstWord("bg c/Food a/100"));
+        assertEquals("export", Parser.returnFirstWord("ex data.csv"));
+
+        // Commands that remain unchanged (already short or no alias)
+        assertEquals("balance", Parser.returnFirstWord("balance"));
+        assertEquals("help", Parser.returnFirstWord("help"));
+        assertEquals("tips", Parser.returnFirstWord("tips"));
+        assertEquals("bye", Parser.returnFirstWord("bye"));
+    }
+
     // ============ Test input handling for parseAddExpense ============
 
     /**
