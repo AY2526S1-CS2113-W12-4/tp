@@ -144,6 +144,8 @@ Validation notes:
 - Amount must be a non-negative number (e.g., `5`, `14.20`).
 - Category and date are mandatory.
 - Description is optional; omit it entirely if not needed.
+  - Note that entering an empty description field (e.g. `add-expense a/10 c/food d/2025-10-13 des/`) 
+    will be treated as if there is no description field at all.
 - Categories (not case-sensitive) must be any one of the following (if not, an error message is presented to the user):
   - FOOD
   - STUDY
