@@ -37,10 +37,10 @@ final class Parser {
      * Extracts the first word from the given input string, which is typically the command word.
      * Handles leading spaces and tab characters by trimming them first,
      * ensuring that the command is correctly recognized even if there
-     * are extra spaces or tabs before it.
+     * are extra spaces or tabs before it. Also supports command aliases for faster typing.
      *
      * @param input The full user input string. Must not be null.
-     * @return The first word of the input string (the command).
+     * @return The first word of the input string (the command), expanded from alias if applicable.
      */
     public static String returnFirstWord(String input) {
         assert input != null : "Input cannot be null.";
@@ -49,10 +49,47 @@ final class Parser {
         String normalized = input.stripLeading().replaceAll("\\s+", " ");
         int firstSpaceIndex = normalized.indexOf(' ');
 
+        String commandWord;
         if (firstSpaceIndex == -1) {
-            return normalized; // Only one token (command only)
+            commandWord = normalized; // Only one token (command only)
+        } else {
+            commandWord = normalized.substring(0, firstSpaceIndex);
         }
-        return normalized.substring(0, firstSpaceIndex);
+
+        // Map aliases to full command names for consistency
+        return expandCommandAlias(commandWord);
+    }
+
+    /**
+     * Expands command aliases to their full command names.
+     * Supports lightning-fast keyboard-first workflow with minimal typing.
+     *
+     * @param command The command or alias entered by user
+     * @return Full command name for processing
+     */
+    private static String expandCommandAlias(String command) {
+        return switch (command) {
+            // Core data entry commands (highest frequency)
+            case "ae" -> "add-expense";
+            case "ai" -> "add-income";
+            case "le" -> "list-expense";
+            case "li" -> "list-income";
+
+            // Modification commands
+            case "me" -> "modify-expense";
+            case "mi" -> "modify-income";
+
+            // Deletion commands
+            case "de" -> "delete-expense";
+            case "di" -> "delete-income";
+
+            // Other high-frequency commands
+            case "bg" -> "budget";
+            case "ex" -> "export";
+
+            // Commands that are already short enough
+            default -> command;
+        };
     }
 
     /**
