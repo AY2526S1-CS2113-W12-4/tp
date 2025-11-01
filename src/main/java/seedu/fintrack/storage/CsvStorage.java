@@ -41,7 +41,11 @@ public class CsvStorage implements Storage {
                       double totalIncome, double totalExpense, double balance) {
         LOGGER.log(Level.INFO, "Exporting data to CSV: " + filePath);
 
-        // Note: No directory creation needed since we only write to current directory
+        // Check if file already exists
+        if (filePath.toFile().exists()) {
+            throw new IllegalArgumentException("Export failed. File already exists: " + filePath
+                    + "\nPlease choose a different filename.");
+        }
 
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath.toFile()))) {
             // Write CSV header
