@@ -31,7 +31,8 @@ public class FinTrack {
     private static final String INVALID_COMMAND_MESSAGE =
             "Invalid command. Type 'help' for a list of available commands.";
     private static final String NO_ARGUMENTS_MESSAGE_TEMPLATE =
-            "The '%s' command does not take additional arguments.";
+            "The '%s' command does not take additional arguments. " +
+                    "Just input the command by itself with no other stray text.";
     private static final String UNSUPPORTED_CHARACTER_MESSAGE =
             "Unsupported characters detected. Please use standard ASCII text only.";
 
@@ -84,13 +85,16 @@ public class FinTrack {
             case Ui.ADD_EXPENSE_COMMAND:
                 try {
                     var expense = Parser.parseAddExpense(expandedInput);
-                    boolean isOverBudget = fm.addExpense(expense);
+                    FinanceManager.BudgetStatus status = fm.addExpense(expense);
                     Ui.printExpenseAdded(expense);
 
-                    if (isOverBudget) {
-                        double totalSpent = fm.getTotalExpenseForCategory(expense.getCategory());
-                        double budget = fm.getBudgetForCategory(expense.getCategory());
+                    double totalSpent = fm.getTotalExpenseForCategory(expense.getCategory());
+                    Double budget = fm.getBudgetForCategory(expense.getCategory());
+
+                    if (status.isOverBudget() && budget != null) {
                         Ui.printBudgetExceededWarning(expense.getCategory(), budget, totalSpent);
+                    } else if (status.isNearBudget() && budget != null) {
+                        Ui.printBudgetNearWarning(expense.getCategory(), budget, totalSpent);
                     }
                 } catch (IllegalArgumentException e) {
                     Ui.printError(e.getMessage());
@@ -165,12 +169,15 @@ public class FinTrack {
                     int index = Parser.parseModifyExpenseIndex(expandedInput);
                     Expense oldExpense = fm.getExpense(index);
                     Expense newExpense = Parser.parseModifyExpenseWithDefaults(expandedInput, oldExpense);
-                    boolean isOverBudget = fm.modifyExpense(index, newExpense);
+                    FinanceManager.BudgetStatus status = fm.modifyExpense(index, newExpense);
                     Ui.printExpenseModified(newExpense, index);
-                    if (isOverBudget) {
-                        double totalSpent = fm.getTotalExpenseForCategory(newExpense.getCategory());
-                        double budget = fm.getBudgetForCategory(newExpense.getCategory());
+                    double totalSpent = fm.getTotalExpenseForCategory(newExpense.getCategory());
+                    Double budget = fm.getBudgetForCategory(newExpense.getCategory());
+
+                    if (status.isOverBudget() && budget != null) {
                         Ui.printBudgetExceededWarning(newExpense.getCategory(), budget, totalSpent);
+                    } else if (status.isNearBudget() && budget != null) {
+                        Ui.printBudgetNearWarning(newExpense.getCategory(), budget, totalSpent);
                     }
                 } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
                     Ui.printError(e.getMessage());
