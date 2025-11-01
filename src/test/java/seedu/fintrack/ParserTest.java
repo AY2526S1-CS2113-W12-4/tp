@@ -134,6 +134,7 @@ public class ParserTest {
         // Deletion aliases
         assertEquals("delete-expense", Parser.returnFirstWord("de 1"));
         assertEquals("delete-income", Parser.returnFirstWord("di 1"));
+        assertEquals("delete-budget", Parser.returnFirstWord("db c/food"));
 
         // Other high-frequency aliases
         assertEquals("budget", Parser.returnFirstWord("bg c/Food a/100"));
@@ -1802,6 +1803,96 @@ public class ParserTest {
             fail();
         } catch (IllegalArgumentException e) {
             assertTrue(e.getMessage().contains("Unexpected text before arguments"));
+        }
+    }
+
+    // ============ Tests for parseDeleteBudget ============
+
+    @Test
+    public void parseDeleteBudget_valid_ok() {
+        String input = Ui.DELETE_BUDGET_COMMAND + " c/food";
+        ExpenseCategory cat = Parser.parseDeleteBudget(input);
+        assertEquals(ExpenseCategory.FOOD, cat);
+    }
+
+    @Test
+    public void parseDeleteBudget_validWhitespace_ok() {
+        String input = Ui.DELETE_BUDGET_COMMAND + " \t c/ \t bills ";
+        ExpenseCategory cat = Parser.parseDeleteBudget(input);
+        assertEquals(ExpenseCategory.BILLS, cat);
+    }
+
+    @Test
+    public void parseDeleteBudget_validCategoryCasing_ok() {
+        String input = Ui.DELETE_BUDGET_COMMAND + " c/TrAnSpOrT";
+        ExpenseCategory cat = Parser.parseDeleteBudget(input);
+        assertEquals(ExpenseCategory.TRANSPORT, cat);
+    }
+
+    @Test
+    public void parseDeleteBudget_missingAllArgs_throws() {
+        try {
+            Parser.parseDeleteBudget(Ui.DELETE_BUDGET_COMMAND);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Missing parameters for delete-budget command. " +
+                    "Usage: delete-budget c/<category>", e.getMessage());
+        }
+    }
+
+    @Test
+    public void parseDeleteBudget_missingPrefix_throws() {
+        try {
+            // Fails validation because 'food' is not a prefix
+            Parser.parseDeleteBudget(Ui.DELETE_BUDGET_COMMAND + " food");
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains("Usage: delete-budget c/<category>"));
+        }
+    }
+
+    @Test
+    public void parseDeleteBudget_missingValue_throws() {
+        try {
+            Parser.parseDeleteBudget(Ui.DELETE_BUDGET_COMMAND + " c/");
+            fail();
+        } catch (IllegalArgumentException e) {
+            // This is caught by validatePrefixesExactly
+            assertEquals("Missing required parameter: c/. " +
+                    "Usage: delete-budget c/<category>", e.getMessage());
+        }
+    }
+
+    @Test
+    public void parseDeleteBudget_invalidCategory_throws() {
+        try {
+            Parser.parseDeleteBudget(Ui.DELETE_BUDGET_COMMAND + " c/nonexistent");
+            fail();
+        } catch (IllegalArgumentException e) {
+            // This exception comes from ExpenseCategory.parse()
+            assertTrue(e.getMessage().contains("Unknown expense category"));
+        }
+    }
+
+    @Test
+    public void parseDeleteBudget_unknownPrefix_throws() {
+        try {
+            Parser.parseDeleteBudget(Ui.DELETE_BUDGET_COMMAND + " c/food a/100");
+            fail();
+        } catch (IllegalArgumentException e) {
+            // Fails validation
+            assertTrue(e.getMessage().contains("Unexpected argument prefix: a/"));
+        }
+    }
+
+    @Test
+    public void parseDeleteBudget_duplicatePrefix_throws() {
+        try {
+            Parser.parseDeleteBudget(Ui.DELETE_BUDGET_COMMAND + " c/food c/rent");
+            fail();
+        } catch (IllegalArgumentException e) {
+            // Fails validation
+            assertTrue(e.getMessage().contains("Duplicate argument: c/"));
         }
     }
 

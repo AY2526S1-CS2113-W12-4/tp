@@ -31,6 +31,7 @@ public class Ui {
     public static final String BALANCE_COMMAND = "balance";
     public static final String BUDGET_COMMAND = "budget";
     public static final String LIST_BUDGET_COMMAND = "list-budget";
+    public static final String DELETE_BUDGET_COMMAND = "delete-budget";
     public static final String LIST_EXPENSE_COMMAND = "list-expense";
     public static final String LIST_INCOME_COMMAND = "list-income";
     public static final String MODIFY_EXPENSE_COMMAND = "modify-expense";
@@ -252,6 +253,19 @@ public class Ui {
         System.out.println("Budget set for " + category + ": $" + String.format("%.2f", amount));
         printHorizontalLine(80);
         LOGGER.fine("Printed budget set confirmation.");
+    }
+
+    /**
+     * Prints a confirmation that a budget has been deleted.
+     *
+     * @param category The expense category for which the budget was deleted.
+     */
+    static void printBudgetDeleted(ExpenseCategory category) {
+        Objects.requireNonNull(category, "category cannot be null");
+        printHorizontalLine(80);
+        System.out.println("Budget for " + category + " has been deleted.");
+        printHorizontalLine(80);
+        LOGGER.fine("Printed budget deleted confirmation.");
     }
 
     /**
@@ -852,37 +866,42 @@ public class Ui {
         System.out.println("    " + LIST_BUDGET_COMMAND);
         System.out.println("    Example: list-budget");
 
+        System.out.println();
+        System.out.println("12. Delete budget for an expense category:");
+        System.out.println("    " + DELETE_BUDGET_COMMAND + " c/<category>");
+        System.out.println("    Example: delete-budget c/FOOD");
 
         System.out.println();
-        System.out.println("12. Show a summary of your total expenses:");
+        System.out.println("13. Show a summary of your total expenses:");
         System.out.println("    " + SUMMARY_EXPENSE_COMMAND);
         System.out.println("    Example: summary-expense");
 
         System.out.println();
-        System.out.println("13. Show a summary of your total income:");
+        System.out.println("14. Show a summary of your total income:");
         System.out.println("    " + SUMMARY_INCOME_COMMAND);
         System.out.println("    Example: summary-income");
 
         System.out.println();
-        System.out.println("14. Provides a useful tip:");
+        System.out.println("15. Provides a useful tip:");
         System.out.println("    " + TIPS_COMMAND);
         System.out.println("    Example: tips");
 
 
         System.out.println();
-        System.out.println("15. Show this help menu:");
+        System.out.println("16. Show this help menu:");
         System.out.println("    " + HELP_COMMAND);
         System.out.println("    Example: help");
-
-        System.out.println();
-        System.out.println("16. Exit the program:");
-        System.out.println("    " + EXIT_COMMAND);
-        System.out.println("    Example: bye");
 
         System.out.println();
         System.out.println("17. Export data to CSV file:");
         System.out.println("    " + EXPORT_COMMAND + " <filepath>");
         System.out.println("    Example: export financial_data.csv");
+
+        System.out.println();
+        System.out.println("18. Exit the program:");
+        System.out.println("    " + EXIT_COMMAND);
+        System.out.println("    Example: bye");
+
 
         printHorizontalLine(80);
     }

@@ -547,28 +547,32 @@ Description: Monthly salary
     list-budget
     Example: list-budget
 
-12. Show a summary of your total expenses:
+12. Delete budget for an expense category:
+    delete-budget c/<category>
+    Example: delete-budget c/FOOD
+
+13. Show a summary of your total expenses:
     summary-expense
     Example: summary-expense
 
-13. Show a summary of your total income:
+14. Show a summary of your total income:
     summary-income
     Example: summary-income
 
-14. Provides a useful tip:
+15. Provides a useful tip:
     tips
     Example: tips
 
-15. Show this help menu:
+16. Show this help menu:
     help
     Example: help
-
-16. Exit the program:
-    bye
-    Example: bye
 
 17. Export data to CSV file:
     export <filepath>
     Example: export financial_data.csv
+
+18. Exit the program:
+    bye
+    Example: bye
 --------------------------------------------------------------------------------
 > Bye. Hope to see you again soon!

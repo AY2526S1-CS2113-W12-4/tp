@@ -118,6 +118,7 @@ final class Parser {
         // Deletion commands
         case "de" -> "delete-expense";
         case "di" -> "delete-income";
+        case "db" -> "delete-budget";
 
         // Other high-frequency commands
         case "bg" -> "budget";
@@ -149,7 +150,7 @@ final class Parser {
                 new Object[]{prefix, args}
         );
 
-        int start = args.indexOf(prefix);
+        int start = findFirstPrefixIndex(args, prefix);
         if (start < 0) {
             LOGGER.log(Level.FINER, "Prefix not found.");
             return null;
@@ -367,10 +368,33 @@ final class Parser {
             return args; // Prefix not found
         }
 
-        // Logic for single-token prefixes (a/, c/, d/)
-        // We use replaceFirst to remove only the first valid occurrence
-        Pattern pattern = Pattern.compile("(?<=^|\\s)" + Pattern.quote(prefix) + "[^\\s]*");
-        return pattern.matcher(args).replaceFirst("").trim();
+        // Logic for other prefixes (a/, c/, d/)
+        int startIdx = findFirstPrefixIndex(args, prefix);
+        if (startIdx == -1) {
+            return args; // Prefix not found
+        }
+
+        int valStartIdx = startIdx + prefix.length();
+
+        // Find the end of the value (start of the next prefix)
+        // We must start searching *after* the prefix itself.
+        int valEndIdx = findNextPrefixIndex(args, valStartIdx);
+
+        String before;
+        String after;
+
+        if (valEndIdx == -1) {
+            // This was the last prefix, remove from startIdx to end
+            before = args.substring(0, startIdx);
+            after = ""; // Nothing comes after
+        } else {
+            // There is another prefix after this one
+            before = args.substring(0, startIdx);
+            after = args.substring(valEndIdx); // The next prefix and rest of string
+        }
+
+        // Re-join before and after, then trim
+        return (before + " " + after).trim();
     }
 
     private static boolean isPrefixStart(String args, int index) {
@@ -459,6 +483,45 @@ final class Parser {
         LOGGER.log(Level.INFO, "Successfully parsed budget command for {0} with amount {1}.",
                 new Object[]{category, amount});
         return Map.entry(category, amount);
+    }
+
+    /**
+     * Parses the 'delete-budget' command and returns the category to delete.
+     * Expected format: {@code delete-budget c/<category>}
+     *
+     * @param input The full command string from the user. Must not be null.
+     * @return The {@code ExpenseCategory} to delete the budget for.
+     * @throws IllegalArgumentException If the format is invalid or the category is missing/invalid.
+     */
+    public static ExpenseCategory parseDeleteBudget(String input) throws IllegalArgumentException {
+        assert input != null : "Input for parsing delete-budget cannot be null.";
+        LOGGER.log(Level.FINER, "Parsing delete-budget entry: ''{0}''.", input);
+
+        String args = extractArgumentsAfterCommand(input, Ui.DELETE_BUDGET_COMMAND);
+        if (args.isEmpty()) {
+            LOGGER.log(Level.WARNING, "Missing parameters for delete-budget command.");
+            throw new IllegalArgumentException("Missing parameters for delete-budget command. " +
+                    "Usage: delete-budget c/<category>");
+        }
+
+        validatePrefixesExactly(
+                args,
+                new String[]{Ui.CATEGORY_PREFIX},
+                new String[]{},
+                "Usage: delete-budget c/<category>"
+        );
+
+        String categoryStr = getValue(args, Ui.CATEGORY_PREFIX);
+
+        if (categoryStr == null) {
+            LOGGER.log(Level.WARNING, "Missing required category parameter for delete-budget.");
+            throw new IllegalArgumentException("Usage: delete-budget c/<category>");
+        }
+
+        ExpenseCategory category = ExpenseCategory.parse(categoryStr);
+
+        LOGGER.log(Level.INFO, "Successfully parsed delete-budget command for {0}.", category);
+        return category;
     }
 
     /**
