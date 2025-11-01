@@ -27,8 +27,7 @@ public class ExpenseList extends ReverseChronoList<Expense> {
      * @return Unmodifiable list view.
      */
     public List<Expense> asUnmodifiableView() {
-        // keep the same public API as before
-        return super.asUnmodifiableView(); // mirrors previous behavior
+        return super.asUnmodifiableView();
     }
 
     /* ========== Validation & Invariants ========== */
@@ -53,10 +52,10 @@ public class ExpenseList extends ReverseChronoList<Expense> {
         Objects.requireNonNull(expense.getCategory(), "Expense category cannot be null");
 
         double amount = expense.getAmount();
-        if (!Double.isFinite(amount) || amount < 0.0) {
+        if (!Double.isFinite(amount) || amount <= 1e-9) {
             LOGGER.log(Level.WARNING, "Invalid amount {0} for expense at pos={1}",
                     new Object[]{amount, positionHint});
-            throw new IllegalArgumentException("Expense amount must be a finite, non-negative number");
+            throw new IllegalArgumentException("Expense amount must be a finite, positive number");
         }
     }
 

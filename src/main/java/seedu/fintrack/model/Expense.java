@@ -21,13 +21,13 @@ public class Expense {
      * @param description Expense description.
      */
     public Expense(double amount, ExpenseCategory category, LocalDate date, String description) {
-        assert amount > 0 : "Amount must be above 0.";
+        assert amount > 0 : "Amount must be positive.";
         assert category != null : "Category cannot be null.";
         assert date != null : "Date cannot be null.";
 
         if (amount <= 0) {
             LOGGER.log(Level.WARNING, "Attempted to create Expense with negative/zero amount: {0}", amount);
-            throw new IllegalArgumentException("Amount must be non-negative.");
+            throw new IllegalArgumentException("Amount must be positive.");
         }
         if (category == null) {
             LOGGER.log(Level.WARNING, "Attempted to create Expense with null category.");
