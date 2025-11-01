@@ -164,6 +164,7 @@ public class Ui {
         Objects.requireNonNull(income.getDate(), "income date cannot be null");
         assert Double.isFinite(income.getAmount()) : "income amount must be finite";
 
+        printHorizontalLine(80);
         System.out.println("Income added:");
         System.out.println("  Amount: " + String.format("%.2f", income.getAmount()));
         System.out.println("  Category: " + income.getCategory());
@@ -171,6 +172,7 @@ public class Ui {
         if (income.getDescription() != null && !income.getDescription().isBlank()) {
             System.out.println("  Description: " + income.getDescription());
         }
+        printHorizontalLine(80);
         LOGGER.fine("Printed income added confirmation.");
     }
 
@@ -188,6 +190,7 @@ public class Ui {
         Objects.requireNonNull(expense.getDate(), "expense date cannot be null");
         assert Double.isFinite(expense.getAmount()) : "expense amount must be finite";
 
+        printHorizontalLine(80);
         System.out.println("Expense added:");
         System.out.println("  Amount: " + String.format("%.2f", expense.getAmount()));
         System.out.println("  Category: " + expense.getCategory());
@@ -195,6 +198,7 @@ public class Ui {
         if (expense.getDescription() != null && !expense.getDescription().isBlank()) {
             System.out.println("  Description: " + expense.getDescription());
         }
+        printHorizontalLine(80);
         LOGGER.fine("Printed expense added confirmation.");
     }
 
@@ -244,7 +248,9 @@ public class Ui {
         Objects.requireNonNull(category, "category cannot be null");
         assert Double.isFinite(amount) : "amount must be finite";
 
+        printHorizontalLine(80);
         System.out.println("Budget set for " + category + ": $" + String.format("%.2f", amount));
+        printHorizontalLine(80);
         LOGGER.fine("Printed budget set confirmation.");
     }
 
@@ -262,6 +268,7 @@ public class Ui {
         Objects.requireNonNull(expense.getDate(), "expense date cannot be null");
         assert Double.isFinite(expense.getAmount()) : "expense amount must be finite";
 
+        printHorizontalLine(80);
         System.out.println("Expense at index " + index + " modified to:");
         System.out.println("  Amount: " + String.format("%.2f", expense.getAmount()));
         System.out.println("  Category: " + expense.getCategory());
@@ -269,6 +276,7 @@ public class Ui {
         if (expense.getDescription() != null && !expense.getDescription().isBlank()) {
             System.out.println("  Description: " + expense.getDescription());
         }
+        printHorizontalLine(80);
         LOGGER.fine("Printed expense modified confirmation.");
     }
 
@@ -322,11 +330,14 @@ public class Ui {
         Objects.requireNonNull(budgets, "budgets cannot be null");
 
         if (budgets.isEmpty()) {
+            printHorizontalLine(80);
             System.out.println("No budgets have been set.");
+            printHorizontalLine(80);
             LOGGER.fine("No budgets to list.");
             return;
         }
 
+        printHorizontalLine(80);
         System.out.println("Current Budgets:");
         printHorizontalLine(80);
         budgets.entrySet().stream()
@@ -716,7 +727,11 @@ public class Ui {
     static void printTip() {
         String tip = TIPS.returnTip();
         assert tip != null : "tip should not be null.";
+        printHorizontalLine(80);
+        System.out.println("Tip of the moment:");
+        printHorizontalLine(80);
         System.out.println(tip);
+        printHorizontalLine(80);
     }
 
     /**
