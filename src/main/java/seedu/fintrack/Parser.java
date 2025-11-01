@@ -316,9 +316,9 @@ final class Parser {
             LOGGER.log(Level.WARNING, "Non-finite amount provided: {0}.", amount);
             throw new IllegalArgumentException("Amount must be finite.");
         }
-        if (amount < 0) {
+        if (amount <= 0) {
             LOGGER.log(Level.WARNING, "Negative amount provided: {0}.", amount);
-            throw new IllegalArgumentException("Amount must be non-negative.");
+            throw new IllegalArgumentException("Amount must be more than 0.");
         }
 
         LocalDate date;
@@ -379,9 +379,9 @@ final class Parser {
             LOGGER.log(Level.WARNING, "Non-finite amount provided: {0}.", amount);
             throw new IllegalArgumentException("Amount must be finite.");
         }
-        if (amount < 0) {
+        if (amount <= 0) {
             LOGGER.log(Level.WARNING, "Negative amount provided: {0}.", amount);
-            throw new IllegalArgumentException("Amount must be non-negative.");
+            throw new IllegalArgumentException("Amount must be more than 0.");
         }
 
         LocalDate date;
