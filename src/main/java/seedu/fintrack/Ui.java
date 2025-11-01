@@ -593,7 +593,9 @@ public class Ui {
      * @param expenseByCategory map of each category to its total amount
      */
 
-    static void printExpenseByCategory(Double totalExpense, Map<ExpenseCategory, Double> expenseByCategory) {
+    static void printExpenseByCategory(Double totalExpense,
+            Map<ExpenseCategory, Double> expenseByCategory,
+            Map<ExpenseCategory, Double> expensePercentageByCategory) {
         if (totalExpense <= 0 || expenseByCategory.isEmpty()) {
             System.out.println("You have not spent anything yet!");
             return;
@@ -605,7 +607,7 @@ public class Ui {
         for (Map.Entry<ExpenseCategory, Double> mapEntry : expenseByCategory.entrySet()) {
             ExpenseCategory category = mapEntry.getKey();
             double amount = (mapEntry.getValue());
-            double percentOfTotal = totalExpense == 0.0 ? 0.0 : (amount / totalExpense) * 100.0;
+            double percentOfTotal = expensePercentageByCategory.get(category);
             System.out.printf("%s: %.2f (%.2f%%)%n", category, amount, percentOfTotal);
 
             if (amount > topAmount) {
@@ -630,15 +632,16 @@ public class Ui {
      * @param expenseByCategory   a map of each ExpenseCategory to its aggregated amount
      * @throws NullPointerException if totalExpense or expenseByCategory is null
      */
-    static void printSummaryExpense(Double totalExpense, Map<ExpenseCategory, Double> expenseByCategory) {
+    static void printSummaryExpense(Double totalExpense,
+            Map<ExpenseCategory, Double> expenseByCategory,
+            Map<ExpenseCategory, Double> expensePercentageByCategory) {
         try {
             printHorizontalLine(80);
             System.out.println("Here is an overall summary of your expenses!");
-            System.out.print("Total Expense: ");
-            System.out.println(totalExpense);
+            System.out.printf("Total Expense: %.2f%n", totalExpense);
             printNextLine();
             System.out.println("Here is a breakdown of your expense:");
-            printExpenseByCategory(totalExpense, expenseByCategory);
+            printExpenseByCategory(totalExpense, expenseByCategory, expensePercentageByCategory);
             printHorizontalLine(80);
             LOGGER.log(Level.INFO, "summary-expense called successfully.");
         } catch (NullPointerException e) {
@@ -653,7 +656,9 @@ public class Ui {
      * @param totalIncome      total amount spent (used to compute percentages)
      * @param incomeByCategory map of each category to its total amount
      */
-    static void printIncomeByCategory(Double totalIncome, Map<IncomeCategory, Double> incomeByCategory) {
+    static void printIncomeByCategory(Double totalIncome,
+            Map<IncomeCategory, Double> incomeByCategory,
+            Map<IncomeCategory, Double> incomePercentByCategory) {
         if (totalIncome <= 0 || incomeByCategory.isEmpty()) {
             System.out.println("You have not recorded any income yet!");
             return;
@@ -665,7 +670,7 @@ public class Ui {
         for (Map.Entry<IncomeCategory, Double> mapEntry : incomeByCategory.entrySet()) {
             IncomeCategory category = mapEntry.getKey();
             double amount = (mapEntry.getValue());
-            double percentOfTotal = totalIncome == 0.0 ? 0.0 : (amount / totalIncome) * 100.0;
+            double percentOfTotal = incomePercentByCategory.get(category);
             System.out.printf("%s: %.2f (%.2f%%)%n", category, amount, percentOfTotal);
 
             if (amount > topAmount) {
@@ -690,15 +695,16 @@ public class Ui {
      * @param incomeByCategory   a map of each IncomeCategory to its aggregated amount
      * @throws NullPointerException if totalIncome or incomeByCategory is null
      */
-    static void printSummaryIncome(double totalIncome, Map<IncomeCategory, Double> incomeByCategory) {
+    static void printSummaryIncome(double totalIncome,
+            Map<IncomeCategory, Double> incomeByCategory,
+            Map<IncomeCategory, Double> incomePercentByCategory) {
         try {
             printHorizontalLine(80);
             System.out.println("Here is an overall summary of your income!");
-            System.out.print("Total Income: ");
-            System.out.println(totalIncome);
+            System.out.printf("Total Income: %.2f%n", totalIncome);
             printNextLine();
             System.out.println("Here is a breakdown of your income:");
-            printIncomeByCategory(totalIncome, incomeByCategory);
+            printIncomeByCategory(totalIncome, incomeByCategory, incomePercentByCategory);
             printHorizontalLine(80);
             LOGGER.log(Level.INFO, "summary-income called successfully.");
         } catch (NullPointerException e) {
@@ -726,69 +732,68 @@ public class Ui {
         printHorizontalLine(80);
 
         System.out.println("1. Add an expense:");
-        System.out.print("   " + ADD_EXPENSE_COMMAND + " (ae)");
-        System.out.println(" a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
-        System.out.println("   Example: ae a/12.50 c/Food d/2025-10-08 des/Lunch");
+        System.out.print("   " + ADD_EXPENSE_COMMAND + " a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
+        System.out.println("   Example: add-expense a/12.50 c/Food d/2025-10-08 des/Lunch");
         System.out.println("   Available categories: " +
                 "FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS");
 
         System.out.println();
         System.out.println("2. Add an income:");
-        System.out.println("   " + ADD_INCOME_COMMAND + " (ai) a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
-        System.out.println("   Example: ai a/2000 c/Salary d/2025-10-01 des/Monthly pay");
+        System.out.println("   " + ADD_INCOME_COMMAND + " a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
+        System.out.println("   Example: add-income a/2000 c/Salary d/2025-10-01 des/Monthly pay");
         System.out.println("   Available categories: SALARY, SCHOLARSHIP, INVESTMENT, GIFT, OTHERS");
 
         System.out.println();
         System.out.println("3. View all expenses (from latest to earliest date):");
-        System.out.println("   " + LIST_EXPENSE_COMMAND + " (le)");
-        System.out.println("   To view by month: " + LIST_EXPENSE_COMMAND + " (le) d/<YYYY-MM>");
-        System.out.println("   Example: le d/2025-10");
+        System.out.println("   " + LIST_EXPENSE_COMMAND);
+        System.out.println("   To view by month: " + LIST_EXPENSE_COMMAND + " d/<YYYY-MM>");
+        System.out.println("   Example: list-expense d/2025-10");
 
         System.out.println();
         System.out.println("4. View all incomes (from latest to earliest date):");
-        System.out.println("   " + LIST_INCOME_COMMAND + " (li)");
-        System.out.println("   To view by month: " + LIST_INCOME_COMMAND + " (li) d/<YYYY-MM>");
-        System.out.println("   Example: li d/2025-10");
+        System.out.println("   " + LIST_INCOME_COMMAND);
+        System.out.println("   To view by month: " + LIST_INCOME_COMMAND + " d/<YYYY-MM>");
+        System.out.println("   Example: list-income d/2025-10");
 
         System.out.println();
         System.out.println("5. Delete an expense:");
-        System.out.println("   " + DELETE_EXPENSE_COMMAND + " (de) <index>");
+        System.out.println("   " + DELETE_EXPENSE_COMMAND + " <index>");
         System.out.println("   Deletes the expense shown at that index in 'list-expense'.");
-        System.out.println("   Example: de 1");
+        System.out.println("   Example: delete-expense 1");
 
         System.out.println();
         System.out.println("6. Delete an income:");
-        System.out.println("   " + DELETE_INCOME_COMMAND + " (di) <index>");
+        System.out.println("   " + DELETE_INCOME_COMMAND + " <index>");
         System.out.println("   Deletes the income shown at that index in 'list-income'.");
-        System.out.println("   Example: di 1");
+        System.out.println("   Example: delete-income 1");
 
         System.out.println();
         System.out.println("7. Modify an expense:");
         System.out.println("   "
-                + MODIFY_EXPENSE_COMMAND + " (me)"
+                + MODIFY_EXPENSE_COMMAND
                 + " <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
         System.out.println("   Modifies the expense shown at that index in 'list-expense'.");
-        System.out.println("   Example: me 1 a/1300 c/Rent d/2024-01-01 des/Monthly rent increased");
+        System.out.println("   Example: modify-expense 1 a/1300 c/Rent d/2024-01-01 des/Monthly rent increased");
 
         System.out.println();
         System.out.println("8. Modify an income:");
         System.out.println("   "
-                + MODIFY_INCOME_COMMAND + " (mi)"
+                + MODIFY_INCOME_COMMAND
                 + " <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
         System.out.println("   Modifies the income shown at that index in 'list-income'.");
-        System.out.println("   Example: mi 3 a/250 c/Salary d/2024-01-15 des/Extra performance bonus");
+        System.out.println("   Example: modify-income 3 a/250 c/Salary d/2024-01-15 des/Extra performance bonus");
 
         System.out.println();
         System.out.println("9. View balance summary:");
-        System.out.println("   " + BALANCE_COMMAND + " (b)");
+        System.out.println("   " + BALANCE_COMMAND);
         System.out.println("   Shows total income, total expenses, and current balance.");
-        System.out.println("   To view by month: " + BALANCE_COMMAND + " (b) d/<YYYY-MM>");
-        System.out.println("   Example: b d/2025-10");
+        System.out.println("   To view by month: " + BALANCE_COMMAND + " d/<YYYY-MM>");
+        System.out.println("   Example: balance d/2025-10");
 
         System.out.println();
         System.out.println("10. Set budget for expense categories:");
-        System.out.println("    " + BUDGET_COMMAND + " (bg)");
-        System.out.println("    Example: bg c/FOOD a/1000");
+        System.out.println("    " + BUDGET_COMMAND);
+        System.out.println("    Example: budget c/FOOD a/1000");
         System.out.println("    Available categories: " +
                 "FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS");
 
@@ -826,8 +831,8 @@ public class Ui {
 
         System.out.println();
         System.out.println("17. Export data to CSV file:");
-        System.out.println("    " + EXPORT_COMMAND + " (ex) <filepath>");
-        System.out.println("    Example: ex financial_data.csv");
+        System.out.println("    " + EXPORT_COMMAND + " <filepath>");
+        System.out.println("    Example: export financial_data.csv");
 
         printHorizontalLine(80);
     }
