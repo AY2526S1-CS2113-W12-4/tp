@@ -30,6 +30,8 @@ public class FinTrack {
             "Invalid command. Type 'help' for a list of available commands.";
     private static final String NO_ARGUMENTS_MESSAGE_TEMPLATE =
             "The '%s' command does not take additional arguments.";
+    private static final String UNSUPPORTED_CHARACTER_MESSAGE =
+            "Unsupported characters detected. Please use standard ASCII text only.";
 
     /*
      * Initialises java.util.logging from a classpath resource ('logging.properties') when no
@@ -61,6 +63,10 @@ public class FinTrack {
 
         while (true) {
             String input = Ui.waitForInput();
+            if (!isAsciiSafe(input)) {
+                Ui.printError(UNSUPPORTED_CHARACTER_MESSAGE);
+                continue;
+            }
             String firstWord = Parser.returnFirstWord(input);
             if (firstWord.equals(Ui.EXIT_COMMAND)) {
                 if (hasUnexpectedArguments(input, Ui.EXIT_COMMAND)) {
@@ -289,5 +295,12 @@ public class FinTrack {
 
     private static String formatNoArgumentsMessage(String commandWord) {
         return String.format(NO_ARGUMENTS_MESSAGE_TEMPLATE, commandWord);
+    }
+
+    private static boolean isAsciiSafe(String input) {
+        if (input == null || input.isEmpty()) {
+            return true;
+        }
+        return input.chars().allMatch(codePoint -> codePoint >= 0 && codePoint <= 0x7F);
     }
 }

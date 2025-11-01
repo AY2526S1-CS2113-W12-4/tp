@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDate;
 import java.util.Locale;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -85,9 +86,10 @@ public class FinTrackTest {
     }
 
     private String run(String script) throws Exception {
-        System.setIn(new java.io.ByteArrayInputStream(script.getBytes()));
+        byte[] bytes = script.getBytes(StandardCharsets.UTF_8);
+        System.setIn(new java.io.ByteArrayInputStream(bytes));
         // bind Ui's scanner to current System.in
-        Ui.test_setScanner(new java.util.Scanner(System.in));
+        Ui.test_setScanner(new java.util.Scanner(System.in, StandardCharsets.UTF_8.name()));
         FinTrack.main(new String[0]);
         return out();
     }
@@ -109,6 +111,17 @@ public class FinTrackTest {
     void invalidCommand_thenExit() throws Exception {
         String s = run("nonsense\nbye\n");
         mustContain(s, "Invalid command. Type 'help' for a list of available commands.");
+        mustContain(s, "Bye. Hope to see you again soon!");
+    }
+
+    @Test
+    void nonAsciiInput_rejectedWithError() throws Exception {
+        String script = String.join("\n",
+                "add-income a/200 c/Salary d/2025-10-01 des/\u5348\u9910",
+                "bye");
+        String s = run(script);
+        mustContain(s, "Error: Unsupported characters detected. Please use standard ASCII text only.");
+        mustNotContain(s, "Income added:");
         mustContain(s, "Bye. Hope to see you again soon!");
     }
 
