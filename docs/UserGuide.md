@@ -7,13 +7,17 @@ FinTrack is a lightweight command-line assistant that helps you keep an eye on d
 ## Quick Start
 
 1. **Install Java 17.** FinTrack requires Java 17. Confirm your version with `java -version`.
-2. **Download or clone FinTrack.** Place the project folder anywhere on your computer.
-3. **Open a terminal at the project root.** On Windows you can use Command Prompt or PowerShell; on macOS/Linux use your preferred shell.
-4. **Run FinTrack from source.**
-    - Windows: `.\gradlew.bat run`
-    - macOS/Linux: `./gradlew run`
-      FinTrack will compile (on first run) and display a welcome banner followed by a `>` prompt.
-5. *(Optional)* Build a runnable JAR with `./gradlew shadowJar` (macOS/Linux) or `.\gradlew.bat shadowJar` (Windows). The application JAR is created under `build/libs/`.
+2. **Download FinTrack.**
+   - **Option 1: Clone the project.** Place the project folder anywhere on your computer.
+   - **Option 2: Download the JAR file.** Download `fintrack.jar` from the releases page and place it anywhere on your computer.
+3. **Open a terminal at the project root (for Option 1) or where the JAR is located (for Option 2).** On Windows you can use Command Prompt or PowerShell; on macOS/Linux use your preferred shell.
+4. **Run FinTrack.**
+   - **From source (Option 1):**
+     - Windows: `.\gradlew.bat run`
+     - macOS/Linux: `./gradlew run`
+       FinTrack will compile (on first run) and display a welcome banner followed by a `>` prompt.
+   - **From JAR (Option 2):** `java -jar fintrack.jar`
+5. _(Optional, for Option 1)_ Build a runnable JAR with `./gradlew shadowJar` (macOS/Linux) or `.\gradlew.bat shadowJar` (Windows). The application JAR is created under `build/libs/`.
 
 Tip: Type `help` after launch to see every available command.
 
@@ -22,10 +26,10 @@ Tip: Type `help` after launch to see every available command.
 - FinTrack is fully keyboard-driven. Each command is entered on a single line and confirmed with Enter.
 - Commands are **case-sensitive**. Use lowercase as shown in this guide (e.g., `add-expense`, not `Add-Expense`).
 - Parameters use prefixes:
-    - `a/` for amount (non-negative number, decimals allowed).
-    - `c/` for category (must be from the valid list of categories).
-    - `d/` for date in `YYYY-MM-DD` format.
-    - `des/` for an optional description. If omitted, the entry has no description.
+  - `a/` for amount (non-negative number, decimals allowed).
+  - `c/` for category (must be from the valid list of categories).
+  - `d/` for date in `YYYY-MM-DD` format.
+  - `des/` for an optional description. If omitted, the entry has no description.
 - Compulsory parameters can be input in **any order**. For example, if `add-expense` requires the `a/<amount>`, `c/<category>` and `d/<YYYY-MM-DD>` parameters, it can be input in any order (e.g. `c/<category>`, `a/<amount>`, `d/<YYYY-MM-DD>`).
   - However, if you include the optional description (`des/`), place it after all other parameters—everything after `des/` is treated as part of the description.
 - Dates must be valid calendar dates (for example, `2025-02-29` is invalid).
@@ -141,6 +145,7 @@ Creates a new expense. Expenses are automatically sorted so the newest date appe
   ```
 
 Validation notes:
+
 - Amount must be a non-negative number (e.g., `5`, `14.20`).
 - Category and date are mandatory.
 - Description is optional; omit it entirely if not needed.
@@ -171,6 +176,7 @@ Records income that contributes to your balance.
   ```
 
 The same validation rules as `add-expense` apply to amount, date, and description.
+
 - Categories must be any of the following (if not, an error message is presented to the user):
   - SALARY
   - SCHOLARSHIP
@@ -213,16 +219,16 @@ For example, `list-expense d/2025-10` lists only expenses recorded in **October 
 - **Example usage:** `list-expense d/2025-10`
 - **Sample output:**
 
-    ```
-    Expenses for the month 2025-10 (Newest first):
-    --------------------------------------------------
-    #1
-    Date: 2025-10-08
-    Amount: $12.50
-    Category: FOOD
-    Description: Lunch
-    --------------------------------------------------
-    ```
+  ```
+  Expenses for the month 2025-10 (Newest first):
+  --------------------------------------------------
+  #1
+  Date: 2025-10-08
+  Amount: $12.50
+  Category: FOOD
+  Description: Lunch
+  --------------------------------------------------
+  ```
 
 ### Listing incomes: `list-income`
 
@@ -259,17 +265,17 @@ For example, `list-income d/2025-12` lists only incomes recorded in **December 2
 - **Example usage:** `list-income d/2025-12`
 - **Sample output:**
 
-    ```
-    Incomes for the month 2025-12 (Newest first):
-    --------------------------------------------------
-    #1
-    Date: 2025-12-01
-    Amount: $3200.00
-    Category: SALARY
-    Description: December pay
-    --------------------------------------------------
+  ```
+  Incomes for the month 2025-12 (Newest first):
+  --------------------------------------------------
+  #1
+  Date: 2025-12-01
+  Amount: $3200.00
+  Category: SALARY
+  Description: December pay
+  --------------------------------------------------
 
-    ```
+  ```
 
 ### Showing your balance: `balance`
 
@@ -293,11 +299,11 @@ For example, `balance d/2025-01` displays the total income, expenses, and balanc
 - **Example usage:** `balance d/2025-01`
 - **Sample output:**
 
-    ```
-    Overall Balance for the month 2025-01: 3158.00
-    Total Income: 3200.00
-    Total Expense: 42.00
-    ```
+  ```
+  Overall Balance for the month 2025-01: 3158.00
+  Total Income: 3200.00
+  Total Expense: 42.00
+  ```
 
 ### Deleting an expense: `delete-expense`
 
@@ -332,7 +338,8 @@ Removes an expense by its 1-based index as seen in the most recent `list-income`
     Date: 2025-10-01
     Description: October salary
   ```
-FinTrack rejects zero or negative indexes and any index larger than the number of incomes.
+
+  FinTrack rejects zero or negative indexes and any index larger than the number of incomes.
 
 ### Modifying an expense: `modify-expense`
 
@@ -403,8 +410,9 @@ Allows the user to set budgets for expense categories available.
   ```
   Budget set for FOOD: $500.00
   ```
-  
+
 Validation notes:
+
 - Amount must be a non-negative number (e.g., `5`, `14.20`).
 - Categories (not case-sensitive) must be any one of the following (if not, an error message is presented to the user):
   - FOOD
@@ -418,7 +426,7 @@ Validation notes:
 
 ### Viewing list of budgets: `list-budget`
 
-Allows the user to view the budgets set for each expense category (if applicable). 
+Allows the user to view the budgets set for each expense category (if applicable).
 
 - **Format:** `list-budget`
 - **Example usage:** `list-budget`
@@ -432,7 +440,8 @@ Allows the user to view the budgets set for each expense category (if applicable
   ENTERTAINMENT       : $200.00
   --------------------------------------------------------------------------------
   ```
-If the user has not set budgets for any category, FinTrack prints `No budgets have been set.`
+
+  If the user has not set budgets for any category, FinTrack prints `No budgets have been set.`
 
 ### Viewing Summary of Expenses `summary-expense`
 
@@ -442,18 +451,18 @@ Gives a summary of your overall expenses.
 - **Example usage:** `summary-expense`
 - **Sample Output:**
 
-    ```
-    -----------------------------------------------
-    Here is an overall summary of your expenses!
-    Total Expense: 40.0
+  ```
+  -----------------------------------------------
+  Here is an overall summary of your expenses!
+  Total Expense: 40.0
 
-    Here is a breakdown of your expense:
-    TRANSPORT: 10.00 (25.00%)
-    FOOD: 30.00 (75.00%)
+  Here is a breakdown of your expense:
+  TRANSPORT: 10.00 (25.00%)
+  FOOD: 30.00 (75.00%)
 
-    Your most spent on category is: FOOD
-    -----------------------------------------------
-    ```
+  Your most spent on category is: FOOD
+  -----------------------------------------------
+  ```
 
 If no expense has been tracked, `summary-expense` will let you know as well.
 
@@ -465,18 +474,18 @@ Gives a summary of your overall income.
 - **Example usage:** `summary-income`
 - **Sample Output:**
 
-    ```
-    ----------------------------------------------
-    Here is an overall summary of your income!
-    Total Income: 30.0
+  ```
+  ----------------------------------------------
+  Here is an overall summary of your income!
+  Total Income: 30.0
 
-    Here is a breakdown of your income:
-    SALARY: 20.00 (66.67%)
-    INVESTMENT: 10.00 (33.33%)
+  Here is a breakdown of your income:
+  SALARY: 20.00 (66.67%)
+  INVESTMENT: 10.00 (33.33%)
 
-    Your highest source of income is: SALARY
-    ----------------------------------------------
-    ```
+  Your highest source of income is: SALARY
+  ----------------------------------------------
+  ```
 
 If no income has been tracked, `summary-income` will let you know as well.
 
@@ -488,9 +497,9 @@ Get a random tip.
 - **Example usage:** `tips`
 - **Sample Output:**
 
-    ```
-    Take the shuttle bus, it's worth it :(
-    ```
+  ```
+  Take the shuttle bus, it's worth it :(
+  ```
 
 ### Leaving FinTrack: `bye`
 
@@ -556,7 +565,7 @@ A: Ensure the date is valid on the calendar and in `YYYY-MM-DD` format.
 ## Command Summary
 
 | Command                    | Format                                                                   | Example                                                      |
-|:---------------------------|--------------------------------------------------------------------------|--------------------------------------------------------------|
+| :------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------ |
 | `help`                     | `help`                                                                   | `help`                                                       |
 | `add-expense`              | `add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]` | `add-expense a/12.50 c/Food d/2025-10-08 des/Lunch`          |
 | `add-income`               | `add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]`  | `add-income a/3200 c/Salary d/2025-10-01 des/October salary` |
