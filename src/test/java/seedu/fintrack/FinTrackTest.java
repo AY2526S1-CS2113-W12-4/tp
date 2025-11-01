@@ -560,4 +560,348 @@ public class FinTrackTest {
         mustContain(s, "Overall Balance for the month 2025-09:");
     }
 
+    @Test
+    void deleteExpenseAlias_extremeNegative_showSpecificError() throws Exception {
+        String s = run("de -9999999999\nbye\n");
+        mustContain(s, "Expense index is too small. Please use a larger number (minimum: 1).");
+    }
+
+    @Test
+    void deleteExpenseAlias_extremePositive_showSpecificError() throws Exception {
+        String s = run("de 9999999999\nbye\n");
+        mustContain(s, "Expense index is too large. Please use a smaller number (maximum: 2147483647).");
+    }
+
+    @Test
+    void deleteExpenseAlias_justAboveMaxInt_showSpecificError() throws Exception {
+        String s = run("de 2147483648\nbye\n");
+        mustContain(s, "Expense index is too large. Please use a smaller number (maximum: 2147483647).");
+    }
+
+    @Test
+    void deleteExpenseAlias_justBelowMinInt_showSpecificError() throws Exception {
+        String s = run("de -2147483649\nbye\n");
+        mustContain(s, "Expense index is too small. Please use a larger number (minimum: 1).");
+    }
+
+    @Test
+    void deleteExpenseAlias_veryLargePositive_showSpecificError() throws Exception {
+        String s = run("de 99999999999999999999\nbye\n");
+        mustContain(s, "Expense index is too large. Please use a smaller number (maximum: 2147483647).");
+    }
+
+    @Test
+    void deleteExpenseAlias_veryLargeNegative_showSpecificError() throws Exception {
+        String s = run("de -99999999999999999999\nbye\n");
+        mustContain(s, "Expense index is too small. Please use a larger number (minimum: 1).");
+    }
+
+    @Test
+    void deleteExpenseAlias_invalidFormat_showGenericError() throws Exception {
+        String s = run("de abc123\nbye\n");
+        mustContain(s, "Expense index must be a valid number.");
+    }
+
+    @Test
+    void deleteIncomeAlias_extremeNegative_showSpecificError() throws Exception {
+        String s = run("di -9999999999\nbye\n");
+        mustContain(s, "Income index is too small. Please use a larger number (minimum: 1).");
+    }
+
+    @Test
+    void deleteIncomeAlias_extremePositive_showSpecificError() throws Exception {
+        String s = run("di 9999999999\nbye\n");
+        mustContain(s, "Income index is too large. Please use a smaller number (maximum: 2147483647).");
+    }
+
+    @Test
+    void deleteIncomeAlias_justAboveMaxInt_showSpecificError() throws Exception {
+        String s = run("di 2147483648\nbye\n");
+        mustContain(s, "Income index is too large. Please use a smaller number (maximum: 2147483647).");
+    }
+
+    @Test
+    void deleteIncomeAlias_justBelowMinInt_showSpecificError() throws Exception {
+        String s = run("di -2147483649\nbye\n");
+        mustContain(s, "Income index is too small. Please use a larger number (minimum: 1).");
+    }
+
+    @Test
+    void deleteIncomeAlias_veryLargePositive_showSpecificError() throws Exception {
+        String s = run("di 99999999999999999999\nbye\n");
+        mustContain(s, "Income index is too large. Please use a smaller number (maximum: 2147483647).");
+    }
+
+    @Test
+    void deleteIncomeAlias_veryLargeNegative_showSpecificError() throws Exception {
+        String s = run("di -99999999999999999999\nbye\n");
+        mustContain(s, "Income index is too small. Please use a larger number (minimum: 1).");
+    }
+
+    @Test
+    void deleteIncomeAlias_invalidFormat_showGenericError() throws Exception {
+        String s = run("di abc123\nbye\n");
+        mustContain(s, "Income index must be a valid number.");
+    }
+
+    @Test
+    void modifyExpenseAlias_extremeNegative_showSpecificError() throws Exception {
+        String s = run("me -9999999999\nbye\n");
+        mustContain(s, "Expense index is too small. Please use a larger number (minimum: 1).");
+    }
+
+    @Test
+    void modifyExpenseAlias_extremePositive_showSpecificError() throws Exception {
+        String s = run("me 9999999999\nbye\n");
+        mustContain(s, "Expense index is too large. Please use a smaller number (maximum: 2147483647).");
+    }
+
+    @Test
+    void modifyExpenseAlias_justAboveMaxInt_showSpecificError() throws Exception {
+        String s = run("me 2147483648\nbye\n");
+        mustContain(s, "Expense index is too large. Please use a smaller number (maximum: 2147483647).");
+    }
+
+    @Test
+    void modifyExpenseAlias_justBelowMinInt_showSpecificError() throws Exception {
+        String s = run("me -2147483649\nbye\n");
+        mustContain(s, "Expense index is too small. Please use a larger number (minimum: 1).");
+    }
+
+    @Test
+    void modifyExpenseAlias_veryLargePositive_showSpecificError() throws Exception {
+        String s = run("me 99999999999999999999\nbye\n");
+        mustContain(s, "Expense index is too large. Please use a smaller number (maximum: 2147483647).");
+    }
+
+    @Test
+    void modifyExpenseAlias_veryLargeNegative_showSpecificError() throws Exception {
+        String s = run("me -99999999999999999999\nbye\n");
+        mustContain(s, "Expense index is too small. Please use a larger number (minimum: 1).");
+    }
+
+    @Test
+    void modifyExpenseAlias_invalidFormat_showGenericError() throws Exception {
+        String s = run("me abc123\nbye\n");
+        mustContain(s, "Expense index must be a valid number.");
+    }
+
+    @Test
+    void modifyIncomeAlias_extremeNegative_showSpecificError() throws Exception {
+        String s = run("mi -9999999999\nbye\n");
+        mustContain(s, "Income index is too small. Please use a larger number (minimum: 1).");
+    }
+
+    @Test
+    void modifyIncomeAlias_extremePositive_showSpecificError() throws Exception {
+        String s = run("mi 9999999999\nbye\n");
+        mustContain(s, "Income index is too large. Please use a smaller number (maximum: 2147483647).");
+    }
+
+    @Test
+    void modifyIncomeAlias_justAboveMaxInt_showSpecificError() throws Exception {
+        String s = run("mi 2147483648\nbye\n");
+        mustContain(s, "Income index is too large. Please use a smaller number (maximum: 2147483647).");
+    }
+
+    @Test
+    void modifyIncomeAlias_justBelowMinInt_showSpecificError() throws Exception {
+        String s = run("mi -2147483649\nbye\n");
+        mustContain(s, "Income index is too small. Please use a larger number (minimum: 1).");
+    }
+
+    @Test
+    void modifyIncomeAlias_veryLargePositive_showSpecificError() throws Exception {
+        String s = run("mi 99999999999999999999\nbye\n");
+        mustContain(s, "Income index is too large. Please use a smaller number (maximum: 2147483647).");
+    }
+
+    @Test
+    void modifyIncomeAlias_veryLargeNegative_showSpecificError() throws Exception {
+        String s = run("mi -99999999999999999999\nbye\n");
+        mustContain(s, "Income index is too small. Please use a larger number (minimum: 1).");
+    }
+
+    @Test
+    void modifyIncomeAlias_invalidFormat_showGenericError() throws Exception {
+        String s = run("mi abc123\nbye\n");
+        mustContain(s, "Income index must be a valid number.");
+    }
+
+    @Test
+    void aliasesWithValidCommands_workNormally() throws Exception {
+        String script = String.join("\n",
+                "add-expense a/10 c/Food d/2025-10-01",
+                "add-income a/100 c/Salary d/2025-10-01",
+                "de 1",
+                "di 1",
+                "bye");
+        String s = run(script);
+
+        mustContain(s, "Expense added:");
+        mustContain(s, "Income added:");
+        mustContain(s, "Expense deleted (index 1):");
+        mustContain(s, "Income deleted (index 1):");
+    }
+
+    @Test
+    void deleteExpenseFullCommand_zero_showPositiveNumberError() throws Exception {
+        String s = run("delete-expense 0\nbye\n");
+        mustContain(s, "Expense index must be a positive number.");
+    }
+
+    @Test
+    void deleteExpenseFullCommand_negativeOne_showPositiveNumberError() throws Exception {
+        String s = run("delete-expense -1\nbye\n");
+        mustContain(s, "Expense index must be a positive number.");
+    }
+
+    @Test
+    void deleteExpenseFullCommand_maxInt_showSpecificError() throws Exception {
+        String script = String.join("\n",
+                "add-expense a/10 c/Food d/2025-10-01",
+                "delete-expense 2147483647",
+                "bye");
+        String s = run(script);
+        mustContain(s, "Expense index out of range. Valid range: 1 to 1");
+    }
+
+    @Test
+    void deleteExpenseFullCommand_justAboveMaxInt_showSpecificError() throws Exception {
+        String s = run("delete-expense 2147483648\nbye\n");
+        mustContain(s, "Expense index is too large. Please use a smaller number (maximum: 2147483647).");
+    }
+
+    @Test
+    void deleteExpenseFullCommand_minInt_showSpecificError() throws Exception {
+        String s = run("delete-expense -2147483648\nbye\n");
+        mustContain(s, "Expense index must be a positive number.");
+    }
+
+    @Test
+    void deleteExpenseFullCommand_justBelowMinInt_showSpecificError() throws Exception {
+        String s = run("delete-expense -2147483649\nbye\n");
+        mustContain(s, "Expense index is too small. Please use a larger number (minimum: 1).");
+    }
+
+    @Test
+    void deleteIncomeFullCommand_zero_showPositiveNumberError() throws Exception {
+        String s = run("delete-income 0\nbye\n");
+        mustContain(s, "Income index must be a positive number.");
+    }
+
+    @Test
+    void deleteIncomeFullCommand_negativeOne_showPositiveNumberError() throws Exception {
+        String s = run("delete-income -1\nbye\n");
+        mustContain(s, "Income index must be a positive number.");
+    }
+
+    @Test
+    void deleteIncomeFullCommand_maxInt_showSpecificError() throws Exception {
+        String script = String.join("\n",
+                "add-income a/100 c/Salary d/2025-10-01",
+                "delete-income 2147483647",
+                "bye");
+        String s = run(script);
+        mustContain(s, "Income index out of range. Valid range: 1 to 1");
+    }
+
+    @Test
+    void deleteIncomeFullCommand_justAboveMaxInt_showSpecificError() throws Exception {
+        String s = run("delete-income 2147483648\nbye\n");
+        mustContain(s, "Income index is too large. Please use a smaller number (maximum: 2147483647).");
+    }
+
+    @Test
+    void deleteIncomeFullCommand_minInt_showSpecificError() throws Exception {
+        String s = run("delete-income -2147483648\nbye\n");
+        mustContain(s, "Income index must be a positive number.");
+    }
+
+    @Test
+    void deleteIncomeFullCommand_justBelowMinInt_showSpecificError() throws Exception {
+        String s = run("delete-income -2147483649\nbye\n");
+        mustContain(s, "Income index is too small. Please use a larger number (minimum: 1).");
+    }
+
+    @Test
+    void modifyExpenseFullCommand_zero_showPositiveNumberError() throws Exception {
+        String s = run("modify-expense 0\nbye\n");
+        mustContain(s, "Expense index must be a positive number.");
+    }
+
+    @Test
+    void modifyExpenseFullCommand_negativeOne_showPositiveNumberError() throws Exception {
+        String s = run("modify-expense -1\nbye\n");
+        mustContain(s, "Expense index must be a positive number.");
+    }
+
+    @Test
+    void modifyExpenseFullCommand_maxInt_showSpecificError() throws Exception {
+        String script = String.join("\n",
+                "add-expense a/10 c/Food d/2025-10-01",
+                "modify-expense 2147483647",
+                "bye");
+        String s = run(script);
+        mustContain(s, "Expense index out of range. Valid range: 1 to 1");
+    }
+
+    @Test
+    void modifyExpenseFullCommand_justAboveMaxInt_showSpecificError() throws Exception {
+        String s = run("modify-expense 2147483648\nbye\n");
+        mustContain(s, "Expense index is too large. Please use a smaller number (maximum: 2147483647).");
+    }
+
+    @Test
+    void modifyExpenseFullCommand_minInt_showSpecificError() throws Exception {
+        String s = run("modify-expense -2147483648\nbye\n");
+        mustContain(s, "Expense index must be a positive number.");
+    }
+
+    @Test
+    void modifyExpenseFullCommand_justBelowMinInt_showSpecificError() throws Exception {
+        String s = run("modify-expense -2147483649\nbye\n");
+        mustContain(s, "Expense index is too small. Please use a larger number (minimum: 1).");
+    }
+
+    @Test
+    void modifyIncomeFullCommand_zero_showPositiveNumberError() throws Exception {
+        String s = run("modify-income 0\nbye\n");
+        mustContain(s, "Income index must be a positive number.");
+    }
+
+    @Test
+    void modifyIncomeFullCommand_negativeOne_showPositiveNumberError() throws Exception {
+        String s = run("modify-income -1\nbye\n");
+        mustContain(s, "Income index must be a positive number.");
+    }
+
+    @Test
+    void modifyIncomeFullCommand_maxInt_showSpecificError() throws Exception {
+        String script = String.join("\n",
+                "add-income a/100 c/Salary d/2025-10-01",
+                "modify-income 2147483647",
+                "bye");
+        String s = run(script);
+        mustContain(s, "Income index out of range. Valid range: 1 to 1");
+    }
+
+    @Test
+    void modifyIncomeFullCommand_justAboveMaxInt_showSpecificError() throws Exception {
+        String s = run("modify-income 2147483648\nbye\n");
+        mustContain(s, "Income index is too large. Please use a smaller number (maximum: 2147483647).");
+    }
+
+    @Test
+    void modifyIncomeFullCommand_minInt_showSpecificError() throws Exception {
+        String s = run("modify-income -2147483648\nbye\n");
+        mustContain(s, "Income index must be a positive number.");
+    }
+
+    @Test
+    void modifyIncomeFullCommand_justBelowMinInt_showSpecificError() throws Exception {
+        String s = run("modify-income -2147483649\nbye\n");
+        mustContain(s, "Income index is too small. Please use a larger number (minimum: 1).");
+    }
+
 }
