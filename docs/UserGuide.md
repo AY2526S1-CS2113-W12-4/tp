@@ -321,7 +321,7 @@ FinTrack rejects zero or negative indexes and any index larger than the number o
 
 ### Deleting an income: `delete-income`
 
-Removes an expense by its 1-based index as seen in the most recent `list-income` output.
+Removes an income by its 1-based index as seen in the most recent `list-income` output.
 
 - **Format:** `delete-income <index>`
 - **Example usage:** `delete-income 1`
