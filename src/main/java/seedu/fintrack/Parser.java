@@ -192,6 +192,13 @@ final class Parser {
         }
     }
 
+    private static void ensureDateNotFuture(LocalDate date) {
+        if (date.isAfter(LocalDate.now())) {
+            LOGGER.log(Level.WARNING, "Future date provided: {0}.", date);
+            throw new IllegalArgumentException("Date cannot be in the future.");
+        }
+    }
+
     private static boolean isPrefixStart(String args, int index) {
         if (index < 0 || index >= args.length()) {
             return false;
@@ -324,6 +331,7 @@ final class Parser {
         LocalDate date;
         try {
             date = LocalDate.parse(dateStr);
+            ensureDateNotFuture(date);
         } catch (DateTimeParseException e) {
             LOGGER.log(Level.WARNING, "Invalid date format: {0}.", dateStr);
             throw new IllegalArgumentException("Date must be in YYYY-MM-DD format.");
@@ -387,6 +395,7 @@ final class Parser {
         LocalDate date;
         try {
             date = LocalDate.parse(dateStr);
+            ensureDateNotFuture(date);
         } catch (DateTimeParseException e) {
             LOGGER.log(Level.WARNING, "Invalid date format: {0}.", dateStr);
             throw new IllegalArgumentException("Date must be in YYYY-MM-DD format.");
@@ -643,7 +652,9 @@ final class Parser {
 
         if (dateStr != null) {
             try {
-                date = LocalDate.parse(dateStr);
+                LocalDate parsedDate = LocalDate.parse(dateStr);
+                ensureDateNotFuture(parsedDate);
+                date = parsedDate;
             } catch (DateTimeParseException e) {
                 LOGGER.log(Level.WARNING, "Invalid date format: {0}.", dateStr);
                 throw new IllegalArgumentException("Date must be in YYYY-MM-DD format.");
@@ -768,7 +779,9 @@ final class Parser {
 
         if (dateStr != null) {
             try {
-                date = LocalDate.parse(dateStr);
+                LocalDate parsedDate = LocalDate.parse(dateStr);
+                ensureDateNotFuture(parsedDate);
+                date = parsedDate;
             } catch (DateTimeParseException e) {
                 LOGGER.log(Level.WARNING, "Invalid date format: {0}.", dateStr);
                 throw new IllegalArgumentException("Date must be in YYYY-MM-DD format.");

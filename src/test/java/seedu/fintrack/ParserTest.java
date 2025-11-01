@@ -621,6 +621,40 @@ public class ParserTest {
     }
 
     /**
+     * Tests modify-expense with a future date.
+     * Expects an {@link IllegalArgumentException} with the appropriate message.
+     */
+    @Test
+    public void parseModifyExpenseWithDefaults_futureDate_throws() {
+        Expense oldExpense = new Expense(25, ExpenseCategory.FOOD,
+                LocalDate.now(), "existing");
+
+        try {
+            String input = Ui.MODIFY_EXPENSE_COMMAND + " 1 d/" + LocalDate.now().plusDays(1);
+            Parser.parseModifyExpenseWithDefaults(input, oldExpense);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Date cannot be in the future.", e.getMessage());
+        }
+    }
+
+    /**
+     * Tests 'add-income' parsing with a future date.
+     * Expects an {@link IllegalArgumentException} with the appropriate message.
+     */
+    @Test
+    public void parseAddIncome_futureDate_throws() {
+        String future = addIncome("10", "Salary", LocalDate.now().plusDays(1).toString(), null);
+
+        try {
+            Parser.parseAddIncome(future);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Date cannot be in the future.", e.getMessage());
+        }
+    }
+
+    /**
      * Tests modify-expense with invalid category.
      */
     @Test
@@ -882,6 +916,24 @@ public class ParserTest {
     }
 
     /**
+     * Tests modify-income with a future date.
+     * Expects an {@link IllegalArgumentException} with the appropriate message.
+     */
+    @Test
+    public void parseModifyIncomeWithDefaults_futureDate_throws() {
+        Income oldIncome = new Income(1000, IncomeCategory.SALARY,
+                LocalDate.now(), "existing");
+
+        try {
+            String input = Ui.MODIFY_INCOME_COMMAND + " 1 d/" + LocalDate.now().plusDays(1);
+            Parser.parseModifyIncomeWithDefaults(input, oldIncome);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Date cannot be in the future.", e.getMessage());
+        }
+    }
+
+    /**
      * Tests modify-income with invalid category.
      */
     @Test
@@ -967,6 +1019,22 @@ public class ParserTest {
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Date must be in YYYY-MM-DD format.", e.getMessage());
+        }
+    }
+
+    /**
+     * Tests 'add-expense' parsing with a future date.
+     * Expects an {@link IllegalArgumentException} with the appropriate message.
+     */
+    @Test
+    public void parseAddExpense_futureDate_throws() {
+        String future = addExpense("10", "Food", LocalDate.now().plusDays(1).toString(), null);
+
+        try {
+            Parser.parseAddExpense(future);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Date cannot be in the future.", e.getMessage());
         }
     }
 

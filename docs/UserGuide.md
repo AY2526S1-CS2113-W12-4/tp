@@ -24,11 +24,11 @@ Tip: Type `help` after launch to see every available command.
 - Parameters use prefixes:
     - `a/` for amount (non-negative number, decimals allowed).
     - `c/` for category (must be from the valid list of categories).
-    - `d/` for date in `YYYY-MM-DD` format.
+- `d/` for date in `YYYY-MM-DD` format (must not be in the future).
     - `des/` for an optional description. If omitted, the entry has no description.
 - Compulsory parameters can be input in **any order**. For example, if `add-expense` requires the `a/<amount>`, `c/<category>` and `d/<YYYY-MM-DD>` parameters, it can be input in any order (e.g. `c/<category>`, `a/<amount>`, `d/<YYYY-MM-DD>`).
   - However, if you include the optional description (`des/`), place it after all other parameters—everything after `des/` is treated as part of the description.
-- Dates must be valid calendar dates (for example, `2025-02-29` is invalid).
+- Dates must be valid calendar dates (for example, `2025-02-29` is invalid) and cannot be later than today.
 - FinTrack keeps data only while it is running. Closing the application clears all records.
 
 ## Features
@@ -144,6 +144,7 @@ Validation notes:
 - Amount must be a non-negative number (e.g., `5`, `14.20`).
 - Category and date are mandatory.
 - Description is optional; omit it entirely if not needed.
+- The date must be today or earlier; otherwise the app shows `Date cannot be in the future.` and rejects the command.
 - Categories (not case-sensitive) must be any one of the following (if not, an error message is presented to the user):
   - FOOD
   - STUDY
@@ -170,7 +171,7 @@ Records income that contributes to your balance.
     Description: October salary
   ```
 
-The same validation rules as `add-expense` apply to amount, date, and description.
+The same validation rules as `add-expense` apply to amount, date, and description, including the restriction against future dates.
 - Categories must be any of the following (if not, an error message is presented to the user):
   - SALARY
   - SCHOLARSHIP
@@ -353,6 +354,7 @@ Validation notes:
 
 - Index must be a valid, existing expense index (as shown in `list-expense`).
 - All other validation rules are the same as for `add-expense`.
+- Entering a future date triggers the same `Date cannot be in the future.` error as the add command.
 - If the modification causes the category budget to be exceeded, a warning is shown.
 
 ### Modifying an income: `modify-income`
@@ -374,6 +376,7 @@ Validation notes:
 
 - Index must be a valid, existing income index (as shown in `list-income`).
 - All other validation rules are the same as for `add-income`.
+- Entering a future date triggers the same `Date cannot be in the future.` error as the add command.
 
 ### Exporting your data: `export`
 

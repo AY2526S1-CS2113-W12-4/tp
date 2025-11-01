@@ -147,11 +147,11 @@ How the `Parser` component works:
     - Finding the start of the next known prefix (e.g. `c/`) using the `findNextPrefixIndex()` helper.
     - Extracting the substring between these two points as the value. This logic allows the user to provide arguments in any order (e.g. `c/food a/10` is the same as `a/10 c/food`).
 2. Methods like `parseAddExpense(input)` orchestrate the parsing process:
-    - The command word (e.g. `add-expense`) is stripped from the input string.
-    - `getValue()` is called for each required argument (e.g. `a/`, `c/`, `d/`). If any return `null`, an `IllegalArgumentException` is thrown.
-    - `getOptionalValue()` (a null-safe wrapper for `getValue()`) is called for optional arguments (e.g. `des/`).
-    - Type conversion and validation is performed on the extracted string values (e.g. `Double.parseDouble()`, `LocalDate.parse()`, `ExpenseCategory.parse()`).
-    - If all validations pass, they construct and return the new data object (e.g. `new Expense(...)`). If any validation fails (e.g. `NumberFormatException`), it is caught and re-thrown as an `IllegalArgumentException` with a user-friendly message.
+- The command word (e.g. `add-expense`) is stripped from the input string.
+- `getValue()` is called for each required argument (e.g. `a/`, `c/`, `d/`). If any return `null`, an `IllegalArgumentException` is thrown.
+- `getOptionalValue()` (a null-safe wrapper for `getValue()`) is called for optional arguments (e.g. `des/`).
+- Type conversion and validation is performed on the extracted string values (e.g. `Double.parseDouble()`, `LocalDate.parse()`, `ExpenseCategory.parse()`). Dates that parse successfully but fall after `LocalDate.now()` trigger an `IllegalArgumentException` so future transactions are rejected consistently across add and modify flows.
+- If all validations pass, they construct and return the new data object (e.g. `new Expense(...)`). If any validation fails (e.g. `NumberFormatException`), it is caught and re-thrown as an `IllegalArgumentException` with a user-friendly message.
 3. Methods like `parseDeleteExpense(input)` are simpler. The command word is simply stripped and the remaining string is parsed as a positive integer.
 
 The internal logic for `parseAddExpense` is shown below in this sequence diagram:
@@ -425,7 +425,7 @@ Below is a sequence diagram illustrating the `modify-income` flow:
 - **Benefits**:
     - Eliminates code duplication
     - Ensures modify commands support exactly the same format as add commands
-    - Any improvements to add parsing automatically benefit modify parsing
+    - Any improvements to add parsing automatically benefit modify parsing, including shared validation such as blocking future-dated entries
 
 **Index Validation:**
 
