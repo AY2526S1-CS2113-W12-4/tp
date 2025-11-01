@@ -12,6 +12,11 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import seedu.fintrack.model.Expense;
 import seedu.fintrack.model.ExpenseCategory;
@@ -192,6 +197,113 @@ final class Parser {
         }
     }
 
+    /**
+     * Validates that the argument string:
+     *  - contains exactly the required prefixes (each exactly once),
+     *  - may contain optional prefixes at most once each,
+     *  - contains no unknown prefixes, and
+     *  - has no stray text before the first recognised prefix.
+     *
+     * A "prefix" is any token of the form {@code <letters>/} that appears at the
+     * start of the argument string or immediately after whitespace.
+     */
+    private static void validatePrefixesExactly(
+            String args, String[] required, String[] optional, String usageForError) {
+
+        Objects.requireNonNull(args, "args");
+        Objects.requireNonNull(required, "required");
+        Objects.requireNonNull(optional, "optional");
+
+        final Set<String> requiredSet = new HashSet<>(Arrays.asList(required));
+        final Set<String> optionalSet = new HashSet<>(Arrays.asList(optional));
+        final Set<String> allowedSet  = new HashSet<>();
+        allowedSet.addAll(requiredSet);
+        allowedSet.addAll(optionalSet);
+
+        // Find where description starts (if present) - don't validate within description
+        int descIndex = findFirstPrefixIndex(args, Ui.DESCRIPTION_PREFIX);
+        String argsToValidate = (descIndex >= 0) ? args.substring(0, descIndex) : args;
+
+        // Disallow stray text before the first recognised prefix
+        int firstIdx = Integer.MAX_VALUE;
+        for (String p : allowedSet) {
+            int idx = findFirstPrefixIndex(argsToValidate, p);
+            if (idx >= 0 && idx < firstIdx) {
+                firstIdx = idx;
+            }
+        }
+        if (firstIdx != Integer.MAX_VALUE) {
+            String before = argsToValidate.substring(0, firstIdx);
+            if (!before.trim().isEmpty()) {
+                throw new IllegalArgumentException("Unexpected text before arguments: '"
+                        + before.trim() + "'. " + usageForError);
+            }
+        } else {
+            return;
+        }
+
+        // Reject unknown prefixes and duplicates (only in non-description part)
+        Pattern prefixPattern = Pattern.compile("(?<=^|\\s)([A-Za-z]+)/");
+        Matcher m = prefixPattern.matcher(argsToValidate);
+        Set<String> seen = new HashSet<>();
+        while (m.find()) {
+            String token = m.group(1) + "/";
+            if (!allowedSet.contains(token)) {
+                throw new IllegalArgumentException("Unexpected argument prefix: " + token + ". " + usageForError);
+            }
+            if (!seen.add(token)) {
+                throw new IllegalArgumentException("Duplicate argument: " + token
+                        + ". Each prefix must appear at most once.");
+            }
+        }
+
+        // Ensure all required prefixes are present
+        for (String req : required) {
+            String v = getValue(args, req);
+            if (v == null) {
+                throw new IllegalArgumentException("Missing required parameter: " + req + ". " + usageForError);
+            }
+        }
+
+        // Reject stray text after all valid arguments (no extra text allowed)
+        String remainingArgs = args.trim();
+        for (String prefix : requiredSet) {
+            remainingArgs = removePrefixAndValue(remainingArgs, prefix);
+        }
+
+        for (String prefix : optionalSet) {
+            remainingArgs = removePrefixAndValue(remainingArgs, prefix);
+        }
+
+        remainingArgs = remainingArgs.trim();
+
+        // If there is any remaining non-empty text (after removing required/optional prefixes), it's invalid
+        if (!remainingArgs.isEmpty()) {
+            throw new IllegalArgumentException("Unexpected text after valid arguments: '"
+                    + remainingArgs + "'. " + usageForError);
+        }
+    }
+
+    /**
+     * Helper method to remove the prefix and its value from the argument string.
+     */
+    private static String removePrefixAndValue(String args, String prefix) {
+        // Special case for description, which consumes the rest of the string
+        if (Ui.DESCRIPTION_PREFIX.equals(prefix)) {
+            int prefixIndex = findFirstPrefixIndex(args, prefix);
+            if (prefixIndex != -1) {
+                // Return everything before the description prefix
+                return args.substring(0, prefixIndex).trim();
+            }
+            return args; // Prefix not found
+        }
+
+        // Logic for single-token prefixes (a/, c/, d/)
+        // We use replaceFirst to remove only the first valid occurrence
+        Pattern pattern = Pattern.compile("(?<=^|\\s)" + Pattern.quote(prefix) + "[^\\s]*");
+        return pattern.matcher(args).replaceFirst("").trim();
+    }
+
     private static boolean isPrefixStart(String args, int index) {
         if (index < 0 || index >= args.length()) {
             return false;
@@ -238,6 +350,14 @@ final class Parser {
             throw new IllegalArgumentException("Missing parameters for budget command. " +
                     "Usage: budget c/<category> a/<amount>");
         }
+
+        validatePrefixesExactly(
+                args,
+                new String[]{Ui.CATEGORY_PREFIX, Ui.AMOUNT_PREFIX},
+                new String[]{},
+                "Usage: budget c/<category> a/<amount>"
+        );
+
 
         String categoryStr = getValue(args, Ui.CATEGORY_PREFIX);
         String amountStr = getValue(args, Ui.AMOUNT_PREFIX);
@@ -294,6 +414,13 @@ final class Parser {
         }
 
         ensureDescriptionLast(args);
+
+        validatePrefixesExactly(
+                args,
+                new String[]{Ui.AMOUNT_PREFIX, Ui.CATEGORY_PREFIX, Ui.DATE_PREFIX},
+                new String[]{Ui.DESCRIPTION_PREFIX},
+                "Usage: add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]"
+        );
 
         String amountStr = getValue(args, Ui.AMOUNT_PREFIX);
         String categoryString = getValue(args, Ui.CATEGORY_PREFIX);
@@ -357,6 +484,14 @@ final class Parser {
         }
 
         ensureDescriptionLast(args);
+
+        validatePrefixesExactly(
+                args,
+                new String[]{Ui.AMOUNT_PREFIX, Ui.CATEGORY_PREFIX, Ui.DATE_PREFIX},
+                new String[]{Ui.DESCRIPTION_PREFIX},
+                "Usage: add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]"
+        );
+
 
         String amountStr = getValue(args, Ui.AMOUNT_PREFIX);
         String categoryString = getValue(args, Ui.CATEGORY_PREFIX);
