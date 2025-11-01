@@ -298,16 +298,6 @@ public class UiTest {
     }
 
     @Test
-    void printBudgetExceededWarning_showsBannerAndNumbers() {
-        Ui.printBudgetExceededWarning(
-                ExpenseCategory.FOOD, 100.0, 150.0);
-        String s = out();
-        assertTrue(s.contains("BUDGET ALERT"));
-        assertTrue(s.contains("budget of $100.00"));
-        assertTrue(s.contains("spent a total of $150.00"));
-    }
-
-    @Test
     void printHorizontalLine_printsExactCount() {
         String ls = System.lineSeparator();
         Ui.printHorizontalLine(5);

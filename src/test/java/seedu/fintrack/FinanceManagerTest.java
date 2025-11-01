@@ -670,7 +670,7 @@ public class FinanceManagerTest {
     }
 
     @Test
-    void addExpense_nearBudgetThreshold_95Percent_returnsNearBudget() {
+    void addExpense_nearBudgetThreshold95Percent_returnsNearBudget() {
         fm.setBudget(ExpenseCategory.FOOD, 100.0);
 
         // Add expense that brings us to 95% of budget

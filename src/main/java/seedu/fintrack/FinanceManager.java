@@ -87,9 +87,7 @@ public class FinanceManager {
             // Check if over budget (including zero budget case)
             if (newTotal > budget) {
                 isOverBudget = true;
-            }
-            // Check if near budget (only if not already over and budget > 0)
-            else if (budget > 0 && newTotal >= budget * WARNING_THRESHOLD) {
+            } else if (budget > 0 && newTotal >= budget * WARNING_THRESHOLD) {
                 isNearBudget = true;
             }
         }

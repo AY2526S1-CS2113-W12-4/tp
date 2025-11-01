@@ -20,3 +20,5 @@ text-ui-test/EXPECTED-UNIX.TXT
 *.lck
 test coverage stuff/
 financial_data.csv
+test_export_1762016545519.csv
+test_export_1762016769585.csv

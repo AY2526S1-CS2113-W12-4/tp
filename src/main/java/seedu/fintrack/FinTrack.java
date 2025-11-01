@@ -31,7 +31,8 @@ public class FinTrack {
     private static final String INVALID_COMMAND_MESSAGE =
             "Invalid command. Type 'help' for a list of available commands.";
     private static final String NO_ARGUMENTS_MESSAGE_TEMPLATE =
-            "The '%s' command does not take additional arguments. Just input the command by itself with no other stray text.";
+            "The '%s' command does not take additional arguments. " +
+                    "Just input the command by itself with no other stray text.";
     private static final String UNSUPPORTED_CHARACTER_MESSAGE =
             "Unsupported characters detected. Please use standard ASCII text only.";
 
