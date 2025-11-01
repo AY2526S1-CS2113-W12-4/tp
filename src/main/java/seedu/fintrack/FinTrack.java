@@ -107,7 +107,7 @@ public class FinTrack {
                 break;
             case Ui.BALANCE_COMMAND:
                 try {
-                    Optional<YearMonth> ymOpt = Parser.parseOptionalMonthForBalance(expandedInput); // parses optional YYYY-MM
+                    Optional<YearMonth> ymOpt = Parser.parseOptionalMonthForBalance(expandedInput);
                     if (ymOpt.isPresent()) {
                         YearMonth ym = ymOpt.get();
                         double monthlyIncome = fm.getIncomesViewForMonth(ym).stream()
