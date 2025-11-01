@@ -506,23 +506,6 @@ Closes the application safely.
 
 You can also close the terminal window, but `bye` ensures the farewell message is shown.
 
-### Exporting your data: `export`
-
-Exports all incomes and expenses to a CSV file for use in spreadsheet applications or backups.
-
-- **Format:** `export <filepath>`
-- **Example usage:** `export financial_data.csv`
-- **Sample output:**
-  ```
-  Successfully exported data to: /path/to/financial_data.csv
-  ```
-
-Notes:
-
-- The CSV file will contain all incomes and expenses in a single table, with a `Type` column to distinguish between them.
-- The file can be opened in Excel, Google Sheets, or any compatible application.
-- If the export fails (e.g., due to permissions), an error message is shown.
-
 ## Error Handling
 
 - Invalid commands or parameters print a single line beginning with `Error:`, for example `Error: Amount must be a valid number.`
