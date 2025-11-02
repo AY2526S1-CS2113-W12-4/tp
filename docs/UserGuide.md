@@ -415,7 +415,7 @@ Notes:
  
 Allows the user to set budgets for expense categories available. 
 
-When the user is reaching their budget limit (within 10%), FinTrack will warn users that they are approaching their budget limit.
+When the user is reaching their budget limit (total expense for that category is more than or equal to 90% of the budget set), FinTrack will warn users that they are approaching their budget limit.
 
 When the user goes overbudget for any expense category, every new expense added thereafter will trigger reminders to spend less.
 
