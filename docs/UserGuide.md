@@ -59,12 +59,14 @@ Shows a command overview in the terminal.
      Available categories: SALARY, SCHOLARSHIP, INVESTMENT, GIFT, OTHERS
 
   3. View all expenses (from latest to earliest date):
-     list-expense
+     Usage: list-expense [d/<YYYY-MM>]
+     Example: list-expense
      To view by month: list-expense d/<YYYY-MM>
      Example: list-expense d/2025-10
 
   4. View all incomes (from latest to earliest date):
-     list-income
+     Usage: list-income [d/<YYYY-MM>]
+     Example: list-income
      To view by month: list-income d/<YYYY-MM>
      Example: list-income d/2025-10
 
