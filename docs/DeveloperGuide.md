@@ -10,7 +10,7 @@
     - [FinanceManager Module](#financemanager-module-financemanagerjava)
 - [Implementation](#implementation)
   - [Feature: Monthly Filtering](#monthly-filtering-balance-list-expense-list-income)
-  - [Feature: Budget](#budget-budget-and-list-budget)
+  - [Feature: Budget](#budget-budget-list-budget-and-delete-budget)
   - [Feature: Summary](#summary-summary-expense-and-summary-income)
   - [Feature: Export](#export-export)
   - [Feature: Modify](#modify-modify-expense-and-modify-income)
@@ -19,6 +19,7 @@
 - [Appendix C: Non-Functional Requirements](#appendix-c-non-functional-requirements)
 - [Appendix D: Glossary](#appendix-d-glossary)
 - [Appendix E: Instructions for Manual Testing](#appendix-e-instructions-for-manual-testing)
+- [Appendix F: Known Issues](#appendix-f-known-issues)
 ## Acknowledgements
 
 We would like to thank our TA, Chen Siyu, and the rest of the CS2113 teaching team for their hard work and guidance!
@@ -523,6 +524,7 @@ Manage day-to-day expenses and budgets with optimal efficiency, stay on top of g
 - **Program specific terminology:**
   - _**Command word**_: First token that selects a feature (e.g., list-income).
   - _**Prefix**_: Short tag before a value that specifies the argument (e.g., `a/12.50`, `c/FOOD`, `d/2025-10-08`, `des/Lunch`).
+  - _**Command alias**_: Shortcut for a command word (e.g., `ae` expands to `add-expense`).
   - _**Enum**_ (Enumeration): A fixed set of named constants
   - _**Category**_: Enum describing type (Expense: FOOD, STUDY, …; Income: SALARY, …).
   - _**Index (1-based)**_: Visible numbering in lists that starts from 1. Used by delete-expense, etc.
@@ -531,7 +533,9 @@ Manage day-to-day expenses and budgets with optimal efficiency, stay on top of g
   - _**Newest-first**_: Display order where the most recent item appears first.
   - _**Budget**_: Per-category expense limit; warnings shown when exceeded.
   - _**Balance**_: Net amount (income − expense).
+  - _**Persistence file**_: The plaintext `fintrack-data.txt` file that stores incomes, expenses, and budgets across runs.
 - **General terminology:**
+  - _**ASCII (American Standard Code for Information Interchange)**_: 7-bit character encoding used by FinTrack to validate input.
   - **_CLI (Command-Line Interface)_**: Text-based interface where users type commands and see textual output.
   - **_REPL (Read–Evaluate–Print Loop)_**: The continuous loop that reads a command, executes it, prints the result, and repeats until program is exited.
   - **_Separation of Concerns (SoC)_**: Software design principle that divides a system into distinct sections, each handling a separate "concern" or aspect of the application.
@@ -541,6 +545,8 @@ Manage day-to-day expenses and budgets with optimal efficiency, stay on top of g
   - **_CSV (Comma-Separated Values)_**: A text file format where each row is a record and fields are separated by commas. Commonly used in spreadsheets.
   - _**Logger**_: Internal diagnostic output (e.g., INFO/WARNING/SEVERE) used for troubleshooting; not meant for end-user display.
   - _**Assertion**_: Development-time check that halts in debug/assertion-enabled runs if an invariant (a condition that should always be true) is violated.
+  - _**JVM (Java Virtual Machine)**_: Runtime environment that executes compiled Java bytecode; FinTrack runs inside the JVM.
+  - _**UTF-8**_: Variable-length Unicode encoding; required for terminals that want FinTrack to detect non-ASCII characters accurately.
 
 ## Appendix E: Instructions for manual testing
 
@@ -608,3 +614,29 @@ Compare the output of your manual session with some example outputs in `text-ui-
 ### 7. Exit
 
 Type `bye` to exit the application.
+
+## Appendix F: Known Issues
+
+- **Non-ASCII detection on Windows PowerShell**
+  `Parser.returnFirstWord` normalises the command and `FinTrack.main()` rejects
+  non-ASCII characters before dispatch. In Windows PowerShell, the console layer
+  transliterates characters outside the active code page to `?` before the JVM sees
+  them. As a result, FinTrack accepts the literal `?` and cannot surface the original
+  character to the user. The guard still protects UTF-8 capable environments, so we
+  retain it to prevent corrupting `fintrack-data.txt`.
+
+- **Whitespace collapse affects descriptions**
+  The preprocessing step `input.stripLeading().replaceAll("\\s+", " ")` runs before
+  prefix extraction. It improves parsing resilience (mixed tabs/spaces, multiple gaps)
+  but also means descriptions lose intentional extra spacing or tabs. We accept this
+  trade-off for now because it keeps tokenisation simple; if richer formatting becomes
+  important we will need to revisit the normalisation stage.
+
+- **No-write directories trigger logging stack traces**
+  FinTrack disables file logging when it detects that the persistence target cannot be
+  written. If you launch the application from a directory where the JVM cannot create
+  log files, the built-in `java.util.logging` framework still emits an initial stack
+  trace while failing to open its default handler. The program continues to run after
+  printing the warning. Mitigation options include running FinTrack from a writable
+  directory or configuring `java.util.logging.config.file` to point at a custom
+  handler that writes to an accessible location.
