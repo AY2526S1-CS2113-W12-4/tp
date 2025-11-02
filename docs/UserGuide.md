@@ -32,7 +32,7 @@ Tip: Type `help` after launch to see every available command.
   - `des/` for an optional description. If omitted, the entry has no description.
 - Compulsory parameters can be input in **any order**. For example, if `add-expense` requires the `a/<amount>`, `c/<category>` and `d/<YYYY-MM-DD>` parameters, it can be input in any order (e.g. `c/<category>`, `a/<amount>`, `d/<YYYY-MM-DD>`).
   - However, if you include the optional description (`des/`), place it after all other parameters—everything after `des/` is treated as part of the description.
-- Dates must be valid calendar dates (for example, `2025-02-29` is invalid).
+- Dates must be valid calendar dates (for example, `2025-02-29` is invalid). Dates set in the future (for example, `2026-10-12`) are also accepted.
 - FinTrack keeps data only while it is running. Closing the application clears all records.
 
 ## Features
@@ -554,7 +554,7 @@ A: Use the optional month filter on incomes (`list-income d/<YYYY-MM>`).
 A: Yes. However, descriptions must be the last argument declared, as `des/` will consume the rest of the line.
 
 **Q: Why was my date rejected even though it looks correct?**  
-A: Ensure the date is valid on the calendar and in `YYYY-MM-DD` format.
+A: Ensure the date is valid on the calendar and in `YYYY-MM-DD` format. Future dates (for example, `2026-10-12`) are allowed, so you can plan upcoming transactions.
 
 ## Command Summary
 
