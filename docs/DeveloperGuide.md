@@ -150,7 +150,7 @@ How the `Parser` component works:
     - The command word (e.g. `add-expense`) is stripped from the input string.
     - `getValue()` is called for each required argument (e.g. `a/`, `c/`, `d/`). If any return `null`, an `IllegalArgumentException` is thrown.
     - `getOptionalValue()` (a null-safe wrapper for `getValue()`) is called for optional arguments (e.g. `des/`).
-    - Type conversion and validation is performed on the extracted string values (e.g. `Double.parseDouble()`, `LocalDate.parse()`, `ExpenseCategory.parse()`).
+    - Type conversion and validation is performed on the extracted string values (e.g. `Double.parseDouble()`, `LocalDate.parse()`, `ExpenseCategory.parse()`). Date checks enforce a valid ISO-8601 calendar day while intentionally allowing future dates (for example, `2026-10-12`) so users can log planned transactions.
     - If all validations pass, they construct and return the new data object (e.g. `new Expense(...)`). If any validation fails (e.g. `NumberFormatException`), it is caught and re-thrown as an `IllegalArgumentException` with a user-friendly message.
 3. Methods like `parseDeleteExpense(input)` are simpler. The command word is simply stripped and the remaining string is parsed as a positive integer.
 
