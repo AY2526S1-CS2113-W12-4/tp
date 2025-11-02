@@ -1,6 +1,7 @@
 package seedu.fintrack;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -23,6 +24,10 @@ import seedu.fintrack.model.IncomeCategory;
  * including valid inputs, invalid inputs, and edge cases.
  */
 public class ParserTest {
+
+    static {
+        System.setProperty("fintrack.disablePersistence", "true");
+    }
 
     // ============ Helpers for command strings ============
 
@@ -146,6 +151,16 @@ public class ParserTest {
         assertEquals("help", Parser.returnFirstWord("help"));
         assertEquals("tips", Parser.returnFirstWord("tips"));
         assertEquals("bye", Parser.returnFirstWord("bye"));
+    }
+
+    /**
+     * Parser should report when the reserved persistence separator is present.
+     */
+    @Test
+    public void containsForbiddenSeparator_detectsPipe() {
+        assertTrue(Parser.containsForbiddenSeparator("modify-income 1 a/50|c/salary"));
+        assertFalse(Parser.containsForbiddenSeparator("modify-income 1 a/50"));
+        assertFalse(Parser.containsForbiddenSeparator(null));
     }
 
     // ============ Test input handling for parseAddExpense ============
