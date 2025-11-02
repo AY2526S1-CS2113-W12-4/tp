@@ -7,25 +7,47 @@ skinparam boxpadding 30
 
 participant ":FinTrack"
 participant ":Parser"
+participant "expense:Expense" as Expense
 
-":FinTrack" -> ":Parser" : parseAddExpense("... a/10 c/food d/...")
+":FinTrack" -> ":Parser" : parseAddExpense("add-expense a/10 c/food d/2025-10-22")
 
-' --- Argument Parsing --- '
+activate ":Parser"
 ":Parser" -> ":Parser" : args = input.substring(...)
 ":Parser" -> ":Parser" : amountStr = getValue(args, "a/")
 ":Parser" -> ":Parser" : categoryStr = getValue(args, "c/")
 ":Parser" -> ":Parser" : dateStr = getValue(args, "d/")
 ":Parser" -> ":Parser" : desc = getOptionalValue(args, "des/")
 
-' --- Validation and Construction --- '
 note right of ":Parser"
     Performs type conversions:
-    - Double.parseDouble("10")
-    - ExpenseCategory.parse("food")
-    - LocalDate.parse("2025-10-22")
+    - amount = Double.parseDouble("10")
+    - category = ExpenseCategory.parse("food")
+    - date = LocalDate.parse("2025-10-22")
+
+    Validates:
+    - amount is finite and > 0
+    - category is valid enum
+    - date is in YYYY-MM-DD format and exists
 end note
 
-":Parser" -> ":Parser" : new Expense(10.0, category, date, "")
+":Parser" -> ":Parser" : amount = Double.parseDouble(amountStr)
+":Parser" -> ":Parser" : category = ExpenseCategory.parse(categoryStr)
+":Parser" -> ":Parser" : date = LocalDate.parse(dateStr)
+
+create Expense
+":Parser" -> Expense : new Expense(10.0, FOOD, 2025-10-22, "")
+activate Expense
+
+note right of Expense
+    Constructor validates:
+    - amount > 0
+    - category != null
+    - date != null
+end note
+
+Expense --> ":Parser"
+deactivate Expense
 
 ":Parser" --> ":FinTrack" : expense:Expense
+deactivate ":Parser"
 @enduml

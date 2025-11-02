@@ -171,7 +171,7 @@ The internal logic for `parseAddExpense` is shown below in this sequence diagram
 
 Why `Parser` was implemented this way:
 
-- **Single Responsibility Principle (SRP)**: The `Parser` class is a good example of SRP, as it only knows how to parse strings. It has no knowledge of `FinanceManager`, storage, or how the `Ui` works. This makes it independently testable and reusable.
+- **Single Responsibility Principle (SRP)**: The `Parser` class demonstrates SRP by focusing solely on parsing strings into structured data. While it references command and parameter prefix constants from `Ui` (such as `AMOUNT_PREFIX` and `ADD_EXPENSE_COMMAND`), it has no knowledge of how `Ui` displays information or handles user interaction. It also has no knowledge of `FinanceManager` or storage. This separation of concerns makes `Parser` independently testable and reusable—it could work with any interface that uses the same command format.
 - **Defensive Programming**: The `Parser` is the application's first line of defense against bad user input. It is designed to be extremely strict, throwing an `IllegalArgumentException` for any deviation from the expected format. This simplifies the rest of the application, as `FinTrack` and `FinanceManager` can trust that any object they receive from the `Parser` is valid.
 - **Stateless Utility**: By making the class `final` with a `private` constructor and all `static` methods, we enforce that it's a stateless utility. There is no need to create an instance of a `Parser`, which simplifies the design.
 
@@ -270,17 +270,20 @@ Here is how the monthly filter works:
 - Up-front validation: Parsing into `YearMonth` inside `Parser` ensures downstream logic
   always receives a valid, normalised month value.
 
-### Budget (`budget and list-budget`)
+### Budget (`budget, list-budget and delete-budget`)
 
 The budget feature allows us to set budgets for our expenses which lets us set a budget for a certain category. When we set a budget using `budget c/{ExpenseCategory} a/{amount}`, we get warned when any expense using `add-expense` we make exceeds our budget. Finally, we can see all the budgets we have set through `list-budget`.
 
-Here is how `budget` and `list-budget` works:
+Here is how `budget`, `list-budget` and `delete-budget` works:
 
 1. In `FinTrack`, `Parser` first handles our input by recognising the budget function and then parsing the input into `ExpenseCategory` and budget amount.
 2. To store all our budgets, we create a HashMap called `budgets` which has `ExpenseCategory` as the key and the budget amount as the value.
 3. A function `setBudget` is then called to set the budget for the input category. Finally, `Ui` calls `printBudgetSet()` to indicate budget has been set.
-4. Now, when `addExpense()` is called during `add-expense`, a boolean called `budgetExceeded` checks for if the added expense exceeds the budget set for that category. If so, a warning is printed by `printBudgetExceededWarning()` in `Ui`.
+4. Now, when `addExpense()` is called during `add-expense`, the following happens:
+    - A boolean called `isNearBudget` checks for if the added expense makes the total more than or equal to 90% of the budget set for that category. If so, a waring is printed by `printBudgetNearWarning()` in `Ui`.
+    - A boolean called `isOverBudget` checks for if the added expense makes the total exceeds the budget set for that category. If so, a warning is printed by `printBudgetExceededWarning()` in `Ui`.
 5. When `list-budget` is called, `Ui` prints a list of the budgets by calling `printBudgets` which receives a printable version of all the budgets which we get from `getBudgetsView()`.
+6. When `delete-budget` is called, the `deleteBudget` method from `FinanceManager` is called, removing the corresponding budget from the HashMap.
 
 Below is the sequence diagram of an instance of `budget` and `add-expense`:
 ![budget.png](images/budget.png)
