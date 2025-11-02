@@ -1,5 +1,5 @@
 @startuml
-title FinTrack — Budget Feature (Class Diagram)
+title FinTrack — Budget Feature (Object Diagram)
 
 /'
   Scenario:
@@ -16,7 +16,7 @@ object fm         as "<u>fm : FinanceManager</u>" {
 
 object expenses   as "<u>expenses : ExpenseList</u>"
 object budgets    as "<u>budgets : HashMap<ExpenseCategory, Double></u>" {
-  FOOD -> 200.00
+
 }
 
 /' Example category & value objects produced by Parser '/
@@ -33,19 +33,19 @@ object e1         as "<u>e1 : Expense</u>" {
 }
 
 /' Object links: who holds what '/
-fm *-- expenses
-fm *-- budgets
-parser ..> budgetEntry
-ui ..> parser
-ui ..> fm
+fm --- expenses
+fm --- budgets
+parser --- budgetEntry
+ui -- parser
+ui --- fm
 
 /' Budget setting flow (at object level):
    Parser returns (FOOD, 200.00); FinanceManager stores it in budgets map. '/
 /'budgetEntry --> budgets'/
-budgets *-- budgetEntry
+budgets --- budgetEntry
 
 /' Adding an expense (object placement into list) '/
-e1 ---> expenses
+e1 --- expenses
 
 /' Budget check semantics (captured as a note on fm):
    On fm.addExpense(e):
