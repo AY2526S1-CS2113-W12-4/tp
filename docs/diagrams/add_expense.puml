@@ -41,7 +41,6 @@ loop until user types "bye"
     activate UI
     deactivate UI
 
-    opt isOverBudget == true
         FT -> FM: getTotalExpenseForCategory(category)
         activate FM
         FM --> FT
@@ -51,6 +50,8 @@ loop until user types "bye"
         activate FM
         FM --> FT
         deactivate FM
+
+    opt isOverBudget == true
 
         FT -> UI: printBudgetExceededWarning(...)
         activate UI
