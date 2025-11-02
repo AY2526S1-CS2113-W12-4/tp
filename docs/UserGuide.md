@@ -34,6 +34,7 @@ Tip: Type `help` after launch to see every available command.
   - `c/` for category (must be from the valid list of categories).
   - `d/` for date in `YYYY-MM-DD` format.
   - `des/` for an optional description. If omitted, the entry has no description.
+- Square brackets like `[d/<YYYY-MM>]` in the command formats mark optional parameters; leave them out entirely if you do not need that option.
 - Compulsory parameters can be input in **any order**. For example, if `add-expense` requires the `a/<amount>`, `c/<category>` and `d/<YYYY-MM-DD>` parameters, it can be input in any order (e.g. `c/<category>`, `a/<amount>`, `d/<YYYY-MM-DD>`).
   - However, if you include the optional description (`des/`), place it after all other parameters—everything after `des/` is treated as part of the description.
 - Dates must be valid calendar dates (for example, `2025-02-29` is invalid). Dates set in the future (for example, `2026-10-12`) are also accepted.
@@ -63,12 +64,14 @@ Shows a command overview in the terminal.
      Available categories: SALARY, SCHOLARSHIP, INVESTMENT, GIFT, OTHERS
 
   3. View all expenses (from latest to earliest date):
-     list-expense
+     Usage: list-expense [d/<YYYY-MM>]
+     Example: list-expense
      To view by month: list-expense d/<YYYY-MM>
      Example: list-expense d/2025-10
 
   4. View all incomes (from latest to earliest date):
-     list-income
+     Usage: list-income [d/<YYYY-MM>]
+     Example: list-income
      To view by month: list-income d/<YYYY-MM>
      Example: list-income d/2025-10
 
