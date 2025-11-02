@@ -473,7 +473,7 @@ public class FinanceManager {
             incomeByCategory.put(category, currentTotalAmount + currentAmount);
         }
 
-        LOGGER.log(Level.INFO, "Expense for each Category calculated successfully.");
+        LOGGER.log(Level.INFO, "Income for each Category calculated successfully.");
         return incomeByCategory;
     }
 
@@ -492,7 +492,7 @@ public class FinanceManager {
         return percent;
     }
 
-    public Map<ExpenseCategory, Double>getExpensePercentageByCategory(
+    public Map<ExpenseCategory, Double> getExpensePercentageByCategory(
             Map<ExpenseCategory, Double>expenseByCategory, double totalExpense) {
         assert expenseByCategory != null : "expenseByCategory map should not be null.";
         assert !Double.isNaN(totalExpense) : "totalAmount should be a number.";
@@ -511,7 +511,7 @@ public class FinanceManager {
         return expensePercentageByCategory;
     }
 
-    public Map<IncomeCategory, Double>getIncomePercentageByCategory(
+    public Map<IncomeCategory, Double> getIncomePercentageByCategory(
             Map<IncomeCategory, Double>incomeByCategory, double totalIncome) {
         assert incomeByCategory != null : "incomeByCategory map should not be null.";
         assert !Double.isNaN(totalIncome) : "totalAmount should be a number.";
