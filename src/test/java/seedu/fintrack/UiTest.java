@@ -26,6 +26,7 @@ import seedu.fintrack.model.IncomeCategory;
 public class UiTest {
 
     private final PrintStream originalOut = System.out;
+    private final String divider = "-".repeat(Ui.HORIZONTAL_LINE_LEN);
     private ByteArrayOutputStream outContent;
     private Locale originalLocale;
 
@@ -64,16 +65,16 @@ public class UiTest {
     }
 
 
-    /*@Test
+    @Test
     void printBalance_formatsToTwoDecimalPlacesAndLabels() {
         Ui.printBalance(1234.5, 2000.0, 765.4321);
         String ls = System.lineSeparator();
         String expected = ""
                 + "Overall Balance: 1234.50" + ls
-                + "  Total Income:  2000.00" + ls
-                + "  Total Expense: 765.43" + ls;
+                + "Total Income: 2000.00" + ls
+                + "Total Expense: 765.43" + ls;
         assertEquals(expected, out());
-    }*/
+    }
 
     @Test
     void printError_prefixesWithError() {
@@ -107,15 +108,14 @@ public class UiTest {
         Ui.printIncomeAdded(inc);
 
         String ls = System.lineSeparator();
-        String divider = "-".repeat(80) + ls;
         String expected = ""
-                + divider
+                + divider + ls
                 + "Income added:" + ls
                 + "  Amount: 123.00" + ls
                 + "  Category: SALARY" + ls
                 + "  Date: 2025-10-01" + ls
                 + "  Description: Oct pay" + ls
-                + divider;
+                + divider + ls;
 
         assertEquals(expected, out());
     }
@@ -126,15 +126,13 @@ public class UiTest {
         Ui.printIncomeAdded(inc);
 
         String ls = System.lineSeparator();
-        String divider = "-".repeat(80) + ls;
         String expected = ""
-                + divider
+                + divider + ls
                 + "Income added:" + ls
                 + "  Amount: 50.00" + ls
                 + "  Category: GIFT" + ls
                 + "  Date: 2025-10-07" + ls
-                + divider;
-
+                + divider + ls;
         assertEquals(expected, out());
         assertFalse(out().contains("Description:"));
     }
@@ -153,15 +151,14 @@ public class UiTest {
         Ui.printExpenseAdded(ex);
 
         String ls = System.lineSeparator();
-        String divider = "-".repeat(80) + ls;
         String expected = ""
-                + divider
+                + divider + ls
                 + "Expense added:" + ls
                 + "  Amount: 9.50" + ls
                 + "  Category: FOOD" + ls
                 + "  Date: 2025-10-02" + ls
                 + "  Description: Lunch" + ls
-                + divider;
+                + divider + ls;
 
         assertEquals(expected, out());
     }
@@ -193,11 +190,13 @@ public class UiTest {
 
         String ls = System.lineSeparator();
         String expected = ""
+                + divider + ls
                 + "Income deleted (index 2):" + ls
                 + "  Amount: 100.00" + ls
                 + "  Category: SALARY" + ls
                 + "  Date: 2025-10-05" + ls
-                + "  Description: Bonus" + ls;
+                + "  Description: Bonus" + ls
+                + divider + ls;
 
         assertEquals(expected, out());
     }
@@ -209,10 +208,12 @@ public class UiTest {
 
         String ls = System.lineSeparator();
         String expected = ""
+                + divider + ls
                 + "Expense deleted (index 1):" + ls
                 + "  Amount: 7.00" + ls
                 + "  Category: FOOD" + ls
-                + "  Date: 2025-10-06" + ls;
+                + "  Date: 2025-10-06" + ls
+                + divider + ls;
 
         assertEquals(expected, out());
         assertFalse(out().contains("Description:"));
