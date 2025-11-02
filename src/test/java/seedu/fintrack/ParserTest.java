@@ -654,17 +654,18 @@ public class ParserTest {
      * Tests modify-expense with no fields specified (only index).
      */
     @Test
-    public void parseModifyExpenseWithDefaults_noFields_keepsAllFields() {
+    public void parseModifyExpenseWithDefaults_noFields_throws() {
         Expense oldExpense = new Expense(88.88, ExpenseCategory.BILLS,
                 LocalDate.of(2025, 7, 7), "checkup");
 
         String input = Ui.MODIFY_EXPENSE_COMMAND + " 1";
-        Expense e = Parser.parseModifyExpenseWithDefaults(input, oldExpense);
-
-        assertEquals(88.88, e.getAmount(), 1e-9);
-        assertEquals(ExpenseCategory.BILLS, e.getCategory());
-        assertEquals(LocalDate.of(2025, 7, 7), e.getDate());
-        assertEquals("checkup", e.getDescription());
+        try {
+            Expense e = Parser.parseModifyExpenseWithDefaults(input, oldExpense);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("At least one field must be specified. Usage: modify-expense " +
+                    "<index> [a/<amount>] [c/<category>] [d/<YYYY-MM-DD>] [des/<description>]", e.getMessage());
+        }
     }
 
     /**
