@@ -30,6 +30,7 @@ import seedu.fintrack.model.IncomeCategory;
 final class Parser {
     private static final Logger LOGGER = Logger.getLogger(Parser.class.getName());
     private static final DateTimeFormatter YEAR_MONTH_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM");
+    private static final Pattern ISO_DATE_PATTERN = Pattern.compile("\\d{4}-\\d{2}-\\d{2}");
 
     static {
         // Suppresses INFO and FINER log messages
@@ -580,13 +581,7 @@ final class Parser {
             throw new IllegalArgumentException("Amount must be more than 0.");
         }
 
-        LocalDate date;
-        try {
-            date = LocalDate.parse(dateStr);
-        } catch (DateTimeParseException e) {
-            LOGGER.log(Level.WARNING, "Invalid date format: {0}.", dateStr);
-            throw new IllegalArgumentException("Date must be in YYYY-MM-DD format.");
-        }
+        LocalDate date = parseIsoDateOrThrow(dateStr);
 
         ExpenseCategory category = ExpenseCategory.parse(categoryString);
         Expense newExpense = new Expense(amount, category, date, description);
@@ -651,13 +646,7 @@ final class Parser {
             throw new IllegalArgumentException("Amount must be more than 0.");
         }
 
-        LocalDate date;
-        try {
-            date = LocalDate.parse(dateStr);
-        } catch (DateTimeParseException e) {
-            LOGGER.log(Level.WARNING, "Invalid date format: {0}.", dateStr);
-            throw new IllegalArgumentException("Date must be in YYYY-MM-DD format.");
-        }
+        LocalDate date = parseIsoDateOrThrow(dateStr);
 
         IncomeCategory category = IncomeCategory.parse(categoryString);
         Income newIncome = new Income(amount, category, date, description);
@@ -981,12 +970,7 @@ final class Parser {
         }
 
         if (dateStr != null) {
-            try {
-                date = LocalDate.parse(dateStr);
-            } catch (DateTimeParseException e) {
-                LOGGER.log(Level.WARNING, "Invalid date format: {0}.", dateStr);
-                throw new IllegalArgumentException("Date must be in YYYY-MM-DD format.");
-            }
+            date = parseIsoDateOrThrow(dateStr);
         }
 
         if (description != null) {
@@ -1130,12 +1114,7 @@ final class Parser {
         }
 
         if (dateStr != null) {
-            try {
-                date = LocalDate.parse(dateStr);
-            } catch (DateTimeParseException e) {
-                LOGGER.log(Level.WARNING, "Invalid date format: {0}.", dateStr);
-                throw new IllegalArgumentException("Date must be in YYYY-MM-DD format.");
-            }
+            date = parseIsoDateOrThrow(dateStr);
         }
 
         if (description != null) {
@@ -1193,6 +1172,29 @@ final class Parser {
         } catch (InvalidPathException e) {
             LOGGER.log(Level.WARNING, "Invalid filename provided: {0}", args);
             throw new IllegalArgumentException("Invalid filename. Please provide a valid filename for the CSV file.");
+        }
+    }
+
+    /**
+     * Parses a strict ISO-8601 date string (YYYY-MM-DD) and differentiates between format and calendar errors.
+     *
+     * @param dateStr the user-supplied date string; must not be {@code null}
+     * @return parsed {@link LocalDate}
+     * @throws IllegalArgumentException if the date is not in the expected format or represents an impossible date
+     */
+    private static LocalDate parseIsoDateOrThrow(String dateStr) {
+        Objects.requireNonNull(dateStr, "date cannot be null");
+
+        if (!ISO_DATE_PATTERN.matcher(dateStr).matches()) {
+            LOGGER.log(Level.WARNING, "Invalid date format: {0}.", dateStr);
+            throw new IllegalArgumentException("Date must be in YYYY-MM-DD format.");
+        }
+
+        try {
+            return LocalDate.parse(dateStr);
+        } catch (DateTimeParseException e) {
+            LOGGER.log(Level.WARNING, "Invalid calendar date: {0}.", dateStr);
+            throw new IllegalArgumentException("Invalid date: " + dateStr + " does not exist.");
         }
     }
 

@@ -758,7 +758,7 @@ public class ParserTest {
             Parser.parseModifyExpenseWithDefaults(input, oldExpense);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Date must be in YYYY-MM-DD format.", e.getMessage());
+            assertEquals("Invalid date: 2025-13-45 does not exist.", e.getMessage());
         }
     }
 
@@ -1108,7 +1108,7 @@ public class ParserTest {
             Parser.parseAddExpense(bad3);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Date must be in YYYY-MM-DD format.", e.getMessage());
+            assertEquals("Invalid date: 2025-13-40 does not exist.", e.getMessage());
         }
     }
 
