@@ -4,6 +4,8 @@
 
 FinTrack is a lightweight command-line assistant that helps you keep an eye on day-to-day spending and income. It is designed for users who prefer a fast, keyboard-first workflow without navigating complex spreadsheets. This guide explains how to install FinTrack, enter your transactions, and understand the feedback shown in the terminal.
 
+**Important:** FinTrack does not save data between sessions - closing the app immediately clears all records.
+
 ## Quick Start
 
 1. **Install Java 17.** FinTrack requires Java 17. Confirm your version with `java -version`.
@@ -18,6 +20,8 @@ FinTrack is a lightweight command-line assistant that helps you keep an eye on d
        FinTrack will compile (on first run) and display a welcome banner followed by a `>` prompt.
    - **From JAR (Option 2):** `java -jar fintrack.jar`
 5. _(Optional, for Option 1)_ Build a runnable JAR with `./gradlew shadowJar` (macOS/Linux) or `.\gradlew.bat shadowJar` (Windows). The application JAR is created under `build/libs/`.
+
+**Warning:** FinTrack keeps data in memory only. Leave the application running or export your records if you need to retain them after you exit.
 
 Tip: Type `help` after launch to see every available command.
 
