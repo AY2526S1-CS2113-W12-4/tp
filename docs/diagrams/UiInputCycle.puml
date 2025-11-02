@@ -18,7 +18,7 @@ Ui -> Scanner : read input
 alt input available
     Ui --> Caller : trimmed line
 else input unavailable
-    Ui <- Scanner : exception
+    Ui <-- Scanner : exception
     Ui -> Logger : log severe error
     Ui --> Caller : EXIT_COMMAND
 end
