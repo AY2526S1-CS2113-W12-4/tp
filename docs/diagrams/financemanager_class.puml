@@ -1,8 +1,8 @@
 @startuml
 hide circle
+hide enum methods
 skinparam classStereotypeFontStyle normal
 skinparam classAttributeIconSize 0
-
 class FinanceManager {
     - budgets: Map<ExpenseCategory, Double>
     + setBudget(category: ExpenseCategory, amount: double)
@@ -10,34 +10,29 @@ class FinanceManager {
     + modifyIncome(index: int, newIncome: Income)
     + getBalance(): double
 }
-
 class Income {
     - amount: double
     - category: IncomeCategory
     - date: LocalDate
     - description: String
 }
-
 class Expense {
     - amount: double
     - category: ExpenseCategory
     - date: LocalDate
     - description: String
 }
-
 class IncomeList {
     + add(income: Income)
     + remove(index: int): Income
     + asUnmodifiableView(): List<Income>
 }
-
 class ExpenseList {
     + add(expense: Expense)
     + remove(index: int): Expense
     + asUnmodifiableView(): List<Expense>
 }
-
-class ExpenseCategory <<enumeration>> {
+enum ExpenseCategory <<enumeration>> {
     FOOD
     STUDY
     TRANSPORT
@@ -47,19 +42,16 @@ class ExpenseCategory <<enumeration>> {
     GROCERIES
     OTHERS
 }
-
-class IncomeCategory <<enumeration>> {
+enum IncomeCategory <<enumeration>> {
     SALARY
     SCHOLARSHIP
     INVESTMENT
     GIFT
     OTHERS
 }
-
 FinanceManager *--> IncomeList
 FinanceManager *--> ExpenseList
 FinanceManager ..> ExpenseCategory
 IncomeList o-- Income
 ExpenseList o-- Expense
-
 @enduml
