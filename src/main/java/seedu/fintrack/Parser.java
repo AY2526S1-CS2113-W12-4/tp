@@ -188,6 +188,22 @@ final class Parser {
         return v == null ? "" : v;
     }
 
+    /**
+     * Returns whether the argument string contains a usable occurrence of {@code prefix}.
+     *
+     * <p>Unlike {@link #getValue(String, String)}, this distinguishes between the prefix being
+     * absent and the prefix appearing with an empty value.</p>
+     *
+     * @param argumentSegment raw argument fragment to scan; must not be {@code null}
+     * @param prefix prefix token to look for (e.g. {@code a/}); must not be {@code null}
+     * @return {@code true} if the prefix appears in the arguments, {@code false} otherwise
+     */
+    private static boolean containsPrefix(String argumentSegment, String prefix) {
+        assert argumentSegment != null : "Arguments cannot be null.";
+        assert prefix != null : "Prefix cannot be null.";
+        return findFirstPrefixIndex(argumentSegment, prefix) >= 0;
+    }
+
     private static int findNextPrefixIndex(String args, int fromIndex) {
         assert args != null : "Arguments cannot be null.";
 
@@ -967,9 +983,13 @@ final class Parser {
         }
 
         String remainingArgs = (split == -1) ? "" : args.substring(split).stripLeading();
+        boolean hasAmountPrefix = containsPrefix(remainingArgs, Ui.AMOUNT_PREFIX);
+        boolean hasCategoryPrefix = containsPrefix(remainingArgs, Ui.CATEGORY_PREFIX);
+        boolean hasDatePrefix = containsPrefix(remainingArgs, Ui.DATE_PREFIX);
+        boolean hasDescriptionPrefix = containsPrefix(remainingArgs, Ui.DESCRIPTION_PREFIX);
 
         // If no fields provided to modify, throw error
-        if (remainingArgs.isEmpty()) {
+        if (!hasAmountPrefix && !hasCategoryPrefix && !hasDatePrefix && !hasDescriptionPrefix) {
             LOGGER.log(Level.WARNING, "No fields provided for modify-expense command.");
             throw new IllegalArgumentException(
                     "At least one field must be specified. Usage: " +
@@ -1001,7 +1021,12 @@ final class Parser {
         String finalDescription = oldExpense.getDescription();
 
         // Override with new values if provided
-        if (amountStr != null) {
+        if (hasAmountPrefix) {
+            if (amountStr == null) {
+                LOGGER.log(Level.WARNING, "Amount prefix provided without value for modify-expense: {0}",
+                        remainingArgs);
+                throw new IllegalArgumentException("Amount must follow a/.");
+            }
             validateNoStrayText(amountStr, "amount");
             try {
                 amount = Double.parseDouble(amountStr);
@@ -1019,17 +1044,32 @@ final class Parser {
             }
         }
 
-        if (categoryString != null) {
+        if (hasCategoryPrefix) {
+            if (categoryString == null) {
+                LOGGER.log(Level.WARNING, "Category prefix provided without value for modify-expense: {0}",
+                        remainingArgs);
+                throw new IllegalArgumentException("Category must follow c/.");
+            }
             validateNoStrayText(categoryString, "category");
             category = ExpenseCategory.parse(categoryString);
         }
 
-        if (dateStr != null) {
+        if (hasDatePrefix) {
+            if (dateStr == null) {
+                LOGGER.log(Level.WARNING, "Date prefix provided without value for modify-expense: {0}",
+                        remainingArgs);
+                throw new IllegalArgumentException("Date must follow d/.");
+            }
             date = parseIsoDateOrThrow(dateStr);
         }
 
-        if (description != null) {
-            finalDescription = description.isBlank() ? null : description;
+        if (hasDescriptionPrefix) {
+            LOGGER.log(Level.FINE, "Description override detected for modify-expense.");
+            if (description == null || description.isBlank()) {
+                finalDescription = null;
+            } else {
+                finalDescription = description;
+            }
         }
 
         Expense newExpense = new Expense(amount, category, date, finalDescription);
@@ -1133,6 +1173,30 @@ final class Parser {
         }
 
         String remainingArgs = (split == -1) ? "" : args.substring(split).stripLeading();
+        boolean hasAmountPrefix = containsPrefix(remainingArgs, Ui.AMOUNT_PREFIX);
+        boolean hasCategoryPrefix = containsPrefix(remainingArgs, Ui.CATEGORY_PREFIX);
+        boolean hasDatePrefix = containsPrefix(remainingArgs, Ui.DATE_PREFIX);
+        boolean hasDescriptionPrefix = containsPrefix(remainingArgs, Ui.DESCRIPTION_PREFIX);
+
+        // If no fields provided to modify, throw error
+        if (!hasAmountPrefix && !hasCategoryPrefix && !hasDatePrefix && !hasDescriptionPrefix) {
+            LOGGER.log(Level.WARNING, "No fields provided for modify-income command.");
+            throw new IllegalArgumentException(
+                    "At least one field must be specified. Usage: "
+                            + "modify-income <index> [a/<amount>] [c/<category>] [d/<YYYY-MM-DD>] [des/<description>]"
+            );
+        }
+
+        // Validate description is last if present
+        ensureDescriptionLast(remainingArgs);
+
+        // Validate prefixes: all are optional, but at least one must be present
+        validatePrefixesExactly(
+                remainingArgs,
+                new String[]{},
+                new String[]{Ui.AMOUNT_PREFIX, Ui.CATEGORY_PREFIX, Ui.DATE_PREFIX, Ui.DESCRIPTION_PREFIX},
+                "Usage: modify-income <index> [a/<amount>] [c/<category>] [d/<YYYY-MM-DD>] [des/<description>]"
+        );
 
         // Parse optional fields
         String amountStr = getValue(remainingArgs, Ui.AMOUNT_PREFIX);
@@ -1147,7 +1211,13 @@ final class Parser {
         String finalDescription = oldIncome.getDescription();
 
         // Override with new values if provided
-        if (amountStr != null) {
+        if (hasAmountPrefix) {
+            if (amountStr == null) {
+                LOGGER.log(Level.WARNING, "Amount prefix provided without value for modify-income: {0}",
+                        remainingArgs);
+                throw new IllegalArgumentException("Amount must follow a/.");
+            }
+            validateNoStrayText(amountStr, "amount");
             try {
                 amount = Double.parseDouble(amountStr);
                 if (!Double.isFinite(amount)) {
@@ -1164,16 +1234,32 @@ final class Parser {
             }
         }
 
-        if (categoryString != null) {
+        if (hasCategoryPrefix) {
+            if (categoryString == null) {
+                LOGGER.log(Level.WARNING, "Category prefix provided without value for modify-income: {0}",
+                        remainingArgs);
+                throw new IllegalArgumentException("Category must follow c/.");
+            }
+            validateNoStrayText(categoryString, "category");
             category = IncomeCategory.parse(categoryString);
         }
 
-        if (dateStr != null) {
+        if (hasDatePrefix) {
+            if (dateStr == null) {
+                LOGGER.log(Level.WARNING, "Date prefix provided without value for modify-income: {0}",
+                        remainingArgs);
+                throw new IllegalArgumentException("Date must follow d/.");
+            }
             date = parseIsoDateOrThrow(dateStr);
         }
 
-        if (description != null) {
-            finalDescription = description.isBlank() ? null : description;
+        if (hasDescriptionPrefix) {
+            LOGGER.log(Level.FINE, "Description override detected for modify-income.");
+            if (description == null || description.isBlank()) {
+                finalDescription = null;
+            } else {
+                finalDescription = description;
+            }
         }
 
         Income newIncome = new Income(amount, category, date, finalDescription);

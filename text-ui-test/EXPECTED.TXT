@@ -413,11 +413,13 @@ Amount: $1300.00
 Category: RENT
 Description: Monthly rent increased
 --------------------------------------------------------------------------------
-> Income at index 4 modified to:
+> --------------------------------------------------------------------------------
+Income at index 4 modified to:
   Amount: 250.00
   Category: SALARY
   Date: 2024-01-15
   Description: Extra performance bonus
+--------------------------------------------------------------------------------
 > Incomes (Newest first):
 --------------------------------------------------------------------------------
 #1
