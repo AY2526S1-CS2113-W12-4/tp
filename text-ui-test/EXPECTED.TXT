@@ -96,9 +96,11 @@ Expense added:
   Date: 2024-03-05
   Description: Taxi
 --------------------------------------------------------------------------------
-> Overall Balance: 11050.00
+> --------------------------------------------------------------------------------
+Overall Balance: 11050.00
 Total Income: 15200.00
 Total Expense: 4150.00
+--------------------------------------------------------------------------------
 > Expenses (Newest first):
 --------------------------------------------------------------------------------
 #1
@@ -183,9 +185,11 @@ Amount: $5000.00
 Category: SALARY
 Description: Monthly salary
 --------------------------------------------------------------------------------
-> Overall Balance for the month 2024-01: 3920.00
+> --------------------------------------------------------------------------------
+Overall Balance for the month 2024-01: 3920.00
 Total Income: 5200.00
 Total Expense: 1280.00
+--------------------------------------------------------------------------------
 > Expenses for the month 2024-01 (Newest first):
 --------------------------------------------------------------------------------
 #1
@@ -218,9 +222,11 @@ Amount: $5000.00
 Category: SALARY
 Description: Monthly salary
 --------------------------------------------------------------------------------
-> Overall Balance for the month 2024-02: 3705.00
+> --------------------------------------------------------------------------------
+Overall Balance for the month 2024-02: 3705.00
 Total Income: 5100.00
 Total Expense: 1395.00
+--------------------------------------------------------------------------------
 > Expenses for the month 2024-02 (Newest first):
 --------------------------------------------------------------------------------
 #1
@@ -254,9 +260,11 @@ Amount: $4800.00
 Category: SALARY
 Description: Monthly salary
 --------------------------------------------------------------------------------
-> Overall Balance for the month 2024-03: 3425.00
+> --------------------------------------------------------------------------------
+Overall Balance for the month 2024-03: 3425.00
 Total Income: 4900.00
 Total Expense: 1475.00
+--------------------------------------------------------------------------------
 > Expenses for the month 2024-03 (Newest first):
 --------------------------------------------------------------------------------
 #1
@@ -284,9 +292,11 @@ Amount: $4900.00
 Category: SALARY
 Description: Monthly salary
 --------------------------------------------------------------------------------
-> Overall Balance for the month 2024-04: 0.00
+> --------------------------------------------------------------------------------
+Overall Balance for the month 2024-04: 0.00
 Total Income: 0.00
 Total Expense: 0.00
+--------------------------------------------------------------------------------
 > No expenses recorded.
 > No incomes recorded.
 > Error: Month must be in YYYY-MM format.
@@ -452,25 +462,35 @@ Amount: $5000.00
 Category: SALARY
 Description: Monthly salary
 --------------------------------------------------------------------------------
-> Overall Balance: 11005.00
+> --------------------------------------------------------------------------------
+Overall Balance: 11005.00
 Total Income: 15250.00
 Total Expense: 4245.00
-> Expense deleted (index 1):
+--------------------------------------------------------------------------------
+> --------------------------------------------------------------------------------
+Expense deleted (index 1):
   Amount: 20.00
   Category: TRANSPORT
   Date: 2024-03-05
   Description: Taxi
-> Income deleted (index 2):
+--------------------------------------------------------------------------------
+> --------------------------------------------------------------------------------
+Income deleted (index 2):
   Amount: 300.00
   Category: SALARY
   Date: 2024-02-20
   Description: Logo commission
-> Overall Balance: 10725.00
+--------------------------------------------------------------------------------
+> --------------------------------------------------------------------------------
+Overall Balance: 10725.00
 Total Income: 14950.00
 Total Expense: 4225.00
-> Overall Balance for the month 2024-03: 3445.00
+--------------------------------------------------------------------------------
+> --------------------------------------------------------------------------------
+Overall Balance for the month 2024-03: 3445.00
 Total Income: 4900.00
 Total Expense: 1455.00
+--------------------------------------------------------------------------------
 > Expenses for the month 2024-03 (Newest first):
 --------------------------------------------------------------------------------
 #1
@@ -496,62 +516,74 @@ Description: Monthly salary
 --------------------------------------------------------------------------------
 1. Add an expense:
    add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
+   (shortcut: ae)
    Example: add-expense a/12.50 c/Food d/2025-10-08 des/Lunch
    Available categories: FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS
 
 2. Add an income:
    add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
-   Example: add-income a/2000 c/Salary d/2025-10-01 des/Monthly pay
+   (shortcut: ai)
+   Example: ai a/2000 c/Salary d/2025-10-01 des/Monthly pay
    Available categories: SALARY, SCHOLARSHIP, INVESTMENT, GIFT, OTHERS
 
 3. View all expenses (from latest to earliest date):
    list-expense
+   (shortcut: le)
    To view by month: list-expense d/<YYYY-MM>
    Example: list-expense d/2025-10
 
 4. View all incomes (from latest to earliest date):
    list-income
+   (shortcut: li)
    To view by month: list-income d/<YYYY-MM>
-   Example: list-income d/2025-10
+   Example: li d/2025-10
 
 5. Delete an expense:
    delete-expense <index>
+   (shortcut: de)
    Deletes the expense shown at that index in 'list-expense'.
-   Example: delete-expense 1
+   Example: de 1
 
 6. Delete an income:
    delete-income <index>
+   (shortcut: di)
    Deletes the income shown at that index in 'list-income'.
    Example: delete-income 1
 
 7. Modify an expense:
    modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
+   (shortcut: me)
    Modifies the expense shown at that index in 'list-expense'.
-   Example: modify-expense 1 a/1300 c/Rent d/2024-01-01 des/Monthly rent increased
+   Example: me 1 a/1300 c/Rent d/2024-01-01 des/Monthly rent increased
 
 8. Modify an income:
    modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
+   (shortcut: mi)
    Modifies the income shown at that index in 'list-income'.
    Example: modify-income 3 a/250 c/Salary d/2024-01-15 des/Extra performance bonus
 
 9. View balance summary:
    balance
+   (shortcut: b)
    Shows total income, total expenses, and current balance.
    To view by month: balance d/<YYYY-MM>
-   Example: balance d/2025-10
+   Example: b d/2025-10
 
 10. Set budget for expense categories:
     budget
+    (shortcut: bg)
     Example: budget c/FOOD a/1000
     Available categories: FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS
 
 11. List budgets for expense categories:
     list-budget
+    (shortcut: lb)
     Example: list-budget
 
 12. Delete budget for an expense category:
     delete-budget c/<category>
-    Example: delete-budget c/FOOD
+    (shortcut: db)
+    Example: db c/FOOD
 
 13. Show a summary of your total expenses:
     summary-expense
@@ -571,6 +603,7 @@ Description: Monthly salary
 
 17. Export data to CSV file:
     export <filepath>
+    (shortcut: ex)
     Example: export financial_data.csv
 
 18. Exit the program:

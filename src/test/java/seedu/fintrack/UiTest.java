@@ -70,9 +70,11 @@ public class UiTest {
         Ui.printBalance(1234.5, 2000.0, 765.4321);
         String ls = System.lineSeparator();
         String expected = ""
+                + divider + ls
                 + "Overall Balance: 1234.50" + ls
                 + "Total Income: 2000.00" + ls
-                + "Total Expense: 765.43" + ls;
+                + "Total Expense: 765.43" + ls
+                + divider + ls;
         assertEquals(expected, out());
     }
 
