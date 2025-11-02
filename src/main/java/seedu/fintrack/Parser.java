@@ -270,6 +270,25 @@ final class Parser {
     }
 
     /**
+     * Validates that a value extracted from a prefix doesn't contain unexpected text.
+     * This helps catch cases where users forget to use prefixes for their arguments.
+     *
+     * @param value the extracted value to check
+     * @param prefixName the name of the prefix (for error messages, e.g., "amount", "category", "date")
+     * @throws IllegalArgumentException if the value contains spaces (indicating stray text)
+     */
+    private static void validateNoStrayText(String value, String prefixName) {
+        if (value != null && value.contains(" ")) {
+            String[] parts = value.split(" ", 2);
+            LOGGER.log(Level.WARNING, "Unexpected text after {0}: {1}.", new Object[]{prefixName, parts[1]});
+            throw new IllegalArgumentException(
+                    "Unexpected text after " + prefixName + ": '" + parts[1] + "'. " +
+                            "Please ensure all arguments use the correct prefixes (a/, c/, d/, des/)."
+            );
+        }
+    }
+
+    /**
      * Validates that the argument string:
      *  - contains exactly the required prefixes (each exactly once),
      *  - may contain optional prefixes at most once each,
@@ -462,6 +481,10 @@ final class Parser {
             throw new IllegalArgumentException("Usage: budget c/<category> a/<amount>");
         }
 
+        // Validate no stray text
+        validateNoStrayText(categoryStr, "category");
+        validateNoStrayText(amountStr, "amount");
+
         ExpenseCategory category = ExpenseCategory.parse(categoryStr);
 
         double amount;
@@ -520,6 +543,9 @@ final class Parser {
             throw new IllegalArgumentException("Usage: delete-budget c/<category>");
         }
 
+        // Validate no stray text
+        validateNoStrayText(categoryStr, "category");
+
         ExpenseCategory category = ExpenseCategory.parse(categoryStr);
 
         LOGGER.log(Level.INFO, "Successfully parsed delete-budget command for {0}.", category);
@@ -565,6 +591,9 @@ final class Parser {
             LOGGER.log(Level.WARNING,"Missing one or more required parameters for add-expense command.");
             throw new IllegalArgumentException("Required fields: a/<amount> c/<category> d/<YYYY-MM-DD>.");
         }
+
+        validateNoStrayText(amountStr, "amount");
+        validateNoStrayText(categoryString, "category");
 
         double amount;
         try {
@@ -630,6 +659,9 @@ final class Parser {
             LOGGER.log(Level.WARNING,"Missing one or more required parameters for add-income.");
             throw new IllegalArgumentException("Required fields: a/<amount> c/<category> d/<YYYY-MM-DD>.");
         }
+
+        validateNoStrayText(amountStr, "amount");
+        validateNoStrayText(categoryString, "category");
 
         double amount;
         try {
@@ -936,6 +968,26 @@ final class Parser {
 
         String remainingArgs = (split == -1) ? "" : args.substring(split).stripLeading();
 
+        // If no fields provided to modify, throw error
+        if (remainingArgs.isEmpty()) {
+            LOGGER.log(Level.WARNING, "No fields provided for modify-expense command.");
+            throw new IllegalArgumentException(
+                    "At least one field must be specified. " +
+                            "Usage: modify-expense <index> [a/<amount>] [c/<category>] [d/<YYYY-MM-DD>] [des/<description>]"
+            );
+        }
+
+        // Validate description is last if present
+        ensureDescriptionLast(remainingArgs);
+
+        // Validate prefixes: all are optional, but at least one must be present
+        validatePrefixesExactly(
+                remainingArgs,
+                new String[]{},  // No required prefixes
+                new String[]{Ui.AMOUNT_PREFIX, Ui.CATEGORY_PREFIX, Ui.DATE_PREFIX, Ui.DESCRIPTION_PREFIX},
+                "Usage: modify-expense <index> [a/<amount>] [c/<category>] [d/<YYYY-MM-DD>] [des/<description>]"
+        );
+
         // Parse optional fields
         String amountStr = getValue(remainingArgs, Ui.AMOUNT_PREFIX);
         String categoryString = getValue(remainingArgs, Ui.CATEGORY_PREFIX);
@@ -950,6 +1002,7 @@ final class Parser {
 
         // Override with new values if provided
         if (amountStr != null) {
+            validateNoStrayText(amountStr, "amount");
             try {
                 amount = Double.parseDouble(amountStr);
                 if (!Double.isFinite(amount)) {
@@ -967,6 +1020,7 @@ final class Parser {
         }
 
         if (categoryString != null) {
+            validateNoStrayText(categoryString, "category");
             category = ExpenseCategory.parse(categoryString);
         }
 
@@ -1185,6 +1239,8 @@ final class Parser {
      */
     private static LocalDate parseIsoDateOrThrow(String dateStr) {
         Objects.requireNonNull(dateStr, "date cannot be null");
+
+        validateNoStrayText(dateStr, "date");
 
         if (!ISO_DATE_PATTERN.matcher(dateStr).matches()) {
             LOGGER.log(Level.WARNING, "Invalid date format: {0}.", dateStr);
