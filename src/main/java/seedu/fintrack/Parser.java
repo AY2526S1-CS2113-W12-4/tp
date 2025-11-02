@@ -189,6 +189,16 @@ final class Parser {
     }
 
     /**
+     * Reports whether the raw input contains the pipe separator (reserved for persistence storage).
+     *
+     * @param input user-supplied string; may be {@code null}
+     * @return {@code true} if {@code '|'} appears in the input, {@code false} otherwise
+     */
+    public static boolean containsForbiddenSeparator(String input) {
+        return input != null && input.indexOf('|') >= 0;
+    }
+
+    /**
      * Returns whether the argument string contains a usable occurrence of {@code prefix}.
      *
      * <p>Unlike {@link #getValue(String, String)}, this distinguishes between the prefix being

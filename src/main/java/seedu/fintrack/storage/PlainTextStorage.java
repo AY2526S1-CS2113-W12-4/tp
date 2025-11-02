@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,35 @@ public class PlainTextStorage {
     private static final String SEPARATOR = "|";
 
     /**
+     * Resolves the default persistence file path alongside the originating code location.
+     *
+     * <p>When packaged as a jar, this points to the jar's parent directory. During development,
+     * it resolves to the compiled classes directory. On failure, the current working directory is used.</p>
+     *
+     * @return absolute path to {@code fintrack-data.txt}
+     */
+    public Path resolveDefaultFile() {
+        try {
+            Path source = Paths.get(
+                    PlainTextStorage.class.getProtectionDomain()
+                            .getCodeSource()
+                            .getLocation()
+                            .toURI());
+
+            Path base = source;
+            if (Files.isRegularFile(source)) {
+                base = source.getParent();
+            }
+            if (base == null) {
+                base = Paths.get(System.getProperty("user.dir"));
+            }
+            return base.resolve("fintrack-data.txt");
+        } catch (Exception ex) {
+            return Paths.get(System.getProperty("user.dir")).resolve("fintrack-data.txt");
+        }
+    }
+
+    /**
      * Verifies that the application can write to {@code file}'s parent directory.
      *
      * @param file target persistence file
@@ -56,11 +86,14 @@ public class PlainTextStorage {
             Files.createDirectories(parent);
             Path probe = Files.createTempFile(parent, "fintrack", ".tmp");
             Files.deleteIfExists(probe);
-            return true;
         } catch (IOException e) {
-            LOGGER.log(Level.WARNING, "Persistence directory not writable: {0}", e.toString());
             return false;
         }
+
+        if (Files.exists(file)) {
+            return Files.isWritable(file);
+        }
+        return true;
     }
 
     /**
@@ -75,7 +108,9 @@ public class PlainTextStorage {
             throw new IllegalArgumentException("File and manager must not be null.");
         }
         if (!Files.exists(file)) {
-            LOGGER.log(Level.INFO, "No persistence file found at {0}; starting with empty state.", file.toAbsolutePath());
+            LOGGER.log(Level.INFO,
+                    "No persistence file found at {0}; starting with empty state.",
+                    file.toAbsolutePath());
             return;
         }
 
@@ -251,4 +286,3 @@ public class PlainTextStorage {
         return lines;
     }
 }
-
