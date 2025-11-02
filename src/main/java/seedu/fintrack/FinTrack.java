@@ -3,6 +3,7 @@ package seedu.fintrack;
 import seedu.fintrack.model.Expense;
 import seedu.fintrack.model.ExpenseCategory;
 import seedu.fintrack.model.Income;
+import seedu.fintrack.model.BudgetStatus;
 import seedu.fintrack.model.IncomeCategory;
 import seedu.fintrack.storage.CsvStorage;
 import seedu.fintrack.storage.Storage;
@@ -85,7 +86,7 @@ public class FinTrack {
             case Ui.ADD_EXPENSE_COMMAND:
                 try {
                     var expense = Parser.parseAddExpense(expandedInput);
-                    FinanceManager.BudgetStatus status = fm.addExpense(expense);
+                    BudgetStatus status = fm.addExpense(expense);
                     Ui.printExpenseAdded(expense);
 
                     double totalSpent = fm.getTotalExpenseForCategory(expense.getCategory());
@@ -178,7 +179,7 @@ public class FinTrack {
                     int index = Parser.parseModifyExpenseIndex(expandedInput);
                     Expense oldExpense = fm.getExpense(index);
                     Expense newExpense = Parser.parseModifyExpenseWithDefaults(expandedInput, oldExpense);
-                    FinanceManager.BudgetStatus status = fm.modifyExpense(index, newExpense);
+                    BudgetStatus status = fm.modifyExpense(index, newExpense);
                     Ui.printExpenseModified(newExpense, index);
                     double totalSpent = fm.getTotalExpenseForCategory(newExpense.getCategory());
                     Double budget = fm.getBudgetForCategory(newExpense.getCategory());
