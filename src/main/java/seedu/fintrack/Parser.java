@@ -972,8 +972,8 @@ final class Parser {
         if (remainingArgs.isEmpty()) {
             LOGGER.log(Level.WARNING, "No fields provided for modify-expense command.");
             throw new IllegalArgumentException(
-                    "At least one field must be specified. " +
-                            "Usage: modify-expense <index> [a/<amount>] [c/<category>] [d/<YYYY-MM-DD>] [des/<description>]"
+                    "At least one field must be specified. Usage: " +
+                            "modify-expense <index> [a/<amount>] [c/<category>] [d/<YYYY-MM-DD>] [des/<description>]"
             );
         }
 
