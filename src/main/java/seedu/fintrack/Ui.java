@@ -308,6 +308,7 @@ public class Ui {
         Objects.requireNonNull(income.getDate(), "income date cannot be null");
         assert Double.isFinite(income.getAmount()) : "income amount must be finite";
 
+        printHorizontalLine(80);
         System.out.println("Income at index " + index + " modified to:");
         System.out.println("  Amount: " + String.format("%.2f", income.getAmount()));
         System.out.println("  Category: " + income.getCategory());
@@ -315,6 +316,7 @@ public class Ui {
         if (income.getDescription() != null && !income.getDescription().isBlank()) {
             System.out.println("  Description: " + income.getDescription());
         }
+        printHorizontalLine(80);
         LOGGER.fine("Printed income modified confirmation.");
     }
 
