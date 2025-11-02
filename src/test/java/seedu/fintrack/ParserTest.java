@@ -634,6 +634,23 @@ public class ParserTest {
     }
 
     /**
+     * Tests modify-expense with a blank description to ensure it clears existing text.
+     */
+    @Test
+    public void parseModifyExpenseWithDefaults_blankDescription_clearsDescription() {
+        Expense oldExpense = new Expense(30, ExpenseCategory.FOOD,
+                LocalDate.of(2025, 4, 5), "keep me");
+
+        String input = Ui.MODIFY_EXPENSE_COMMAND + " 1 des/";
+        Expense e = Parser.parseModifyExpenseWithDefaults(input, oldExpense);
+
+        assertEquals(30, e.getAmount(), 1e-9);
+        assertEquals(ExpenseCategory.FOOD, e.getCategory());
+        assertEquals(LocalDate.of(2025, 4, 5), e.getDate());
+        assertNull(e.getDescription());
+    }
+
+    /**
      * Tests modify-expense with multiple fields specified.
      */
     @Test
@@ -893,6 +910,23 @@ public class ParserTest {
         assertEquals(IncomeCategory.OTHERS, i.getCategory());
         assertEquals(LocalDate.of(2025, 5, 5), i.getDate());
         assertEquals("updated allowance description", i.getDescription());
+    }
+
+    /**
+     * Tests modify-income with a blank description to ensure it clears existing text.
+     */
+    @Test
+    public void parseModifyIncomeWithDefaults_blankDescription_clearsDescription() {
+        Income oldIncome = new Income(600, IncomeCategory.OTHERS,
+                LocalDate.of(2025, 5, 5), "keep me");
+
+        String input = Ui.MODIFY_INCOME_COMMAND + " 1 des/";
+        Income i = Parser.parseModifyIncomeWithDefaults(input, oldIncome);
+
+        assertEquals(600, i.getAmount(), 1e-9);
+        assertEquals(IncomeCategory.OTHERS, i.getCategory());
+        assertEquals(LocalDate.of(2025, 5, 5), i.getDate());
+        assertNull(i.getDescription());
     }
 
     /**

@@ -188,6 +188,16 @@ final class Parser {
         return v == null ? "" : v;
     }
 
+    /**
+     * Checks if the provided argument string contains the specified prefix, regardless
+     * of whether a value follows the prefix.
+     */
+    private static boolean hasPrefix(String args, String prefix) {
+        Objects.requireNonNull(args, "Arguments cannot be null.");
+        Objects.requireNonNull(prefix, "Prefix cannot be null.");
+        return findFirstPrefixIndex(args, prefix) >= 0;
+    }
+
     private static int findNextPrefixIndex(String args, int fromIndex) {
         assert args != null : "Arguments cannot be null.";
 
@@ -993,6 +1003,7 @@ final class Parser {
         String categoryString = getValue(remainingArgs, Ui.CATEGORY_PREFIX);
         String dateStr = getValue(remainingArgs, Ui.DATE_PREFIX);
         String description = getValue(remainingArgs, Ui.DESCRIPTION_PREFIX);
+        boolean hasDescriptionPrefix = hasPrefix(remainingArgs, Ui.DESCRIPTION_PREFIX);
 
         // Use old values as defaults
         double amount = oldExpense.getAmount();
@@ -1030,6 +1041,8 @@ final class Parser {
 
         if (description != null) {
             finalDescription = description.isBlank() ? null : description;
+        } else if (hasDescriptionPrefix) {
+            finalDescription = null;
         }
 
         Expense newExpense = new Expense(amount, category, date, finalDescription);
@@ -1139,6 +1152,7 @@ final class Parser {
         String categoryString = getValue(remainingArgs, Ui.CATEGORY_PREFIX);
         String dateStr = getValue(remainingArgs, Ui.DATE_PREFIX);
         String description = getValue(remainingArgs, Ui.DESCRIPTION_PREFIX);
+        boolean hasDescriptionPrefix = hasPrefix(remainingArgs, Ui.DESCRIPTION_PREFIX);
 
         // Use old values as defaults
         double amount = oldIncome.getAmount();
@@ -1174,6 +1188,8 @@ final class Parser {
 
         if (description != null) {
             finalDescription = description.isBlank() ? null : description;
+        } else if (hasDescriptionPrefix) {
+            finalDescription = null;
         }
 
         Income newIncome = new Income(amount, category, date, finalDescription);
