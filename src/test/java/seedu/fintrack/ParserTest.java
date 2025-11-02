@@ -670,6 +670,67 @@ public class ParserTest {
     }
 
     /**
+     * modify-expense should reject an amount prefix without a value.
+     */
+    @Test
+    public void parseModifyExpenseWithDefaults_blankAmount_throws() {
+        Expense oldExpense = new Expense(70, ExpenseCategory.GROCERIES,
+                LocalDate.of(2025, 2, 2), "weekly shop");
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> Parser.parseModifyExpenseWithDefaults(Ui.MODIFY_EXPENSE_COMMAND + " 1 a/", oldExpense)
+        );
+        assertEquals("Amount must follow a/.", ex.getMessage());
+    }
+
+    /**
+     * modify-expense should reject a category prefix without a value.
+     */
+    @Test
+    public void parseModifyExpenseWithDefaults_blankCategory_throws() {
+        Expense oldExpense = new Expense(70, ExpenseCategory.GROCERIES,
+                LocalDate.of(2025, 2, 2), "weekly shop");
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> Parser.parseModifyExpenseWithDefaults(Ui.MODIFY_EXPENSE_COMMAND + " 1 c/", oldExpense)
+        );
+        assertEquals("Category must follow c/.", ex.getMessage());
+    }
+
+    /**
+     * modify-expense should reject a date prefix without a value.
+     */
+    @Test
+    public void parseModifyExpenseWithDefaults_blankDate_throws() {
+        Expense oldExpense = new Expense(70, ExpenseCategory.GROCERIES,
+                LocalDate.of(2025, 2, 2), "weekly shop");
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> Parser.parseModifyExpenseWithDefaults(Ui.MODIFY_EXPENSE_COMMAND + " 1 d/", oldExpense)
+        );
+        assertEquals("Date must follow d/.", ex.getMessage());
+    }
+
+    /**
+     * modify-expense should allow clearing a description explicitly with an empty des/ prefix.
+     */
+    @Test
+    public void parseModifyExpenseWithDefaults_descriptionClearedWhenBlank_desPrefix() {
+        Expense oldExpense = new Expense(45, ExpenseCategory.FOOD,
+                LocalDate.of(2025, 4, 5), "old desc");
+
+        Expense e = Parser.parseModifyExpenseWithDefaults(Ui.MODIFY_EXPENSE_COMMAND + " 1 des/", oldExpense);
+
+        assertEquals(45, e.getAmount(), 1e-9);
+        assertEquals(ExpenseCategory.FOOD, e.getCategory());
+        assertEquals(LocalDate.of(2025, 4, 5), e.getDate());
+        assertNull(e.getDescription());
+    }
+
+    /**
      * Tests 'modify-expense' index parsing with invalid parameters.
      * Expects an IllegalArgumentException for each case.
      */
@@ -936,6 +997,67 @@ public class ParserTest {
                         + "[a/<amount>] [c/<category>] [d/<YYYY-MM-DD>] [des/<description>]",
                 ex.getMessage()
         );
+    }
+
+    /**
+     * modify-income should reject an amount prefix without a value.
+     */
+    @Test
+    public void parseModifyIncomeWithDefaults_blankAmount_throws() {
+        Income oldIncome = new Income(900, IncomeCategory.GIFT,
+                LocalDate.of(2025, 3, 3), "bonus");
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> Parser.parseModifyIncomeWithDefaults(Ui.MODIFY_INCOME_COMMAND + " 1 a/", oldIncome)
+        );
+        assertEquals("Amount must follow a/.", ex.getMessage());
+    }
+
+    /**
+     * modify-income should reject a category prefix without a value.
+     */
+    @Test
+    public void parseModifyIncomeWithDefaults_blankCategory_throws() {
+        Income oldIncome = new Income(900, IncomeCategory.GIFT,
+                LocalDate.of(2025, 3, 3), "bonus");
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> Parser.parseModifyIncomeWithDefaults(Ui.MODIFY_INCOME_COMMAND + " 1 c/", oldIncome)
+        );
+        assertEquals("Category must follow c/.", ex.getMessage());
+    }
+
+    /**
+     * modify-income should reject a date prefix without a value.
+     */
+    @Test
+    public void parseModifyIncomeWithDefaults_blankDate_throws() {
+        Income oldIncome = new Income(900, IncomeCategory.GIFT,
+                LocalDate.of(2025, 3, 3), "bonus");
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> Parser.parseModifyIncomeWithDefaults(Ui.MODIFY_INCOME_COMMAND + " 1 d/", oldIncome)
+        );
+        assertEquals("Date must follow d/.", ex.getMessage());
+    }
+
+    /**
+     * modify-income should allow clearing a description explicitly with an empty des/ prefix.
+     */
+    @Test
+    public void parseModifyIncomeWithDefaults_descriptionClearedWhenBlank_desPrefix() {
+        Income oldIncome = new Income(900, IncomeCategory.GIFT,
+                LocalDate.of(2025, 3, 3), "bonus");
+
+        Income i = Parser.parseModifyIncomeWithDefaults(Ui.MODIFY_INCOME_COMMAND + " 1 des/", oldIncome);
+
+        assertEquals(900, i.getAmount(), 1e-9);
+        assertEquals(IncomeCategory.GIFT, i.getCategory());
+        assertEquals(LocalDate.of(2025, 3, 3), i.getDate());
+        assertNull(i.getDescription());
     }
 
     /**
