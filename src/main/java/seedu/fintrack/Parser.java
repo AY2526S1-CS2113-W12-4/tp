@@ -111,6 +111,7 @@ final class Parser {
         case "ai" -> "add-income";
         case "le" -> "list-expense";
         case "li" -> "list-income";
+        case "lb" -> "list-budget";
 
         // Modification commands
         case "me" -> "modify-expense";

@@ -29,6 +29,7 @@ Tip: Type `help` after launch to see every available command.
 
 - FinTrack is fully keyboard-driven. Each command is entered on a single line and confirmed with Enter.
 - Commands are **case-sensitive**. Use lowercase as shown in this guide (e.g., `add-expense`, not `Add-Expense`).
+- FinTrack supports both commands typed in full as well as aliases. To know more about this, click [here](#command-aliases).
 - Parameters use prefixes:
   - `a/` for amount (decimals allowed; for expenses and incomes the amount must be positive, for budgets the amount must be non-negative).
   - `c/` for category (must be from the valid list of categories).
@@ -50,93 +51,95 @@ Shows a command overview in the terminal.
 - **Example usage:** `help`
 - **Sample output:**
 
-  ```
-  === FinTrack Command Summary ===
-  --------------------------------------------------------------------------------
-  1. Add an expense:
-     add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
-     Example: add-expense a/12.50 c/Food d/2025-10-08 des/Lunch
-     Available categories: FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS
+    ```
+    === FinTrack Command Summary ===
+    --------------------------------------------------------------------------------
+    1. Add an expense:
+       add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
+       Example: add-expense a/12.50 c/Food d/2025-10-08 des/Lunch
+       Available categories: FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS
+    
+    2. Add an income:
+       add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
+       Example: add-income a/2000 c/Salary d/2025-10-01 des/Monthly pay
+       Available categories: SALARY, SCHOLARSHIP, INVESTMENT, GIFT, OTHERS
+    
+    3. View all expenses (from latest to earliest date):
+       list-expense
+       To view by month: list-expense d/<YYYY-MM>
+       Example: list-expense d/2025-10
+    
+    4. View all incomes (from latest to earliest date):
+       list-income
+       To view by month: list-income d/<YYYY-MM>
+       Example: list-income d/2025-10
+    
+    5. Delete an expense:
+       delete-expense <index>
+       Deletes the expense shown at that index in 'list-expense'.
+       Example: delete-expense 1
+    
+    6. Delete an income:
+       delete-income <index>
+       Deletes the income shown at that index in 'list-income'.
+       Example: delete-income 1
+    
+    7. Modify an expense:
+       modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
+       Modifies the expense shown at that index in 'list-expense'.
+       Example: modify-expense 1 a/1300 c/Rent d/2024-01-01 des/Monthly rent increased
+    
+    8. Modify an income:
+       modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
+       Modifies the income shown at that index in 'list-income'.
+       Example: modify-income 3 a/250 c/Salary d/2024-01-15 des/Extra performance bonus
+    
+    9. View balance summary:
+       balance
+       Shows total income, total expenses, and current balance.
+       To view by month: balance d/<YYYY-MM>
+       Example: balance d/2025-10
+    
+    10. Set budget for expense categories:
+        budget
+        Example: budget c/FOOD a/1000
+        Available categories: FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS
+    
+    11. List budgets for expense categories:
+        list-budget
+        Example: list-budget
+    
+    12. Delete budget for an expense category:
+        delete-budget c/<category>
+        Example: delete-budget c/FOOD
+    
+    13. Show a summary of your total expenses:
+        summary-expense
+        Example: summary-expense
+    
+    14. Show a summary of your total income:
+        summary-income
+        Example: summary-income
+    
+    15. Provides a useful tip:
+        tips
+        Example: tips
+    
+    16. Show this help menu:
+        help
+        Example: help
+    
+    17. Export data to CSV file:
+        export <filepath>
+        Example: export financial_data.csv
+    
+    18. Exit the program:
+        bye
+        Example: bye
+    --------------------------------------------------------------------------------
+    ```
 
-  2. Add an income:
-     add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
-     Example: add-income a/2000 c/Salary d/2025-10-01 des/Monthly pay
-     Available categories: SALARY, SCHOLARSHIP, INVESTMENT, GIFT, OTHERS
-
-  3. View all expenses (from latest to earliest date):
-     Usage: list-expense [d/<YYYY-MM>]
-     Example: list-expense
-     To view by month: list-expense d/<YYYY-MM>
-     Example: list-expense d/2025-10
-
-  4. View all incomes (from latest to earliest date):
-     Usage: list-income [d/<YYYY-MM>]
-     Example: list-income
-     To view by month: list-income d/<YYYY-MM>
-     Example: list-income d/2025-10
-
-  5. Delete an expense:
-     delete-expense <index>
-     Deletes the expense shown at that index in 'list-expense'.
-     Example: delete-expense 1
-
-  6. Delete an income:
-     delete-income <index>
-     Deletes the income shown at that index in 'list-income'.
-     Example: delete-income 1
-
-  7. Modify an expense:
-     modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
-     Modifies the expense shown at that index in 'list-expense'.
-     Example: modify-expense 1 a/1300 c/Rent d/2024-01-01 des/Monthly rent increased
-
-  8. Modify an income:
-     modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
-     Modifies the income shown at that index in 'list-income'.
-     Example: modify-income 3 a/250 c/Salary d/2024-01-15 des/Extra performance bonus
-
-  9. View balance summary:
-     balance
-     Shows total income, total expenses, and current balance.
-     To view by month: balance d/<YYYY-MM>
-     Example: balance d/2025-10
-
-  10. Set budget for expense categories:
-      budget
-      Example: budget c/FOOD a/1000
-      Available categories: FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS
-
-  11. List budgets for expense categories:
-      list-budget
-      Example: list-budget
-
-  12. Show a summary of your total expenses:
-      summary-expense
-      Example: summary-expense
-
-  13. Show a summary of your total income:
-      summary-income
-      Example: summary-income
-
-  14. Provides a useful tip:
-      tips
-      Example: tips
-
-  15. Show this help menu:
-      help
-      Example: help
-
-  16. Exit the program:
-      bye
-      Example: bye
-
-  17. Export data to CSV file:
-      export <filepath>
-      Example: export financial_data.csv
-  --------------------------------------------------------------------------------
-  ```
-
-### Adding an expense: `add-expense`
+### Adding an expense: `add-expense` or `ae`
 
 Creates a new expense. Expenses are automatically sorted so the newest date appears first when listed.
 
@@ -168,7 +171,7 @@ Validation notes:
   - GROCERIES
   - OTHERS
 
-### Adding an income: `add-income`
+### Adding an income: `add-income` or `ai`
 
 Records income that contributes to your balance.
 
@@ -193,7 +196,7 @@ The same validation rules as `add-expense` apply to amount, date, and descriptio
   - GIFT
   - OTHERS
 
-### Listing expenses: `list-expense`
+### Listing expenses: `list-expense` or `le`
 
 Shows every expense in reverse chronological order (newest first) with numbered entries. Use the index numbers when deleting expenses.
 
@@ -239,7 +242,7 @@ For example, `list-expense d/2025-10` lists only expenses recorded in **October 
   --------------------------------------------------
   ```
 
-### Listing incomes: `list-income`
+### Listing incomes: `list-income` or `li`
 
 Shows every income in reverse chronological order (newest first) with numbered entries. Use the index numbers when deleting or modifying incomes. Filter by month with the optional `d/<YYYY-MM>` parameter.
 
@@ -286,7 +289,7 @@ For example, `list-income d/2025-12` lists only incomes recorded in **December 2
 
   ```
 
-### Showing your balance: `balance`
+### Showing your balance: `balance` or `b`
 
 Summarises total income, total expenses, and the resulting balance (`income - expense`).
 
@@ -314,7 +317,7 @@ For example, `balance d/2025-01` displays the total income, expenses, and balanc
   Total Expense: 42.00
   ```
 
-### Deleting an expense: `delete-expense`
+### Deleting an expense: `delete-expense` or `de`
 
 Removes an expense by its 1-based index as seen in the most recent `list-expense` output.
 
@@ -332,7 +335,7 @@ Removes an expense by its 1-based index as seen in the most recent `list-expense
 
 FinTrack rejects zero or negative indexes and any index larger than the number of expenses.
 
-### Deleting an income: `delete-income`
+### Deleting an income: `delete-income` or `di`
 
 Removes an income by its 1-based index as seen in the most recent `list-income` output.
 
@@ -350,7 +353,7 @@ Removes an income by its 1-based index as seen in the most recent `list-income` 
 
   FinTrack rejects zero or negative indexes and any index larger than the number of incomes.
 
-### Modifying an expense: `modify-expense`
+### Modifying an expense: `modify-expense` or `me`
 
 Updates an existing expense entry at a specified index. The new entry replaces the old one and is re-sorted by date if necessary.
 
@@ -371,7 +374,7 @@ Validation notes:
 - All other validation rules are the same as for `add-expense`.
 - If the modification causes the category budget to be exceeded, a warning is shown.
 
-### Modifying an income: `modify-income`
+### Modifying an income: `modify-income` or `mi`
 
 Updates an existing income entry at a specified index. The new entry replaces the old one and is re-sorted by date if necessary.
 
@@ -391,7 +394,7 @@ Validation notes:
 - Index must be a valid, existing income index (as shown in `list-income`).
 - All other validation rules are the same as for `add-income`.
 
-### Exporting your data: `export`
+### Exporting your data: `export` or `ex`
 
 Exports all incomes and expenses to a CSV file for use in spreadsheet applications or backups.
 
@@ -408,9 +411,13 @@ Notes:
 - The file can be opened in Excel, Google Sheets, or any compatible application.
 - If the export fails (e.g., due to permissions), an error message is shown.
 
-### Setting budgets: `budget`
+### Setting budgets: `budget` or `bg`
+ 
+Allows the user to set budgets for expense categories available. 
 
-Allows the user to set budgets for expense categories available.
+When the user is reaching their budget limit (within 10%), FinTrack will warn users that they are approaching their budget limit.
+
+When the user goes overbudget for any expense category, every new expense added thereafter will trigger reminders to spend less.
 
 - **Format:** `budget c/<category> a/<amount>`
 - **Example usage:** `budget c/food a/500`
@@ -433,7 +440,7 @@ Validation notes:
   - GROCERIES
   - OTHERS
 
-### Viewing list of budgets: `list-budget`
+### Viewing list of budgets: `list-budget` or `lb`
 
 Allows the user to view the budgets set for each expense category (if applicable).
 
@@ -450,9 +457,25 @@ Allows the user to view the budgets set for each expense category (if applicable
   --------------------------------------------------------------------------------
   ```
 
-  If the user has not set budgets for any category, FinTrack prints `No budgets have been set.`
+If the user has not set budgets for any category, FinTrack prints `No budgets have been set.`
 
-### Viewing Summary of Expenses `summary-expense`
+### Deleting budget for an expense category: `delete-budget` or `db`
+
+Allows the user to delete the budgets set for each expense category (if applicable).
+
+- **Format:** `delete-budget c/<category>`
+- **Example usage:** `delete-budget c/food`
+- **Sample output:**
+
+    ```
+    --------------------------------------------------------------------------------
+    Budget for FOOD has been deleted.
+    --------------------------------------------------------------------------------
+    ```
+
+If the user has not set budgets for a certain category (e.g FOOD), FinTrack prints `Error: No budget was set for category: FOOD`
+
+### Viewing Summary of Expenses `summary-expense` 
 
 Gives a summary of your overall expenses.
 
@@ -566,7 +589,7 @@ A: Ensure the date is valid on the calendar and in `YYYY-MM-DD` format. Future d
 ## Command Summary
 
 | Command                    | Format                                                                   | Example                                                      |
-| :------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------ |
+|:---------------------------|--------------------------------------------------------------------------|--------------------------------------------------------------|
 | `help`                     | `help`                                                                   | `help`                                                       |
 | `add-expense`              | `add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]` | `add-expense a/12.50 c/Food d/2025-10-08 des/Lunch`          |
 | `add-income`               | `add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]`  | `add-income a/3200 c/Salary d/2025-10-01 des/October salary` |
@@ -580,6 +603,7 @@ A: Ensure the date is valid on the calendar and in `YYYY-MM-DD` format. Future d
 | `delete-income`            | `delete-income <index>`                                                  | `delete-income 1`                                            |
 | `budget`                   | `budget c/<category> a/<amount>`                                         | `budget c/food a/500`                                        |
 | `list-budget`              | `list-budget`                                                            | `list-budget`                                                |
+| `delete-budget`            | `delete-budget c/<category>`                                             | `delete-budget c/food`                                       |
 | `summary-expense`          | `summary-expense`                                                        | `summary-expense`                                            |
 | `summary-income`           | `summary-income`                                                         | `summary-income`                                             |
 | `tips`                     | `tips`                                                                   | `tips`                                                       |
@@ -590,18 +614,20 @@ A: Ensure the date is valid on the calendar and in `YYYY-MM-DD` format. Future d
 
 For faster typing, you can use these shortcuts:
 
-| Alias | Full Command     | Example Usage           |
-|-------|------------------|-------------------------|
-| `ae`  | `add-expense`    | `ae a/12.50 c/Food d/2025-10-08` |
+| Alias | Full Command     | Example Usage                     |
+|-------|------------------|-----------------------------------|
+| `ae`  | `add-expense`    | `ae a/12.50 c/Food d/2025-10-08`  |
 | `ai`  | `add-income`     | `ai a/3200 c/Salary d/2025-10-01` |
-| `le`  | `list-expense`   | `le`                     |
-| `li`  | `list-income`    | `li`                     |
-| `me`  | `modify-expense` | `me 1 a/15.00 c/Food`    |
-| `mi`  | `modify-income`  | `mi 2 a/3500 c/Salary`   |
-| `de`  | `delete-expense` | `de 1`                   |
-| `di`  | `delete-income`  | `di 2`                   |
-| `bg`  | `budget`         | `bg c/Food a/500`        |
-| `ex`  | `export`         | `ex financial_data.csv`  |
-| `b`   | `balance`        | `b`                      |
+| `le`  | `list-expense`   | `le`                              |
+| `li`  | `list-income`    | `li`                              |
+| `lb`  | `list-budget`    | `lb`                              |
+| `me`  | `modify-expense` | `me 1 a/15.00 c/Food`             |
+| `mi`  | `modify-income`  | `mi 2 a/3500 c/Salary`            |
+| `de`  | `delete-expense` | `de 1`                            |
+| `di`  | `delete-income`  | `di 2`                            |
+| `db`  | `delete-budget`  | `db c/food`                       |
+| `bg`  | `budget`         | `bg c/Food a/500`                 |
+| `ex`  | `export`         | `ex financial_data.csv`           |
+| `b`   | `balance`        | `b`                               |
 
 Stay tuned to the project repository for upcoming enhancements such as persistent storage and advanced summaries.
