@@ -285,7 +285,7 @@ Here is how `budget`, `list-budget` and `delete-budget` works:
 5. When `list-budget` is called, `Ui` prints a list of the budgets by calling `printBudgets` which receives a printable version of all the budgets which we get from `getBudgetsView()`.
 6. When `delete-budget` is called, the `deleteBudget` method from `FinanceManager` is called, removing the corresponding budget from the HashMap.
 
-Below is the sequence diagram of an instance of `budget` and `add-expense`:
+Below is the class diagram of to show how `budget` works:
 ![budget.png](images/budget.png)
 
 #### Design Considerations:

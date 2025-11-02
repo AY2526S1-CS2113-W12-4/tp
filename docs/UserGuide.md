@@ -571,8 +571,8 @@ A: As a finance tracker, we show our amounts up to 2 decimal points.
 **Q: Why does my percentage in summary show as 0.00% even though I have input some amount?**
 A: Our percentages are shown to 2 decimal points and hence any precision below 2 decimal points may get rounded down to 0.00%. Similarly, if a category takes up a significantly large percentage, it may be shown as 100.00% due to the percentage being rounded up to the closest 2 decimal points.
 
-**Q: Why does the Error: (XXX) must be a valid number appear even though I input a valid number**
-A: Computers can only hold a certain range of values for numerical data types. Hence, you may see some unexpected warning for numbers that fall out of this range. 
+**Q: Why do errors appear even though I input a valid number**
+A: Computers can only operate on a certain range of values for numerical data types. Hence, you may see some unexpected warnings for numbers that fall out of this range. 
 
 **Q: Can I enter dates in other formats such as DD-MM-YYYY?**  
 A: No. FinTrack currently requires ISO format `YYYY-MM-DD`.
