@@ -2,6 +2,7 @@ package seedu.fintrack;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -916,17 +917,25 @@ public class ParserTest {
      * Tests modify-income with no fields specified (only index).
      */
     @Test
-    public void parseModifyIncomeWithDefaults_noFields_keepsAllFields() {
-        Income oldIncome = new Income(777.77, IncomeCategory.INVESTMENT,
-                LocalDate.of(2025, 8, 8), "dividends");
+    public void parseModifyIncomeWithDefaults_noFields_throws() {
+        Income oldIncome = new Income(
+                777.77,
+                IncomeCategory.INVESTMENT,
+                LocalDate.of(2025, 8, 8),
+                "dividends"
+        );
 
         String input = Ui.MODIFY_INCOME_COMMAND + " 1";
-        Income i = Parser.parseModifyIncomeWithDefaults(input, oldIncome);
 
-        assertEquals(777.77, i.getAmount(), 1e-9);
-        assertEquals(IncomeCategory.INVESTMENT, i.getCategory());
-        assertEquals(LocalDate.of(2025, 8, 8), i.getDate());
-        assertEquals("dividends", i.getDescription());
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> Parser.parseModifyIncomeWithDefaults(input, oldIncome)
+        );
+        assertEquals(
+                "At least one field must be specified. Usage: modify-income <index> "
+                        + "[a/<amount>] [c/<category>] [d/<YYYY-MM-DD>] [des/<description>]",
+                ex.getMessage()
+        );
     }
 
     /**
