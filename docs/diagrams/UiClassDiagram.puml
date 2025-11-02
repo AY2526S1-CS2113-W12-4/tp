@@ -1,15 +1,10 @@
-@startuml UiClassDiagram
+﻿@startuml UiClassDiagram
 hide circle
 skinparam classAttributeIconSize 0
 skinparam stereotypeFontStyle normal
-skinparam class {
-  BackgroundColor<<static>> #F2F2F2
-  BorderColor<<static>> #666666
-  StereotypeFontStyle normal
-}
 title Ui Module Responsibilities
 
-class Ui <<static>> {
+class Ui {
   -{static} uiScanner : Scanner
   -{static} LOGGER : Logger
   -{static} TIPS : TipsStorage
