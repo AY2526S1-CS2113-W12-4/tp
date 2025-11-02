@@ -17,6 +17,7 @@ import seedu.fintrack.model.Expense;
 import seedu.fintrack.model.ExpenseCategory;
 import seedu.fintrack.model.Income;
 import seedu.fintrack.model.IncomeCategory;
+import seedu.fintrack.model.BudgetStatus;
 
 public class FinanceManagerTest {
     
@@ -568,7 +569,7 @@ public class FinanceManagerTest {
 
     @Test
     void addExpense_noBudgetSet_returnsNoBudgetStatus() {
-        FinanceManager.BudgetStatus status = fm.addExpense(sampleExpense2); // 50 FOOD
+        BudgetStatus status = fm.addExpense(sampleExpense2); // 50 FOOD
         assertFalse(status.isOverBudget());
         assertFalse(status.isNearBudget());
     }
@@ -576,11 +577,11 @@ public class FinanceManagerTest {
     @Test
     void addExpense_budgetSetStaysUnder_returnsNoBudgetStatus() {
         fm.setBudget(ExpenseCategory.FOOD, 100.0);
-        FinanceManager.BudgetStatus status1 = fm.addExpense(sampleExpense2); // 50 FOOD
+        BudgetStatus status1 = fm.addExpense(sampleExpense2); // 50 FOOD
         assertFalse(status1.isOverBudget());
         assertFalse(status1.isNearBudget());
 
-        FinanceManager.BudgetStatus status2 = fm.addExpense(
+        BudgetStatus status2 = fm.addExpense(
                 new Expense(30.0, ExpenseCategory.FOOD, LocalDate.now(), "Snack"));
         assertFalse(status2.isOverBudget());
         assertFalse(status2.isNearBudget());
@@ -591,7 +592,7 @@ public class FinanceManagerTest {
     void addExpense_budgetSetHitsExactly_returnsNoBudgetStatus() {
         fm.setBudget(ExpenseCategory.FOOD, 100.0);
         fm.addExpense(sampleExpense2); // 50 FOOD
-        FinanceManager.BudgetStatus status = fm.addExpense(
+        BudgetStatus status = fm.addExpense(
                 new Expense(50.0, ExpenseCategory.FOOD, LocalDate.now(), "Dinner"));
         assertFalse(status.isOverBudget());
         assertTrue(status.isNearBudget());
@@ -603,7 +604,7 @@ public class FinanceManagerTest {
         fm.setBudget(ExpenseCategory.FOOD, 100.0);
         fm.addExpense(sampleExpense2); // 50 FOOD
         // This expense (80) will push the total (50+80=130) over the 100 budget
-        FinanceManager.BudgetStatus status = fm.addExpense(
+        BudgetStatus status = fm.addExpense(
                 new Expense(80.0, ExpenseCategory.FOOD, LocalDate.now(), "Big meal"));
         assertTrue(status.isOverBudget());
         assertFalse(status.isNearBudget());
@@ -614,14 +615,14 @@ public class FinanceManagerTest {
     void addExpense_budgetSetAlreadyExceeded_stillReturnsOverBudget() {
         fm.setBudget(ExpenseCategory.FOOD, 100.0);
         // 1. Cross the budget
-        FinanceManager.BudgetStatus status1 = fm.addExpense(
+        BudgetStatus status1 = fm.addExpense(
                 new Expense(110.0, ExpenseCategory.FOOD, LocalDate.now(), "Big meal"));
         assertTrue(status1.isOverBudget());
         assertFalse(status1.isNearBudget());
         assertEquals(110.0, fm.getTotalExpenseForCategory(ExpenseCategory.FOOD));
 
         // 2. Add another expense while already over - should still warn
-        FinanceManager.BudgetStatus status2 = fm.addExpense(
+        BudgetStatus status2 = fm.addExpense(
                 new Expense(20.0, ExpenseCategory.FOOD, LocalDate.now(), "Snack"));
         assertTrue(status2.isOverBudget()); // Now returns true every time
         assertFalse(status2.isNearBudget());
@@ -632,7 +633,7 @@ public class FinanceManagerTest {
     void addExpense_budgetSetUnrelatedCategory_returnsNoBudgetStatus() {
         fm.setBudget(ExpenseCategory.FOOD, 100.0);
         // Add an expense for a different category
-        FinanceManager.BudgetStatus status = fm.addExpense(sampleExpense1); // 1200 RENT
+        BudgetStatus status = fm.addExpense(sampleExpense1); // 1200 RENT
         assertFalse(status.isOverBudget());
         assertFalse(status.isNearBudget());
         assertEquals(0.0, fm.getTotalExpenseForCategory(ExpenseCategory.FOOD));
@@ -644,13 +645,13 @@ public class FinanceManagerTest {
         fm.setBudget(ExpenseCategory.FOOD, 0.0);
 
         // Any expense > 0 will cross the 0.0 budget
-        FinanceManager.BudgetStatus status1 = fm.addExpense(
+        BudgetStatus status1 = fm.addExpense(
                 new Expense(1.0, ExpenseCategory.FOOD, LocalDate.now(), "Gum"));
         assertTrue(status1.isOverBudget());
         assertFalse(status1.isNearBudget());
 
         // Adding a second expense should still return over budget
-        FinanceManager.BudgetStatus status2 = fm.addExpense(
+        BudgetStatus status2 = fm.addExpense(
                 new Expense(5.0, ExpenseCategory.FOOD, LocalDate.now(), "Coffee"));
         assertTrue(status2.isOverBudget());
         assertFalse(status2.isNearBudget());
@@ -662,7 +663,7 @@ public class FinanceManagerTest {
         fm.setBudget(ExpenseCategory.FOOD, 100.0);
 
         // Add expense that brings us to 90% of budget (exactly at threshold)
-        FinanceManager.BudgetStatus status = fm.addExpense(
+        BudgetStatus status = fm.addExpense(
                 new Expense(90.0, ExpenseCategory.FOOD, LocalDate.now(), "Big meal"));
         assertFalse(status.isOverBudget());
         assertTrue(status.isNearBudget());
@@ -674,7 +675,7 @@ public class FinanceManagerTest {
         fm.setBudget(ExpenseCategory.FOOD, 100.0);
 
         // Add expense that brings us to 95% of budget
-        FinanceManager.BudgetStatus status = fm.addExpense(
+        BudgetStatus status = fm.addExpense(
                 new Expense(95.0, ExpenseCategory.FOOD, LocalDate.now(), "Big meal"));
         assertFalse(status.isOverBudget());
         assertTrue(status.isNearBudget());
@@ -686,7 +687,7 @@ public class FinanceManagerTest {
         fm.setBudget(ExpenseCategory.FOOD, 100.0);
 
         // Add expense that brings us to 89% of budget (just below 90% threshold)
-        FinanceManager.BudgetStatus status = fm.addExpense(
+        BudgetStatus status = fm.addExpense(
                 new Expense(89.0, ExpenseCategory.FOOD, LocalDate.now(), "Meal"));
         assertFalse(status.isOverBudget());
         assertFalse(status.isNearBudget());
@@ -698,13 +699,13 @@ public class FinanceManagerTest {
         fm.setBudget(ExpenseCategory.FOOD, 100.0);
 
         // Add first expense
-        FinanceManager.BudgetStatus status1 = fm.addExpense(
+        BudgetStatus status1 = fm.addExpense(
                 new Expense(50.0, ExpenseCategory.FOOD, LocalDate.now(), "Lunch"));
         assertFalse(status1.isOverBudget());
         assertFalse(status1.isNearBudget());
 
         // Add second expense that pushes us into near-budget zone
-        FinanceManager.BudgetStatus status2 = fm.addExpense(
+        BudgetStatus status2 = fm.addExpense(
                 new Expense(42.0, ExpenseCategory.FOOD, LocalDate.now(), "Dinner"));
         assertFalse(status2.isOverBudget());
         assertTrue(status2.isNearBudget());
@@ -775,7 +776,7 @@ public class FinanceManagerTest {
         Expense newExpense = new Expense(100.0, ExpenseCategory.FOOD,
                 LocalDate.parse("2025-01-05"), "Modified expense");
 
-        FinanceManager.BudgetStatus status = fm.modifyExpense(1, newExpense);
+        BudgetStatus status = fm.modifyExpense(1, newExpense);
 
         // Verify the expense was replaced
         List<Expense> expenses = fm.getExpensesView();
@@ -846,7 +847,7 @@ public class FinanceManagerTest {
         Expense newExpense = new Expense(200.0, ExpenseCategory.FOOD,
                 LocalDate.parse("2025-01-02"), "Expensive meal");
 
-        FinanceManager.BudgetStatus status = fm.modifyExpense(1, newExpense);
+        BudgetStatus status = fm.modifyExpense(1, newExpense);
 
         assertTrue(status.isOverBudget());
         assertFalse(status.isNearBudget());
@@ -866,7 +867,7 @@ public class FinanceManagerTest {
         Expense newExpense = new Expense(100.0, ExpenseCategory.FOOD,
                 LocalDate.parse("2025-01-02"), "Regular meal");
 
-        FinanceManager.BudgetStatus status = fm.modifyExpense(1, newExpense);
+        BudgetStatus status = fm.modifyExpense(1, newExpense);
 
         assertFalse(status.isOverBudget());
         assertFalse(status.isNearBudget());
@@ -885,7 +886,7 @@ public class FinanceManagerTest {
         Expense newExpense = new Expense(92.0, ExpenseCategory.FOOD,
                 LocalDate.parse("2025-01-02"), "Big meal");
 
-        FinanceManager.BudgetStatus status = fm.modifyExpense(1, newExpense);
+        BudgetStatus status = fm.modifyExpense(1, newExpense);
 
         assertFalse(status.isOverBudget());
         assertTrue(status.isNearBudget());

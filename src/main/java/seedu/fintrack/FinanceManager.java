@@ -15,6 +15,7 @@ import seedu.fintrack.model.ExpenseCategory;
 import seedu.fintrack.model.IncomeCategory;
 import seedu.fintrack.model.Income;
 import seedu.fintrack.model.Expense;
+import seedu.fintrack.model.BudgetStatus;
 
 /**
  * Manages all financial data including incomes and expenses.
@@ -30,27 +31,6 @@ public class FinanceManager {
     private final IncomeList incomes = new IncomeList();
     private final ExpenseList expenses = new ExpenseList(); // always newest->oldest
     private final Map<ExpenseCategory, Double> budgets = new HashMap<>();
-
-    /**
-     * Budget status information returned after adding an expense.
-     */
-    public static class BudgetStatus {
-        private final boolean isOverBudget;
-        private final boolean isNearBudget;
-
-        public BudgetStatus(boolean isOverBudget, boolean isNearBudget) {
-            this.isOverBudget = isOverBudget;
-            this.isNearBudget = isNearBudget;
-        }
-
-        public boolean isOverBudget() {
-            return isOverBudget;
-        }
-
-        public boolean isNearBudget() {
-            return isNearBudget;
-        }
-    }
 
     public void addIncome(Income income) {
         if (income == null) {
