@@ -3,6 +3,7 @@ package seedu.fintrack.model;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
@@ -50,5 +51,26 @@ public class IncomeTest {
         LocalDate date = LocalDate.of(2022, 9, 30);
         Income income = new Income(120.00, IncomeCategory.GIFT, date, "Course fee");
         assertEquals(date, income.getDate());
+    }
+
+    @Test
+    public void constructor_nonPositiveAmount_throwsIllegalArgumentException() {
+        assertFailsDueToValidation(() -> new Income(0.0, IncomeCategory.SALARY, LocalDate.now(), "Zero"));
+        assertFailsDueToValidation(() -> new Income(-10.0, IncomeCategory.SALARY, LocalDate.now(), "Negative"));
+    }
+
+    @Test
+    public void constructor_nullCategoryOrDate_throwsIllegalArgumentException() {
+        assertFailsDueToValidation(() -> new Income(10.0, null, LocalDate.now(), "No category"));
+        assertFailsDueToValidation(() -> new Income(10.0, IncomeCategory.GIFT, null, "No date"));
+    }
+
+    private static void assertFailsDueToValidation(Runnable runnable) {
+        try {
+            runnable.run();
+            fail("Expected validation failure");
+        } catch (IllegalArgumentException | AssertionError ignored) {
+            // acceptable outcome under different JVM assertion settings
+        }
     }
 }

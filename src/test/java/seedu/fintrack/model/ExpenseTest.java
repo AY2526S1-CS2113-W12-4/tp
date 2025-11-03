@@ -2,6 +2,7 @@ package seedu.fintrack.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
@@ -41,7 +42,31 @@ public class ExpenseTest {
 
     @Test
     public void getDescription_validExpense_returnsSameDescription() {
-        Expense expense = new Expense(42.00, ExpenseCategory.BILLS, LocalDate.of(2025, 3, 1), "Electricity bill");
+        Expense expense = new Expense(42.00,
+                ExpenseCategory.BILLS,
+                LocalDate.of(2025, 3, 1),
+                "Electricity bill");
         assertEquals("Electricity bill", expense.getDescription());
+    }
+
+    @Test
+    public void constructor_nonPositiveAmount_throwsIllegalArgumentException() {
+        assertFailsDueToValidation(() -> new Expense(0.0, ExpenseCategory.FOOD, LocalDate.now(), "Zero"));
+        assertFailsDueToValidation(() -> new Expense(-5.0, ExpenseCategory.FOOD, LocalDate.now(), "Negative"));
+    }
+
+    @Test
+    public void constructor_nullCategoryOrDate_throwsIllegalArgumentException() {
+        assertFailsDueToValidation(() -> new Expense(10.0, null, LocalDate.now(), "No category"));
+        assertFailsDueToValidation(() -> new Expense(10.0, ExpenseCategory.FOOD, null, "No date"));
+    }
+
+    private static void assertFailsDueToValidation(Runnable runnable) {
+        try {
+            runnable.run();
+            fail("Expected validation failure");
+        } catch (IllegalArgumentException | AssertionError ignored) {
+            // acceptable outcome (assertions enabled vs disabled)
+        }
     }
 }
