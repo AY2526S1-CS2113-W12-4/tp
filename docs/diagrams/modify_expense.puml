@@ -10,34 +10,41 @@ UI --> FT: "modify-expense 2 a/1500 c/RENT"
 FT -> P: returnFirstWord(input)
 P --> FT: "modify-expense"
 
-FT -> P: parseModifyExpense(input)
+FT -> P: parseModifyExpenseIndex(input)
 P -> P: extract index from args
 P -> P: validate index is positive number
-P -> P: parse optional fields (amount, category, date, description) into updates map
-P --> FT: Map.Entry<index, updates>
+P --> FT: index
 
-FT -> FM: modifyExpense(index, updates)
+FT -> FM: getExpense(index)
+FM --> FT: oldExpense
+
+FT -> P: parseModifyExpenseWithDefaults(input, oldExpense)
+P -> P: parse optional fields (amount, category, date, description)
+P -> P: merge with old expense values for unspecified fields
+P -> P: validate no stray text, non-finite amounts, zero amounts
+P --> FT: newExpense
+
+FT -> FM: modifyExpense(index, newExpense)
 
 FM -> FM: oldExpense = deleteExpense(index)
 
 alt index is invalid or list is empty
     FT -> UI: printError(message)
 else index is valid
-    FM -> FM: mergedExpense = mergeExpense(oldExpense, updates)
-    FM -> FM: addExpense(mergedExpense)
-    FM -> FM: check if budget exceeded
+    FM -> FM: addExpense(newExpense)
+    FM -> FM: check budget status
 
-    opt adding merged expense fails
+    opt adding new expense fails
         FM -> FM: restore old expense
         FT -> UI: printError(message)
     end
 
-    FT -> UI: printExpenseModified(mergedExpense, index)
+    FT -> UI: printExpenseModified(newExpense, index)
 
-    opt isOverBudget
-        FT -> FM: getTotalExpenseForCategory(category)
-        FT -> FM: getBudgetForCategory(category)
+    alt budgetStatus is OVER_BUDGET
         FT -> UI: printBudgetExceededWarning(category, budget, totalSpent)
+    else budgetStatus is NEAR_BUDGET
+        FT -> UI: printBudgetNearLimitWarning(category, budget, totalSpent)
     end
 end
 @enduml

@@ -10,27 +10,34 @@ UI --> FT: "modify-income 3 a/5200 c/SALARY"
 FT -> P: returnFirstWord(input)
 P --> FT: "modify-income"
 
-FT -> P: parseModifyIncome(input)
+FT -> P: parseModifyIncomeIndex(input)
 P -> P: extract index from args
 P -> P: validate index is positive number
-P -> P: parse optional fields (amount, category, date, description) into updates map
-P --> FT: Map.Entry<index, updates>
+P --> FT: index
 
-FT -> FM: modifyIncome(index, updates)
+FT -> FM: getIncome(index)
+FM --> FT: oldIncome
+
+FT -> P: parseModifyIncomeWithDefaults(input, oldIncome)
+P -> P: parse optional fields (amount, category, date, description)
+P -> P: merge with old income values for unspecified fields
+P -> P: validate no stray text, non-finite amounts, zero amounts
+P --> FT: newIncome
+
+FT -> FM: modifyIncome(index, newIncome)
 
 FM -> FM: oldIncome = deleteIncome(index)
 
 alt index is invalid or list is empty
     FT -> UI: printError(message)
 else index is valid
-    FM -> FM: mergedIncome = mergeIncome(oldIncome, updates)
-    FM -> FM: addIncome(mergedIncome)
+    FM -> FM: addIncome(newIncome)
 
-    opt adding merged income fails
+    opt adding new income fails
         FM -> FM: restore old income
         FT -> UI: printError(message)
     end
 
-    FT -> UI: printIncomeModified(mergedIncome, index)
+    FT -> UI: printIncomeModified(newIncome, index)
 end
 @enduml
