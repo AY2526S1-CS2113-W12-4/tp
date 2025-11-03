@@ -54,6 +54,7 @@ Given below are my contributions to the project:
 
   - Oversaw release management, and ensured documentation deadlines were met.
   - Managed project workflow: triaged issues, reviewed PRs with detailed feedback, and facilitated weekly syncs to drive progress and resolve blockers.
+  - Implemented improvements to the modify-expense and modify-income commands to support partial modifications after gathering user feedback, enhancing usability by allowing updates to only specified fields without requiring all parameters.
 
 - **Community**:
   - PRs reviewed (with non-trivial comments): [#147](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/147) , [#142](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/142) , [#70](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/70) , [#60](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/60) , [#53](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/53) , [#47](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/47)
