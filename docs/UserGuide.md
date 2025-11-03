@@ -532,7 +532,7 @@ Notes:
 
 ### Setting budgets: `budget` or `bg`
 
-Allows the user to set budgets for expense categories available.
+Allows the user to set budgets for expense categories available. To modify a budget that has already been set, simply re-enter the same command again with the corrected amount and relevant category.
 
 When the user is reaching their budget limit (total expense for that category is more than or equal to 90% of the budget set), FinTrack will warn users that they are approaching their budget limit.
 
@@ -563,7 +563,7 @@ Validation notes:
 
 ### Viewing list of budgets: `list-budget` or `lb`
 
-Allows the user to view the budgets set for each expense category (if applicable).
+Allows the user to view the budgets set for each expense category (if applicable).  
 
 - **Format:** `list-budget`
 - **Example usage:** `list-budget`
