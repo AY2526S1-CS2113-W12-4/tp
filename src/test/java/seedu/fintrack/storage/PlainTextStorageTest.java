@@ -3,6 +3,7 @@ package seedu.fintrack.storage;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -117,6 +118,23 @@ class PlainTextStorageTest {
     }
 
     @Test
+    void canWrite_returnsFalseWhenExistingFileNotWritable() throws IOException {
+        PlainTextStorage storage = new PlainTextStorage();
+        Path target = tempDir.resolve("existing.txt");
+        Files.writeString(target, "locked", StandardCharsets.UTF_8);
+
+        target.toFile().setWritable(false, false);
+        assumeTrue(!Files.isWritable(target),
+                "Platform did not respect read-only flag; skipping assertion");
+        try {
+            assertFalse(storage.canWrite(target),
+                    "Existing read-only file should not be considered writable");
+        } finally {
+            target.toFile().setWritable(true, false);
+        }
+    }
+
+    @Test
     void load_handlesNonAsciiRecords() throws IOException {
         Path dataFile = tempDir.resolve("fintrack-data-nonascii.txt");
         String incomeWithUnicode = "INCOME|500.00|GIFT|2024-11-01|Birthday 🎉";
@@ -200,5 +218,40 @@ class PlainTextStorageTest {
         assertFalse(Files.exists(dataFile), "Final persistence file should not be created on failure");
         assertTrue(Files.exists(locked),
                 "Temp directory should remain because deletion of non-empty dir fails");
+    }
+
+    @Test
+    void save_returnsEarlyWhenCannotCreateDirectory() throws IOException {
+        FinanceManager manager = new FinanceManager();
+        manager.addIncome(new Income(10.0, IncomeCategory.GIFT,
+                LocalDate.parse("2024-01-01"), "Gift"));
+
+        Path parentAsFile = tempDir.resolve("no-dir");
+        Files.writeString(parentAsFile, "block", StandardCharsets.UTF_8);
+        Path dataFile = parentAsFile.resolve("fintrack.txt");
+
+        PlainTextStorage storage = new PlainTextStorage();
+        storage.save(dataFile, manager);
+
+        assertFalse(Files.exists(dataFile), "Save should abort when directory cannot be created");
+        assertTrue(Files.exists(parentAsFile), "Blocking file should remain untouched");
+    }
+
+    @Test
+    void save_logsWhenMoveFails() throws IOException {
+        FinanceManager manager = new FinanceManager();
+        manager.addIncome(new Income(12.0, IncomeCategory.GIFT,
+                LocalDate.parse("2024-02-01"), "Gift move failure test"));
+
+        PlainTextStorage storage = new PlainTextStorage();
+        Path dataFile = tempDir.resolve("destDir");
+        Files.createDirectory(dataFile);
+
+        storage.save(dataFile, manager);
+
+        Path tmpFile = dataFile.getParent().resolve(dataFile.getFileName() + ".tmp");
+        assertTrue(Files.exists(dataFile), "Destination directory should remain");
+        assertTrue(Files.exists(tmpFile),
+                "Temp file should remain when move fails, indicating branch executed");
     }
 }
