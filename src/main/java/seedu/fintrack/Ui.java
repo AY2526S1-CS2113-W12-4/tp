@@ -111,10 +111,10 @@ public class Ui {
             return line == null ? "" : line.trim();
         } catch (NoSuchElementException | IllegalStateException e) {
             // stdin closed or scanner unusable — log and signal upstream to exit cleanly.
-            LOGGER.log(Level.SEVERE, "Input stream unavailable; requesting shutdown.", e);
+            printError(e.getMessage());
             return EXIT_COMMAND;
         } catch (RuntimeException e) {
-            LOGGER.log(Level.SEVERE, "Unexpected error while reading input.", e);
+            printError(e.getMessage());
             throw e;
         }
     }
