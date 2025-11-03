@@ -8,6 +8,8 @@ FinTrack is a lightning-fast, keyboard-first desktop finance tracker built for N
 - [Developer Guide](DeveloperGuide.md) - Architecture and implementation details
 - [About Us](AboutUs.md) - Meet the development team
 
+## UI Teaser
+
 ![Ui](images/Ui.png)
 
 ## Key Features
