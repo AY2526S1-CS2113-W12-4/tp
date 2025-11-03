@@ -435,7 +435,7 @@ Removes an income by its 1-based index as seen in the most recent `list-income` 
 
 ### Modifying an expense: `modify-expense` or `me`
 
-Updates an existing expense entry at a specified index. The new entry replaces the old one and is re-sorted by date if necessary.
+Updates an existing expense entry at a specified index. The new entry replaces the old one and is automatically re-sorted by date to maintain chronological order.
 
 - **Format:** `modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]`
 - **Example usage:** `modify-expense 1 a/1300 c/Rent d/2024-01-01 des/Monthly rent increased`
@@ -454,11 +454,13 @@ Validation notes:
 
 - Index must be a valid, existing expense index (as shown in `list-expense`).
 - All other validation rules are the same as for `add-expense`.
+- **Smart defaults**: Any fields not specified will retain their original values from the existing expense
+- **Minimum requirement**: At least one field (amount, category, date, or description) must be modified
 - If the modification causes the category budget to be exceeded, a warning is shown.
 
 ### Modifying an income: `modify-income` or `mi`
 
-Updates an existing income entry at a specified index. The new entry replaces the old one and is re-sorted by date if necessary.
+Updates an existing income entry at a specified index. The new entry replaces the old one and is automatically re-sorted by date to maintain chronological order.
 
 - **Format:** `modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]`
 - **Example usage:** `modify-income 3 a/250 c/Salary d/2024-01-15 des/Extra performance bonus`
@@ -477,6 +479,8 @@ Validation notes:
 
 - Index must be a valid, existing income index (as shown in `list-income`).
 - All other validation rules are the same as for `add-income`.
+- **Smart defaults**: Any fields not specified will retain their original values from the existing income
+- **Minimum requirement**: At least one field (amount, category, date, or description) must be modified
 
 ### Exporting your data: `export` or `ex`
 

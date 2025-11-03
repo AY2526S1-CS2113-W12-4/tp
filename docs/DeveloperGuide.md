@@ -405,7 +405,7 @@ Both commands work by replacing the old entry with new data while maintaining th
     - Calls `deleteExpense(index)` to remove the old expense and stores it temporarily
     - Calls `addExpense(newExpense)` to add the new expense (which maintains reverse chronological ordering)
     - If adding the new expense fails for any reason, the old expense is restored to maintain data integrity
-    - Returns a boolean indicating if the modification caused the category budget to be exceeded
+    - **Budget checking**: The `addExpense` operation automatically performs budget checking for the expense category, and returns a `BudgetStatus` indicating if the budget was exceeded
 6. `Ui.printExpenseModified()` confirms the successful modification.
 7. If the budget was exceeded, additional warnings are displayed via `printBudgetExceededWarning()`.
 
@@ -438,9 +438,10 @@ Below is a sequence diagram illustrating the `modify-income` flow:
 - **Why this approach**: The modify operations are implemented as a delete followed by an add operation, rather than direct in-place modification.
 - **Advantages**:
     - **Code Reuse**: Leverages existing, well-tested `deleteExpense()`/`deleteIncome()` and `addExpense()`/`addIncome()` methods
-    - **Consistency**: Ensures that modified entries are automatically re-sorted into the correct chronological position
+    - **Consistency**: Ensures that modified entries are automatically re-sorted into the correct chronological position (newest first)
     - **Budget Checking**: For expenses, the add operation automatically checks budget constraints
     - **Validation**: All validation logic from the add operations is automatically applied
+    - **Smart Defaults**: Unspecified fields retain their original values through the parser's default mechanism
 - **Alternatives considered**:
     - Direct in-place modification - This was rejected because:
         - Would require duplicating validation logic
@@ -453,6 +454,7 @@ Below is a sequence diagram illustrating the `modify-income` flow:
 - **Transaction-like behavior**: If adding the new entry fails, the old entry is restored from the temporary variable
 - **Why this is important**: Prevents data loss if the new entry has invalid data that passes parser validation but fails business logic validation
 - **User experience**: Users never lose their original data due to a failed modification attempt
+- **Data integrity**: This rollback mechanism ensures that modifications are atomic operations - either the entire modification succeeds or the original data remains unchanged
 
 **Parser Reuse:**
 
