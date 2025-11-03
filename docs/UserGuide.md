@@ -5,6 +5,7 @@
 - [Quick Start](#quick-start)
 - [Getting to Know FinTrack](#getting-to-know-fintrack)
 - [Where FinTrack saves your data](#where-fintrack-saves-your-data)
+  - [Advanced: editing the persistence file safely](#advanced-editing-the-persistence-file-safely)
 - [Features](#features)
   - [Viewing the built-in help: `help`](#viewing-the-built-in-help-help)
   - [Adding an expense: `add-expense` or `ae`](#adding-an-expense-add-expense-or-ae)
@@ -53,7 +54,8 @@ FinTrack is a lightweight command-line assistant that helps you keep an eye on d
 named `fintrack-data.txt`. The file lives beside the application JAR when you run
 from a packaged build, or under the `build/classes/java/main` directory when you run
 from source. Delete or rename this file if you want to start afresh.
-**DO NOT manually edit the file, as this may cause loss of data between sessions.**
+Editing the file by hand is an advanced workflow—avoid doing so unless you are confident
+about the required format and have a backup copy.
 
 **First launch tips:**
 - **Ensure you run FinTrack in folder/directory with read and write permissions**, to allow FinTrack to maintain persistent storage.
@@ -95,6 +97,33 @@ Each line in the data/persistence file looks like:
 - `INCOME|amount|CATEGORY|YYYY-MM-DD|description`
 - `EXPENSE|amount|CATEGORY|YYYY-MM-DD|description`
 - `BUDGET|CATEGORY|amount`
+
+### Advanced: editing the persistence file safely
+
+FinTrack is designed so you never have to touch `fintrack-data.txt` directly. However, advanced
+users might prefer to seed data or fix a typo using a text editor. If you choose to do so:
+
+- **Back up first.** Copy the file somewhere safe before editing; FinTrack overwrites malformed
+  lines during the next launch.
+- **Close FinTrack.** Never edit the file while the app is running—FinTrack rewrites the file on
+  exit and will discard in-flight changes.
+- **Stick to ASCII and the `|` separator.** Each line must stay ASCII-only and keep the pipe (`|`)
+  delimiters in the order shown above.
+- **Whitespace rules:** Leading or trailing spaces and tabs around each token (record type,
+  amount, category, date, description) are tolerated, but whitespace inside tokens is not.
+- **Record types are case-sensitive.** Only `INCOME`, `EXPENSE`, or `BUDGET` are accepted (case must
+  match exactly).
+- **Categories ignore case but must be valid names.** The category component is trimmed and
+  uppercased automatically; stick to the built-in categories listed in the command reference.
+- **Dates must be ISO.** Use the `YYYY-MM-DD` format with leading zeros. Invalid calendar dates or
+  extra characters (e.g. `2024-02-30`, `2024/02/30`) are rejected.
+- **Amounts must be positive decimals.** Use plain numbers such as `123.45`; avoid thousand
+  separators or currency symbols.
+- **Descriptions are optional.** Leave the trailing field empty (`...|`) if an entry has no
+  description.
+
+If the file fails to load, FinTrack prints a warning and skips any malformed lines, preserving the
+rest of your data. Restore your backup if you make a mistake.
 
 ## Features
 
@@ -651,7 +680,7 @@ You can also close the terminal window, but `bye` ensures the farewell message i
 ## FAQ
 
 **Q: Does FinTrack save my data between sessions?**  
-A: Yes! Just ensure the `fintrack-data.txt` file and the directory it is/will be stored in has sufficient permissions for FinTrack to automatically create/write to it, and _do not manually edit this file._
+A: Yes! Just ensure the `fintrack-data.txt` file and the directory it lives in remain writable so FinTrack can create/write to it. Manual edits are possible but should only be attempted if you follow the [advanced editing checklist](#advanced-editing-the-persistence-file-safely).
 
 **Q: How do I update an entry?**  
 A: Modify the entry (`modify-expense` or `modify-income`) with the correct format.
@@ -679,6 +708,9 @@ A: Yes. However, descriptions must be the last argument declared, as `des/` will
 
 **Q: Why was my date rejected even though it looks correct?**  
 A: Ensure the date is valid on the calendar and in `YYYY-MM-DD` format. Future dates (for example, `2026-10-12`) are allowed, so you can plan upcoming transactions.
+
+**Q: Why does FinTrack warn about skipping malformed persistence entries?**  
+A: A line in `fintrack-data.txt` does not match the expected `|`-separated layout. Common issues are editing the file while FinTrack is running, mixing up the field order, or inserting disallowed characters (such as additional `|`). Restore your backup or fix the affected lines using the [advanced editing guidelines](#advanced-editing-the-persistence-file-safely); FinTrack keeps the rest of the file intact.
 
 ## Known Limitations of FinTrack
 

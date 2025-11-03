@@ -332,6 +332,11 @@ Below is a sequence diagram to illustrate how summary-expense works:
 ### Persistence (via `PlainTextStorage`)
 The persistence feature keeps user data across runs by reading/writing a plaintext file (`fintrack-data.txt`). `FinTrack.main()` orchestrates when to load and save, while `PlainTextStorage` performs the actual file I/O.
 
+Although the format is intentionally human-readable for debugging, we advise manual edits only for
+advanced users who understand the delimiter layout and have backed up their data. The loader trims
+whitespace around tokens but still enforces strict record types (`INCOME`, `EXPENSE`, `BUDGET`),
+valid ISO dates, finite numeric amounts, and known categories.
+
 Here is how the persistence workflow operates:
 1. On startup, `FinTrack` instantiates `PlainTextStorage`, resolves the default data path, checks write access, and calls `load(...)` to populate `FinanceManager` if the file exists. If the location cannot be written to, it immediately surfaces `Ui.printPersistenceWarning(...)` so the user knows autosave is disabled for the session.
 2. While the REPL runs, FinTrack enforces ASCII-only input and blocks the `|` character so every command can be safely persisted using the pipe-delimited format.

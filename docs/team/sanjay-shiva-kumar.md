@@ -8,52 +8,25 @@ The following is the link to my code contribution to this project: [RepoSense Li
 
 Given below are my contributions to the project:
 
-- **New Feature**: Reverse-chronological list infrastructure (`ReverseChronoList`, `ExpenseList`, `IncomeList`)
-    - What it does: Implemented a reusable, reverse-chronological `ArrayList` derivative (`ReverseChronoList`)
-      plus concrete `ExpenseList` / `IncomeList` wrappers that sort on insert, validate user input, and expose
-      immutable views for reporting.
-    - Justification: Centralises ordering logic so every command (`list-*`, `summary-*`, `modify-*`, `delete-*`)
-      can trust the newest-first invariant, enabling features like month filters and balance summaries without
-      duplicated sorting.
+- **PlainTextStorage** – Designed and implemented the persistence layer with atomic temp-file swaps, writeability probes, ASCII validation, whitespace checks, and guarded save/load paths so autosave is reliable even when users edit the data file by hand.
+- **Reverse-chronological lists** – Implemented `ReverseChronoList` plus `ExpenseList`/`IncomeList` wrappers that sort on insert, enforce invariants, and expose immutable views so every command (`list`, `summary`, `modify`, `delete`) receives newest-first data without duplicate sorting logic.
+- **Month-aware commands** – Added optional month filters for `balance`, `list-income`, and `list-expense`, threading YearMonth parsing through `Parser`, `FinanceManager`, and `Ui` so users can zoom into any month with a single flag.
+- **Parser hardening** – Normalised argument whitespace, forced descriptions to stay last, and added helper scanners that prevent stray text from being misinterpreted as prefixes, eliminating whole classes of “des/ eats the rest” bugs.
+- **Persistence resilience** – Trimmed record types, amounts, and dates while loading `fintrack-data.txt`, synchronised console warnings, and documented the safe-editing workflow so advanced users can repair data manually without corrupting the file.
+- **Amount validation** – Guarded against `NaN`/`Infinity` across add/modify/budget pathways and tightened the error messaging to keep validation consistent.
 
-- **New Feature**: Month-aware balance and listing commands
-    - What it does: Added optional month filters to `balance`, `list-income`, and `list-expense`,
-      surfaced via `Parser.parseOptionalYearMonthAfterCommand`, `FinanceManager#getIncomesViewForMonth(...)`/
-      `#getExpensesViewForMonth(...)`, and new `Ui.printBalance(...)`/listing overloads.
-    - Justification: Lets users drill into a specific month without exporting data, improving day-to-day planning.
-    - Highlights: Updated CLI output to label the selected month.
+**Testing**
+- Continuously performed extensive manual testing to surface bugs/issues.
+- Extended `UiTest` to cover banner rendering, persistence warnings, and input sanitisation logic.
+- Wrote `FinTrackTest` to exercise the CLI loop end to end, covering success paths, error propagation, and deterministic tips output.
+- Expanded `ParserTest`, `ExpenseListTest`, `IncomeListTest`, and other model suites with whitespace torture cases, month filtering, newest-first guarantees, and non-finite validations.
+- Maintained `text-ui-test/EXPECTED.TXT` so scripted regression runs track evolving output precisely.
 
-- **Feature Hardening**: Robust command parsing and description handling
-    - What it does: Normalised post-command whitespace (`extractArgumentsAfterCommand`), enforced `des/` as the
-      final prefix (`ensureDescriptionLast`), and created helper utilities (`findFirstPrefixIndex`) so descriptions
-      can safely include `a/`, `c/`, or `d/` tokens.
-    - Justification: Prevents silent data loss (e.g., `des/... c/...` swallowing later arguments) and allows
-      users to paste tab-separated commands.
+**Documentation**
+- User Guide: explained month filters, authored the advanced persistence editing checklist, refreshed FAQs for malformed storage lines and ASCII warnings, documented persistence dos / don'ts, and provided CLI examples for whitespace tolerance.
+- Developer Guide: wrote the persistence section (including the sequence diagram), the `FinanceManager` design narrative, FinTrack overview section (including class diagram), and curated the glossary.
+- Appendices: assembled the “Known Issues” appendix to capture deployment edge cases and shell limitations.
 
-- **Enhancement**: Validation for non-finite amounts
-    - What it does: Rejected `NaN`, `Infinity`, and `-Infinity` across `add-*`, `modify-*`, and `budget` flows
-      (`Parser`, `FinanceManager`), surfacing a consistent “Amount must be finite.” message.
-    - Highlights: Extended JUnit coverage for add/modify/budget commands to ensure the validation never
-      regresses.
-
-- **Testing**
-    - Authored `FinTrackTest` (integration-style) exercising the CLI loop, random tip output detection, command
-      error handling, and locale consistency.
-    - Expanded `ParserTest` with whitespace “torture” cases, description invariants, and non-finite amount
-      scenarios.
-    - Expanded `ExpenseListTest`, `IncomeListTest`, and `ParserTest` to assert validation paths, newest-first ordering, month filters, and CLI formatting edge cases.
-    - Continuously updated `text-ui-test/EXPECTED.TXT` to keep scripted regression runs aligned with new output.
-
-- **Documentation**
-    - User Guide: 
-      - Documented month-filter usage for `balance`, `list-income`, `list-expense` 
-      - Continuously refreshed section such as help snippets, sample outputs and FAQ entries impacted by code changes.
-    - Developer Guide: 
-      - Wrote the `FinanceManager` design section (with sequence diagram for add-expense). 
-      - Created the FinTrack module overview class diagram and wrote accompanying explanation.
-      - Wrote the glossary.
-
-- **Project Management**
-    - Helped maintain issue tracker and assigning milestones to PRs
-    - Helped review and merge teammates' PRs
-    - PRs reviewed (with non-trivial comments): [#48](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/48), [#68](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/68), [#84](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/84), [#87](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/87), [#97](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/97), [#97](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/97), [#123](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/123), [#126](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/126), [#149](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/149), [#170](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/170), [#166](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/166)
+**Project Management**
+- Coordinated issue triage and milestone assignment, ensuring features landed within iteration scope.
+- Performed code reviews and merged teammate pull requests, e.g. [#48](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/48), [#68](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/68), [#84](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/84), [#87](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/87), [#97](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/97), [#123](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/123), [#126](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/126), [#149](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/149), [#166](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/166), [#237](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/237), [#241](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/241), [#245](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/245), [#283](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/283).
