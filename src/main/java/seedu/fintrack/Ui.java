@@ -852,14 +852,14 @@ public class Ui {
 
         System.out.println();
         System.out.println("7. Modify an expense:");
-        System.out.println("   modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
+        System.out.println("   modify-expense <index> [a/<amount>] [c/<category>] [d/<YYYY-MM-DD>] [des/<description>]");
         System.out.println("   (shortcut: me)");
         System.out.println("   Modifies the expense shown at that index in 'list-expense'.");
         System.out.println("   Example: me 1 a/1300 c/Rent d/2024-01-01 des/Monthly rent increased");
 
         System.out.println();
         System.out.println("8. Modify an income:");
-        System.out.println("   modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
+        System.out.println("   modify-income <index> [a/<amount>] [c/<category>] [d/<YYYY-MM-DD>] [des/<description>]");
         System.out.println("   (shortcut: mi)");
         System.out.println("   Modifies the income shown at that index in 'list-income'.");
         System.out.println("   Example: modify-income 3 a/250 c/Salary d/2024-01-15 des/Extra performance bonus");
