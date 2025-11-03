@@ -28,7 +28,7 @@ class Income
 enum ExpenseCategory
 enum IncomeCategory
 
-Ui *-- TipsStorage : owns
+Ui ..> TipsStorage : uses
 Ui ..> Expense : formats
 Ui ..> Income : formats
 Ui ..> ExpenseCategory : uses
