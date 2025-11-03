@@ -6,29 +6,29 @@
 - [Getting to Know FinTrack](#getting-to-know-fintrack)
 - [Where FinTrack saves your data](#where-fintrack-saves-your-data)
 - [Features](#features)
-  - [Viewing the built-in help: `help`](#viewing-the-built-in-help-help)
-  - [Adding an expense: `add-expense` or `ae`](#adding-an-expense-add-expense-or-ae)
-  - [Adding an income: `add-income` or `ai`](#adding-an-income-add-income-or-ai)
-  - [Listing expenses: `list-expense` or `le`](#listing-expenses-list-expense-or-le)
-  - [Listing incomes: `list-income` or `li`](#listing-incomes-list-income-or-li)
-  - [Showing your balance: `balance` or `b`](#showing-your-balance-balance-or-b)
-  - [Deleting an expense: `delete-expense` or `de`](#deleting-an-expense-delete-expense-or-de)
-  - [Deleting an income: `delete-income` or `di`](#deleting-an-income-delete-income-or-di)
-  - [Modifying an expense: `modify-expense` or `me`](#modifying-an-expense-modify-expense-or-me)
-  - [Modifying an income: `modify-income` or `mi`](#modifying-an-income-modify-income-or-mi)
-  - [Exporting your data: `export` or `ex`](#exporting-your-data-export-or-ex)
-  - [Setting budgets: `budget` or `bg`](#setting-budgets-budget-or-bg)
-  - [Viewing list of budgets: `list-budget` or `lb`](#viewing-list-of-budgets-list-budget-or-lb)
-  - [Deleting budget for an expense category: `delete-budget` or `db`](#deleting-budget-for-an-expense-category-delete-budget-or-db)
-  - [Viewing Summary of Expenses `summary-expense`](#viewing-summary-of-expenses-summary-expense)
-  - [View Summary of Income `summary-income`](#view-summary-of-income-summary-income)
-  - [Get some money saving tips `tips`](#get-some-money-saving-tips-tips)
-  - [Leaving FinTrack: `bye`](#leaving-fintrack-bye)
+    - [Viewing the built-in help: `help`](#viewing-the-built-in-help-help)
+    - [Adding an expense: `add-expense` or `ae`](#adding-an-expense-add-expense-or-ae)
+    - [Adding an income: `add-income` or `ai`](#adding-an-income-add-income-or-ai)
+    - [Listing expenses: `list-expense` or `le`](#listing-expenses-list-expense-or-le)
+    - [Listing incomes: `list-income` or `li`](#listing-incomes-list-income-or-li)
+    - [Showing your balance: `balance` or `b`](#showing-your-balance-balance-or-b)
+    - [Deleting an expense: `delete-expense` or `de`](#deleting-an-expense-delete-expense-or-de)
+    - [Deleting an income: `delete-income` or `di`](#deleting-an-income-delete-income-or-di)
+    - [Modifying an expense: `modify-expense` or `me`](#modifying-an-expense-modify-expense-or-me)
+    - [Modifying an income: `modify-income` or `mi`](#modifying-an-income-modify-income-or-mi)
+    - [Exporting your data: `export` or `ex`](#exporting-your-data-export-or-ex)
+    - [Setting budgets: `budget` or `bg`](#setting-budgets-budget-or-bg)
+    - [Viewing list of budgets: `list-budget` or `lb`](#viewing-list-of-budgets-list-budget-or-lb)
+    - [Deleting budget for an expense category: `delete-budget` or `db`](#deleting-budget-for-an-expense-category-delete-budget-or-db)
+    - [Viewing Summary of Expenses `summary-expense`](#viewing-summary-of-expenses-summary-expense)
+    - [View Summary of Income `summary-income`](#view-summary-of-income-summary-income)
+    - [Get some money saving tips `tips`](#get-some-money-saving-tips-tips)
+    - [Leaving FinTrack: `bye`](#leaving-fintrack-bye)
 - [Error Handling](#error-handling)
 - [FAQ](#faq)
 - [Known Limitations of FinTrack](#known-limitations-of-fintrack)
 - [Command Summary](#command-summary)
-  - [Command Aliases](#command-aliases)
+    - [Command Aliases](#command-aliases)
 
 ## Introduction
 
@@ -38,15 +38,15 @@ FinTrack is a lightweight command-line assistant that helps you keep an eye on d
 
 1. **Install Java 17.** FinTrack requires Java 17. Confirm your version with `java -version`.
 2. **Download FinTrack.**
-   - **Option 1: Clone the project.** Place the project folder anywhere on your computer.
-   - **Option 2: Download the JAR file.** Download `fintrack.jar` from the releases page and place it anywhere on your computer.
+    - **Option 1: Clone the project.** Place the project folder anywhere on your computer.
+    - **Option 2: Download the JAR file.** Download `fintrack.jar` from the releases page and place it anywhere on your computer.
 3. **Open a terminal at the project root (for Option 1) or where the JAR is located (for Option 2).** On Windows you can use Command Prompt or PowerShell; on macOS/Linux use your preferred shell.
 4. **Run FinTrack.**
-   - **From source (Option 1):**
-     - Windows: `.\gradlew.bat run`
-     - macOS/Linux: `./gradlew run`
-       FinTrack will compile (on first run) and display a welcome banner followed by a `>` prompt.
-   - **From JAR (Option 2):** `java -jar fintrack.jar`
+    - **From source (Option 1):**
+        - Windows: `.\gradlew.bat run`
+        - macOS/Linux: `./gradlew run`
+          FinTrack will compile (on first run) and display a welcome banner followed by a `>` prompt.
+    - **From JAR (Option 2):** `java -jar fintrack.jar`
 5. _(Optional, for Option 1)_ Build a runnable JAR with `./gradlew shadowJar` (macOS/Linux) or `.\gradlew.bat shadowJar` (Windows). The application JAR is created under `build/libs/`.
 
 **Data persistence:** FinTrack automatically saves every change to a plaintext file
@@ -69,13 +69,13 @@ from source. Delete or rename this file if you want to start afresh.
 - Commands are **case-sensitive**. Use lowercase as shown in this guide (e.g., `add-expense`, not `Add-Expense`).
 - FinTrack supports both commands typed in full as well as aliases (abbreviations). To know more about this, click [here](#command-aliases).
 - Parameters use prefixes:
-  - `a/` for amount (decimals allowed; for expenses and incomes the amount must be positive, for budgets the amount must be non-negative).
-  - `c/` for category (must be from the valid list of categories).
-  - `d/` for date in `YYYY-MM-DD` format.
-  - `des/` for an optional description. If omitted, the entry has no description.
+    - `a/` for amount (decimals allowed; for expenses and incomes the amount must be positive, for budgets the amount must be non-negative).
+    - `c/` for category (must be from the valid list of categories).
+    - `d/` for date in `YYYY-MM-DD` format.
+    - `des/` for an optional description. If omitted, the entry has no description.
 - Square brackets like `[d/<YYYY-MM>]` in the command formats mark optional parameters; leave them out entirely if you do not need that option.
 - Compulsory parameters can be input in **any order**. For example, if `add-expense` requires the `a/<amount>`, `c/<category>` and `d/<YYYY-MM-DD>` parameters, it can be input in any order (e.g. `c/<category>`, `a/<amount>`, `d/<YYYY-MM-DD>`).
-  - However, if you include the optional description (`des/`), place it after all other parameters—everything after `des/` is treated as part of the description.
+    - However, if you include the optional description (`des/`), place it after all other parameters—everything after `des/` is treated as part of the description.
 - Dates must be valid calendar dates (for example, `2025-02-29` is invalid). Dates set in the future (for example, `2026-10-12`) are also accepted.
 - **Character limits:** FinTrack only accepts standard ASCII characters. Non-ASCII
   input triggers an error.
@@ -229,17 +229,17 @@ Validation notes:
 - Amount must be a positive number (e.g., `5`, `14.20`).
 - Category and date are mandatory.
 - Description is optional; omit it entirely if not needed.
-  - Note that entering an empty description field (e.g. `add-expense a/10 c/food d/2025-10-13 des/`) 
-    will be treated as if there is no description field at all.
+    - Note that entering an empty description field (e.g. `add-expense a/10 c/food d/2025-10-13 des/`)
+      will be treated as if there is no description field at all.
 - Categories (not case-sensitive) must be any one of the following (if not, an error message is presented to the user):
-  - FOOD
-  - STUDY
-  - TRANSPORT
-  - BILLS
-  - ENTERTAINMENT
-  - RENT
-  - GROCERIES
-  - OTHERS
+    - FOOD
+    - STUDY
+    - TRANSPORT
+    - BILLS
+    - ENTERTAINMENT
+    - RENT
+    - GROCERIES
+    - OTHERS
 
 ### Adding an income: `add-income` or `ai`
 
@@ -262,11 +262,11 @@ Records income that contributes to your balance.
 The same validation rules as `add-expense` apply to amount, date, and description.
 
 - Categories must be any of the following (if not, an error message is presented to the user):
-  - SALARY
-  - SCHOLARSHIP
-  - INVESTMENT
-  - GIFT
-  - OTHERS
+    - SALARY
+    - SCHOLARSHIP
+    - INVESTMENT
+    - GIFT
+    - OTHERS
 
 ### Listing expenses: `list-expense` or `le`
 
@@ -502,8 +502,8 @@ Notes:
 - If the export fails (e.g., due to permissions), an error message is shown.
 
 ### Setting budgets: `budget` or `bg`
- 
-Allows the user to set budgets for expense categories available. 
+
+Allows the user to set budgets for expense categories available.
 
 When the user is reaching their budget limit (total expense for that category is more than or equal to 90% of the budget set), FinTrack will warn users that they are approaching their budget limit.
 
@@ -523,14 +523,14 @@ Validation notes:
 
 - Amount must be a non-negative number (e.g., `5`, `14.20`).
 - Categories (not case-sensitive) must be any one of the following (if not, an error message is presented to the user):
-  - FOOD
-  - STUDY
-  - TRANSPORT
-  - BILLS
-  - ENTERTAINMENT
-  - RENT
-  - GROCERIES
-  - OTHERS
+    - FOOD
+    - STUDY
+    - TRANSPORT
+    - BILLS
+    - ENTERTAINMENT
+    - RENT
+    - GROCERIES
+    - OTHERS
 
 ### Viewing list of budgets: `list-budget` or `lb`
 
@@ -659,14 +659,14 @@ A: Modify the entry (`modify-expense` or `modify-income`) with the correct forma
 **Q: Why do I see "Amount must be a valid number"?**  
 A: FinTrack only accepts standard numbers without currency symbols (e.g., use `a/15.90`, not `a/$15.90`).
 
-**Q: I input a high-precision decimal, and it is being rounded. Why does this happen?**
+**Q: I input a high-precision decimal, and it is being rounded. Why does this happen?**  
 A: As a finance tracker, we show our amounts up to 2 decimal points.
 
-**Q: Why does my percentage in summary show as 0.00% even though I have input some amount?**
+**Q: Why does my percentage in summary show as 0.00% even though I have input some amount?**  
 A: Our percentages are shown to 2 decimal points and hence any precision below 2 decimal points may get rounded down to 0.00%. Similarly, if a category takes up a significantly large percentage, it may be shown as 100.00% due to the percentage being rounded up to the closest 2 decimal points.
 
-**Q: Why do errors appear even though I input a valid number**
-A: Computers can only operate on a certain range of values for numerical data types. Hence, you may see some unexpected warnings for numbers that fall out of this range. 
+**Q: Why do errors appear even though I input a valid number**  
+A: Computers can only operate on a certain range of values for numerical data types. Hence, you may see some unexpected warnings for numbers that fall out of this range.
 
 **Q: Can I enter dates in other formats such as DD-MM-YYYY?**  
 A: No. FinTrack currently requires ISO format `YYYY-MM-DD`.
