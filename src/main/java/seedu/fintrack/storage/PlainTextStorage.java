@@ -135,6 +135,8 @@ public class PlainTextStorage {
                     LOGGER.log(Level.WARNING,
                             "Skipping malformed persistence entry at line {0}: {1}",
                             new Object[]{lineNumber, ex.getMessage()});
+                    System.out.println("Warning: Skipping and deleting malformed persistence entry at line "
+                            + lineNumber + " -> " + ex.getMessage());
                 }
             }
         } catch (IOException ioException) {
@@ -161,11 +163,13 @@ public class PlainTextStorage {
             throw new IllegalArgumentException("Empty record.");
         }
 
-        switch (tokens[0]) {
+        String recordType = tokens[0].trim();
+
+        switch (recordType) {
         case TYPE_INCOME -> loadIncome(tokens, manager);
         case TYPE_EXPENSE -> loadExpense(tokens, manager);
         case TYPE_BUDGET -> loadBudget(tokens, manager);
-        default -> throw new IllegalArgumentException("Unknown record type: " + tokens[0]);
+        default -> throw new IllegalArgumentException("Unknown record type: " + recordType);
         }
     }
 
@@ -173,9 +177,9 @@ public class PlainTextStorage {
         if (tokens.length != 5) {
             throw new IllegalArgumentException("Expected 5 tokens for income, found " + tokens.length);
         }
-        double amount = Double.parseDouble(tokens[1]);
+        double amount = Double.parseDouble(tokens[1].trim());
         IncomeCategory category = IncomeCategory.parse(tokens[2]);
-        LocalDate date = LocalDate.parse(tokens[3]);
+        LocalDate date = LocalDate.parse(tokens[3].trim());
         String description = tokens[4].isBlank() ? null : tokens[4];
         manager.addIncome(new Income(amount, category, date, description));
     }
@@ -184,9 +188,9 @@ public class PlainTextStorage {
         if (tokens.length != 5) {
             throw new IllegalArgumentException("Expected 5 tokens for expense, found " + tokens.length);
         }
-        double amount = Double.parseDouble(tokens[1]);
+        double amount = Double.parseDouble(tokens[1].trim());
         ExpenseCategory category = ExpenseCategory.parse(tokens[2]);
-        LocalDate date = LocalDate.parse(tokens[3]);
+        LocalDate date = LocalDate.parse(tokens[3].trim());
         String description = tokens[4].isBlank() ? null : tokens[4];
         manager.addExpense(new Expense(amount, category, date, description));
     }
@@ -196,7 +200,7 @@ public class PlainTextStorage {
             throw new IllegalArgumentException("Expected 3 tokens for budget, found " + tokens.length);
         }
         ExpenseCategory category = ExpenseCategory.parse(tokens[1]);
-        double amount = Double.parseDouble(tokens[2]);
+        double amount = Double.parseDouble(tokens[2].trim());
         manager.setBudget(category, amount);
     }
 
