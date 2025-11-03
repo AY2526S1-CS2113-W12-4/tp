@@ -1,16 +1,21 @@
 package seedu.fintrack;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDate;
 import java.util.Locale;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import seedu.fintrack.storage.PlainTextStorage;
 
 
 /**
@@ -58,12 +63,6 @@ public class FinTrackTest {
         return s.substring(i, j);
     }
 
-    private static void mustNotContain(String s, String unexpected) {
-        org.junit.jupiter.api.Assertions.assertFalse(
-                s.contains(unexpected),
-                "Did NOT expect output to contain:\n---\n" + unexpected + "\n---\nActual:\n" + s);
-    }
-
     @BeforeEach
     void setUp() {
         originalLocale = Locale.getDefault();
@@ -95,9 +94,70 @@ public class FinTrackTest {
         return out();
     }
 
+    @Test
+    void persistenceEnabled_notWritable_showsWarnings() throws Exception {
+        PlainTextStorage storage = new PlainTextStorage();
+        Path dataFile = storage.resolveDefaultFile();
+        Path parent = dataFile.getParent();
+        java.io.File parentFile = parent.toFile();
+
+        Files.deleteIfExists(dataFile);
+
+        boolean originalWritable = parentFile.canWrite();
+        assumeTrue(parentFile.setWritable(false, false),
+                "Unable to mark directory read-only; skipping test.");
+        assumeTrue(!Files.isWritable(parent),
+                "Directory is still writable after attempting to mark read-only.");
+
+        String s;
+        try {
+            s = runWithPersistenceEnabled("bye\n");
+        } finally {
+            parentFile.setWritable(true, false);
+            Files.deleteIfExists(dataFile);
+        }
+
+        mustContain(s, "PERSISTENCE WARNING:");
+    }
+
+    private String runWithPersistenceEnabled(String script) throws Exception {
+        byte[] bytes = script.getBytes(StandardCharsets.UTF_8);
+        System.setIn(new java.io.ByteArrayInputStream(bytes));
+        Ui.test_setScanner(new java.util.Scanner(System.in, StandardCharsets.UTF_8));
+
+        String previous = System.getProperty("fintrack.disablePersistence");
+        try {
+            System.setProperty("fintrack.disablePersistence", "false");
+            FinTrack.main(new String[0]);
+        } finally {
+            if (previous != null) {
+                System.setProperty("fintrack.disablePersistence", previous);
+            } else {
+                System.clearProperty("fintrack.disablePersistence");
+            }
+        }
+        return out();
+    }
+
     private static void mustContain(String s, String expected) {
         assertTrue(s.contains(expected),
                 "Expected output to contain:\n---\n" + expected + "\n---\nActual:\n" + s);
+    }
+
+    private static void mustNotContain(String s, String unexpected) {
+        org.junit.jupiter.api.Assertions.assertFalse(
+                s.contains(unexpected),
+                "Did NOT expect output to contain:\n---\n" + unexpected + "\n---\nActual:\n" + s);
+    }
+
+    private static long countOccurrences(String haystack, String needle) {
+        long count = 0;
+        int index = 0;
+        while ((index = haystack.indexOf(needle, index)) >= 0) {
+            count++;
+            index += needle.length();
+        }
+        return count;
     }
 
     @Test
@@ -275,6 +335,19 @@ public class FinTrackTest {
         mustContain(s, "Error: Usage: list-income [d/YYYY-MM]");
     }
 
+    @Test
+    void pipeCharacter_rejectedBeforeParsing() throws Exception {
+        String script = String.join("\n",
+                "add-income a/40| c/Salary d/2025-10-01",
+                "add-income a/55 c/Salary d/2025-10-02",
+                "list-income",
+                "bye");
+        String s = run(script);
+
+        mustContain(s, "The '|' character is reserved for persistence.");
+        org.junit.jupiter.api.Assertions.assertEquals(1L, countOccurrences(s, "Income added:"),
+                "Pipe-containing command should be skipped, leaving only one successful addition.");
+    }
 
     @Test
     void deleteSuccessAndOob() throws Exception {
@@ -359,6 +432,25 @@ public class FinTrackTest {
                 "list-budget",
                 "bye"));
         mustContain(s, "No budgets have been set.");
+    }
+
+    @Test
+    void deleteBudget_successAndMissing() throws Exception {
+        String script = String.join("\n",
+                "budget c/Food a/40",
+                "delete-budget c/Food",
+                "delete-budget c/Food",
+                "delete-budget c/Transport",
+                "bye");
+        String s = run(script);
+
+        mustContain(s, "Budget set for FOOD: $40.00");
+        mustContain(s, "Budget for FOOD has been deleted.");
+        org.junit.jupiter.api.Assertions.assertEquals(1L,
+                countOccurrences(s, "Budget for FOOD has been deleted."),
+                "Expected exactly one successful deletion message.");
+        mustContain(s, "Error: No budget was set for category: FOOD");
+        mustContain(s, "Error: No budget was set for category: TRANSPORT");
     }
 
     @Test
@@ -685,6 +777,20 @@ public class FinTrackTest {
     void modifyExpenseAlias_invalidFormat_showGenericError() throws Exception {
         String s = run("me abc123\nbye\n");
         mustContain(s, "Expense index must be a valid number.");
+    }
+
+    @Test
+    void modifyExpense_triggersNearBudgetWarning() throws Exception {
+        String script = String.join("\n",
+                "budget c/Food a/100",
+                "add-expense a/60 c/Food d/2025-10-02 des/Initial",
+                "add-expense a/10 c/Food d/2025-10-01 des/Second",
+                "modify-expense 2 a/35 c/Food d/2025-10-01 des/Adjusted",
+                "bye");
+        String s = run(script);
+
+        mustContain(s, "~~~~~~~~~~~~~~~~~~~~~~~~~~ BUDGET CAUTION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        mustNotContain(s, "BUDGET ALERT");
     }
 
     @Test
