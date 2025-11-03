@@ -88,42 +88,51 @@ public class FinTrackTest {
         byte[] bytes = script.getBytes(StandardCharsets.UTF_8);
         System.setIn(new java.io.ByteArrayInputStream(bytes));
         // bind Ui's scanner to current System.in
-        Ui.test_setScanner(new java.util.Scanner(System.in, StandardCharsets.UTF_8));
+        Ui.test_setScanner(new java.util.Scanner(System.in, StandardCharsets.UTF_8.name()));
         System.setProperty("fintrack.disablePersistence", "true");
         FinTrack.main(new String[0]);
         return out();
     }
 
     @Test
-    void persistenceEnabled_notWritable_showsWarnings() throws Exception {
+    void persistenceEnabled_writableDirectory_savesData() throws Exception {
         PlainTextStorage storage = new PlainTextStorage();
         Path dataFile = storage.resolveDefaultFile();
-        Path parent = dataFile.getParent();
-        java.io.File parentFile = parent.toFile();
+        assumeTrue(storage.canWrite(dataFile), "Persistence path not writable; skipping test.");
 
-        Files.deleteIfExists(dataFile);
-
-        boolean originalWritable = parentFile.canWrite();
-        assumeTrue(parentFile.setWritable(false, false),
-                "Unable to mark directory read-only; skipping test.");
-        assumeTrue(!Files.isWritable(parent),
-                "Directory is still writable after attempting to mark read-only.");
-
-        String s;
-        try {
-            s = runWithPersistenceEnabled("bye\n");
-        } finally {
-            parentFile.setWritable(true, false);
-            Files.deleteIfExists(dataFile);
+        String originalContents = null;
+        if (Files.exists(dataFile)) {
+            originalContents = Files.readString(dataFile);
         }
 
-        mustContain(s, "PERSISTENCE WARNING:");
+        try {
+            Files.deleteIfExists(dataFile);
+            String script = String.join("\n",
+                    "add-income a/42 c/Salary d/2025-10-01",
+                    "add-expense a/13 c/Food d/2025-10-02",
+                    "bye");
+
+            String s = runWithPersistenceEnabled(script);
+
+            String saved = Files.readString(dataFile);
+            org.junit.jupiter.api.Assertions.assertTrue(saved.contains("INCOME|42.0|SALARY"),
+                    "Saved data should include the income record");
+            org.junit.jupiter.api.Assertions.assertTrue(saved.contains("EXPENSE|13.0|FOOD"),
+                    "Saved data should include the expense record");
+            mustContain(s, "Bye. Hope to see you again soon!");
+        } finally {
+            if (originalContents != null) {
+                Files.writeString(dataFile, originalContents, StandardCharsets.UTF_8);
+            } else {
+                Files.deleteIfExists(dataFile);
+            }
+        }
     }
 
     private String runWithPersistenceEnabled(String script) throws Exception {
         byte[] bytes = script.getBytes(StandardCharsets.UTF_8);
         System.setIn(new java.io.ByteArrayInputStream(bytes));
-        Ui.test_setScanner(new java.util.Scanner(System.in, StandardCharsets.UTF_8));
+        Ui.test_setScanner(new java.util.Scanner(System.in, StandardCharsets.UTF_8.name()));
 
         String previous = System.getProperty("fintrack.disablePersistence");
         try {
