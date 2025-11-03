@@ -681,7 +681,7 @@ public class Ui {
             ExpenseCategory category = mapEntry.getKey();
             double amount = (mapEntry.getValue());
             double percentOfTotal = expensePercentageByCategory.get(category);
-            System.out.printf("%s: %.2f (%.2f%%)%n", category, amount, percentOfTotal);
+            System.out.printf("%s: $%.2f (%.2f%%)%n", category, amount, percentOfTotal);
 
             if (amount > topAmount) {
                 topAmount = amount;
@@ -711,7 +711,7 @@ public class Ui {
         try {
             printHorizontalLine(HORIZONTAL_LINE_LEN);
             System.out.println("Here is an overall summary of your expenses!");
-            System.out.printf("Total Expense: %.2f%n", totalExpense);
+            System.out.printf("Total Expense: $%.2f%n", totalExpense);
             printNextLine();
             System.out.println("Here is a breakdown of your expense:");
             printExpenseByCategory(totalExpense, expenseByCategory, expensePercentageByCategory);
@@ -744,7 +744,7 @@ public class Ui {
             IncomeCategory category = mapEntry.getKey();
             double amount = (mapEntry.getValue());
             double percentOfTotal = incomePercentByCategory.get(category);
-            System.out.printf("%s: %.2f (%.2f%%)%n", category, amount, percentOfTotal);
+            System.out.printf("%s: $%.2f (%.2f%%)%n", category, amount, percentOfTotal);
 
             if (amount > topAmount) {
                 topAmount = amount;
@@ -774,7 +774,7 @@ public class Ui {
         try {
             printHorizontalLine(HORIZONTAL_LINE_LEN);
             System.out.println("Here is an overall summary of your income!");
-            System.out.printf("Total Income: %.2f%n", totalIncome);
+            System.out.printf("Total Income: $%.2f%n", totalIncome);
             printNextLine();
             System.out.println("Here is a breakdown of your income:");
             printIncomeByCategory(totalIncome, incomeByCategory, incomePercentByCategory);
