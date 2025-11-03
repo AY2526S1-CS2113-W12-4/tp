@@ -10,8 +10,9 @@
     - [FinanceManager Module](#financemanager-module-financemanagerjava)
 - [Implementation](#implementation)
   - [Feature: Monthly Filtering](#monthly-filtering-balance-list-expense-list-income)
-  - [Feature: Budget](#budget-budget-and-list-budget)
+  - [Feature: Budget](#budget-budget-list-budget-and-delete-budget)
   - [Feature: Summary](#summary-summary-expense-and-summary-income)
+  - [Feature: Persistence](#persistence-via-plaintextstorage)
   - [Feature: Export](#export-export)
   - [Feature: Modify](#modify-modify-expense-and-modify-income)
 - [Appendix A: Product Scope](#appendix-a-product-scope)
@@ -19,6 +20,7 @@
 - [Appendix C: Non-Functional Requirements](#appendix-c-non-functional-requirements)
 - [Appendix D: Glossary](#appendix-d-glossary)
 - [Appendix E: Instructions for Manual Testing](#appendix-e-instructions-for-manual-testing)
+- [Appendix F: Known Issues](#appendix-f-known-issues)
 ## Acknowledgements
 
 We would like to thank our TA, Chen Siyu, and the rest of the CS2113 teaching team for their hard work and guidance!
@@ -57,12 +59,13 @@ how they depend on one another.
       text interpret CLI syntax the same way.
     - `Ui` centralises every user-facing token and message so other modules don't need to print directly to the console.
     - `FinanceManager` encapsulates all business logic, exposing the operations the rest of the app calls to manipulate/query financial data.
+    - `PlainTextStorage` performs automatic load/save of the session data (`fintrack-data.txt`) before and after the command loop.
     - `CsvStorage` implements the `Storage` interface, handling exporting financial data to CSV format. `FinTrack` instantiates it by default when handling the `export`
       command.
 
 How the `FinTrack` component works:
 
-1. The application starts by welcoming the user (via `Ui.printWelcome()`) and initialising the `FinanceManager`, which holds the application's state (all incomes, expenses and budgets).
+1. The application starts by initialising the `FinanceManager` (which holds the application's state e.g. incomes, expenses) and asking `PlainTextStorage` to populate it from the default persistence file (if present). The application proceeds to print the welcome banner (via `Ui.printWelcome()`).
 2. It waits for user input using `Ui.waitForInput()`.
 3. The input is parsed as follows:
     - The command word (e.g. `add-expense`) is extracted using `Parser.returnFirstWord()`.
@@ -75,8 +78,9 @@ How the `FinTrack` component works:
     - Any `IllegalArgumentException` or `IndexOutOfBoundsException` (from `Parser` or `FinanceManager`) is caught within the loop. The error message is retrieved (`e.getMessage()`)
       and printed to the user via `Ui.printError()`.
 5. The loop continues until the user enters the `bye` command (`Ui.EXIT_COMMAND`).
+6. Before exiting, `FinTrack` calls `PlainTextStorage.save(...)` to save financial data to `fintrack-data.txt` when permissions allow writing.
 
-The above flow is illustrated by the sequence diagram below, showing how the `add-expense` command is processed.
+The above flow is illustrated by the sequence diagram below, showing how the `add-expense` command is processed. Persistence is omitted for simplicity.
 
 ![add_expense.png](images/add_expense.png)
 
@@ -324,6 +328,23 @@ Below is a sequence diagram to illustrate how summary-expense works:
 - One thing we considered was how to implement this as simply as possible. While we recognise that the current implementation has a data-hungry implementation in a HashMap, it was also the simplest solution.
 - This solution also helps to reduce coupling and improve testing of the implementation.
 
+### Persistence (via `PlainTextStorage`)
+The persistence feature keeps user data across runs by reading/writing a plaintext file (`fintrack-data.txt`). `FinTrack.main()` orchestrates when to load and save, while `PlainTextStorage` performs the actual file I/O.
+
+Here is how the persistence workflow operates:
+1. On startup, `FinTrack` instantiates `PlainTextStorage`, resolves the default data path, checks write access, and calls `load(...)` to populate `FinanceManager` if the file exists. If the location cannot be written to, it immediately surfaces `Ui.printPersistenceWarning(...)` so the user knows autosave is disabled for the session.
+2. While the REPL runs, FinTrack enforces ASCII-only input and blocks the `|` character so every command can be safely persisted using the pipe-delimited format.
+3. When the user exits `bye`, `save(...)` serialises all incomes, expenses, and budgets. The method writes to a temporary file first and replaces the target atomically. If saving fails (e.g., read-only directory), a banner is printed but, at that point, the session has already ended—users need to rely on a prior CSV export as the fallback.
+4. Tests disable the feature entirely by setting `fintrack.disablePersistence=true`, which keeps automated runs isolated from the developer’s filesystem.
+
+Below is a sequence diagram summarising the lifecycle:
+![persistence_sequence.png](images/persistence_sequence.png)
+
+#### Design Considerations
+- Segregating persistence logic into `PlainTextStorage` keeps `FinanceManager` focused on business rules.
+- Using a simple, human-readable format facilitates debugging while temporary files avoid partial writes.
+- The system degrades gracefully: when the directory is not writable the CLI still works, relying on CSV export as a fallback option for users.
+
 ### Export (`export`)
 The export feature allows users to export all their financial data (incomes and expenses) to a CSV file for backup, analysis in spreadsheet applications, or record-keeping purposes.
 
@@ -523,6 +544,7 @@ Manage day-to-day expenses and budgets with optimal efficiency, stay on top of g
 - **Program specific terminology:**
   - _**Command word**_: First token that selects a feature (e.g., list-income).
   - _**Prefix**_: Short tag before a value that specifies the argument (e.g., `a/12.50`, `c/FOOD`, `d/2025-10-08`, `des/Lunch`).
+  - _**Command alias**_: Shortcut for a command word (e.g., `ae` expands to `add-expense`).
   - _**Enum**_ (Enumeration): A fixed set of named constants
   - _**Category**_: Enum describing type (Expense: FOOD, STUDY, …; Income: SALARY, …).
   - _**Index (1-based)**_: Visible numbering in lists that starts from 1. Used by delete-expense, etc.
@@ -531,7 +553,9 @@ Manage day-to-day expenses and budgets with optimal efficiency, stay on top of g
   - _**Newest-first**_: Display order where the most recent item appears first.
   - _**Budget**_: Per-category expense limit; warnings shown when exceeded.
   - _**Balance**_: Net amount (income − expense).
+  - _**Persistence file**_: The plaintext `fintrack-data.txt` file that stores incomes, expenses, and budgets across runs.
 - **General terminology:**
+  - _**ASCII (American Standard Code for Information Interchange)**_: 7-bit character encoding used by FinTrack to validate input.
   - **_CLI (Command-Line Interface)_**: Text-based interface where users type commands and see textual output.
   - **_REPL (Read–Evaluate–Print Loop)_**: The continuous loop that reads a command, executes it, prints the result, and repeats until program is exited.
   - **_Separation of Concerns (SoC)_**: Software design principle that divides a system into distinct sections, each handling a separate "concern" or aspect of the application.
@@ -541,6 +565,8 @@ Manage day-to-day expenses and budgets with optimal efficiency, stay on top of g
   - **_CSV (Comma-Separated Values)_**: A text file format where each row is a record and fields are separated by commas. Commonly used in spreadsheets.
   - _**Logger**_: Internal diagnostic output (e.g., INFO/WARNING/SEVERE) used for troubleshooting; not meant for end-user display.
   - _**Assertion**_: Development-time check that halts in debug/assertion-enabled runs if an invariant (a condition that should always be true) is violated.
+  - _**JVM (Java Virtual Machine)**_: Runtime environment that executes compiled Java bytecode; FinTrack runs inside the JVM.
+  - _**UTF-8**_: Variable-length Unicode encoding; required for terminals that want FinTrack to detect non-ASCII characters accurately.
 
 ## Appendix E: Instructions for manual testing
 
@@ -608,3 +634,29 @@ Compare the output of your manual session with some example outputs in `text-ui-
 ### 7. Exit
 
 Type `bye` to exit the application.
+
+## Appendix F: Known Issues
+
+- **Non-ASCII detection on Windows PowerShell**
+  `Parser.returnFirstWord` normalises the command and `FinTrack.main()` rejects
+  non-ASCII characters before dispatch. In Windows PowerShell, the console layer
+  transliterates characters outside the active code page to `?` before the JVM sees
+  them. As a result, FinTrack accepts the literal `?` and cannot surface the original
+  character to the user. The guard still protects UTF-8 capable environments, so we
+  retain it to prevent corrupting `fintrack-data.txt`.
+
+- **Whitespace collapse affects descriptions**
+  The preprocessing step `input.stripLeading().replaceAll("\\s+", " ")` runs before
+  prefix extraction. It improves parsing resilience (mixed tabs/spaces, multiple gaps)
+  but also means descriptions lose intentional extra spacing or tabs. We accept this
+  trade-off for now because it keeps tokenisation simple; if richer formatting becomes
+  important we will need to revisit the normalisation stage.
+
+- **No-write directories trigger logging stack traces**
+  FinTrack disables file logging when it detects that the persistence target cannot be
+  written. If you launch the application from a directory where the JVM cannot create
+  log files, the built-in `java.util.logging` framework still emits an initial stack
+  trace while failing to open its default handler. The program continues to run after
+  printing the warning. Mitigation options include running FinTrack from a writable
+  directory or configuring `java.util.logging.config.file` to point at a custom
+  handler that writes to an accessible location.

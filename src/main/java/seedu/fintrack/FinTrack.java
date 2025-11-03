@@ -7,7 +7,9 @@ import seedu.fintrack.model.BudgetStatus;
 import seedu.fintrack.model.IncomeCategory;
 import seedu.fintrack.storage.CsvStorage;
 import seedu.fintrack.storage.Storage;
+import seedu.fintrack.storage.PlainTextStorage;
 
+import java.nio.file.Path;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
@@ -62,11 +64,37 @@ public class FinTrack {
      * Main entry-point for the FinTrack application.
      */
     public static void main(String[] args) {
-        Ui.printWelcome();
         FinanceManager fm = new FinanceManager();
+
+        boolean persistenceEnabled = !isPersistenceDisabled();
+        PlainTextStorage persistence = null;
+        Path dataFile = null;
+        boolean persistenceWritable = false;
+
+        if (persistenceEnabled) {
+            persistence = new PlainTextStorage();
+            dataFile = persistence.resolveDefaultFile();
+            persistenceWritable = persistence.canWrite(dataFile);
+            if (!persistenceWritable) {
+                disableFileLogging();
+            }
+            persistence.load(dataFile, fm);
+            if (!persistenceWritable) {
+                Ui.printPersistenceWarning("Unable to write to persistence file: \n'"
+                        + dataFile
+                        + "'.\nChanges made in this session may not be saved.");
+            }
+        }
+
+        Ui.printWelcome();
 
         while (true) {
             String input = Ui.waitForInput();
+            if (Parser.containsForbiddenSeparator(input)) {
+                Ui.printError("The '|' character is reserved for persistence. "
+                        + "Please remove it from your command.");
+                continue;
+            }
             if (!isAsciiSafe(input)) {
                 Ui.printError(UNSUPPORTED_CHARACTER_MESSAGE);
                 continue;
@@ -301,6 +329,14 @@ public class FinTrack {
             }
         }
 
+        if (persistenceEnabled) {
+            if (persistenceWritable) {
+                persistence.save(dataFile, fm);
+            } else {
+                Ui.printPersistenceWarning("Unable to save data; persistence file could not be written.");
+            }
+        }
+
         Ui.printExit();
     }
 
@@ -324,5 +360,29 @@ public class FinTrack {
             return true;
         }
         return input.chars().allMatch(codePoint -> codePoint >= 0 && codePoint <= 0x7F);
+    }
+
+    /**
+     * Returns whether persistence should be skipped for this run.
+     *
+     * <p>Controlled via the {@code fintrack.disablePersistence} system property. When set to
+     * {@code true}, loading and saving of the plain-text data file is suppressed. This is used
+     * by the automated tests to keep runs isolated.</p>
+     *
+     * @return {@code true} if persistence is disabled, {@code false} otherwise
+     */
+    private static boolean isPersistenceDisabled() {
+        return Boolean.getBoolean("fintrack.disablePersistence");
+    }
+
+    private static void disableFileLogging() {
+        java.util.logging.Logger rootLogger = java.util.logging.Logger.getLogger("");
+        java.util.logging.Handler[] handlers = rootLogger.getHandlers();
+        for (java.util.logging.Handler handler : handlers) {
+            if (handler instanceof java.util.logging.FileHandler) {
+                handler.close();
+                rootLogger.removeHandler(handler);
+            }
+        }
     }
 }

@@ -22,6 +22,9 @@ import seedu.fintrack.tips.TipsStorage;
  * <p>Provides methods for displaying messages, reading input, and formatting output.
  */
 public class Ui {
+    // Length of line-separator for readability
+    public static final int HORIZONTAL_LINE_LEN = 80;
+    
     // Commands
     public static final String HELP_COMMAND = "help";
     public static final String ADD_EXPENSE_COMMAND = "add-expense";
@@ -165,7 +168,7 @@ public class Ui {
         Objects.requireNonNull(income.getDate(), "income date cannot be null");
         assert Double.isFinite(income.getAmount()) : "income amount must be finite";
 
-        printHorizontalLine(80);
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         System.out.println("Income added:");
         System.out.println("  Amount: " + String.format("%.2f", income.getAmount()));
         System.out.println("  Category: " + income.getCategory());
@@ -173,7 +176,7 @@ public class Ui {
         if (income.getDescription() != null && !income.getDescription().isBlank()) {
             System.out.println("  Description: " + income.getDescription());
         }
-        printHorizontalLine(80);
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         LOGGER.fine("Printed income added confirmation.");
     }
 
@@ -191,7 +194,7 @@ public class Ui {
         Objects.requireNonNull(expense.getDate(), "expense date cannot be null");
         assert Double.isFinite(expense.getAmount()) : "expense amount must be finite";
 
-        printHorizontalLine(80);
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         System.out.println("Expense added:");
         System.out.println("  Amount: " + String.format("%.2f", expense.getAmount()));
         System.out.println("  Category: " + expense.getCategory());
@@ -199,7 +202,7 @@ public class Ui {
         if (expense.getDescription() != null && !expense.getDescription().isBlank()) {
             System.out.println("  Description: " + expense.getDescription());
         }
-        printHorizontalLine(80);
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         LOGGER.fine("Printed expense added confirmation.");
     }
 
@@ -217,9 +220,11 @@ public class Ui {
         assert Double.isFinite(totalIncome) : "totalIncome must be finite";
         assert Double.isFinite(totalExpense) : "totalExpense must be finite";
 
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         System.out.println("Overall Balance: " + String.format("%.2f", balance));
         System.out.println("Total Income: " + String.format("%.2f", totalIncome));
         System.out.println("Total Expense: " + String.format("%.2f", totalExpense));
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         LOGGER.fine("Printed balance summary.");
     }
 
@@ -230,12 +235,14 @@ public class Ui {
         assert Double.isFinite(totalIncome) : "totalIncome must be finite";
         assert Double.isFinite(totalExpense) : "totalExpense must be finite";
 
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         System.out.println("Overall Balance for the month " // indicates the specific month
                 + month.format(YEAR_MONTH_FORMATTER)
                 + ": "
                 + String.format("%.2f", balance));
         System.out.println("Total Income: " + String.format("%.2f", totalIncome));
         System.out.println("Total Expense: " + String.format("%.2f", totalExpense));
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         LOGGER.fine("Printed balance summary.");
     }
 
@@ -249,9 +256,9 @@ public class Ui {
         Objects.requireNonNull(category, "category cannot be null");
         assert Double.isFinite(amount) : "amount must be finite";
 
-        printHorizontalLine(80);
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         System.out.println("Budget set for " + category + ": $" + String.format("%.2f", amount));
-        printHorizontalLine(80);
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         LOGGER.fine("Printed budget set confirmation.");
     }
 
@@ -262,9 +269,9 @@ public class Ui {
      */
     static void printBudgetDeleted(ExpenseCategory category) {
         Objects.requireNonNull(category, "category cannot be null");
-        printHorizontalLine(80);
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         System.out.println("Budget for " + category + " has been deleted.");
-        printHorizontalLine(80);
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         LOGGER.fine("Printed budget deleted confirmation.");
     }
 
@@ -282,7 +289,7 @@ public class Ui {
         Objects.requireNonNull(expense.getDate(), "expense date cannot be null");
         assert Double.isFinite(expense.getAmount()) : "expense amount must be finite";
 
-        printHorizontalLine(80);
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         System.out.println("Expense at index " + index + " modified to:");
         System.out.println("  Amount: " + String.format("%.2f", expense.getAmount()));
         System.out.println("  Category: " + expense.getCategory());
@@ -290,7 +297,7 @@ public class Ui {
         if (expense.getDescription() != null && !expense.getDescription().isBlank()) {
             System.out.println("  Description: " + expense.getDescription());
         }
-        printHorizontalLine(80);
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         LOGGER.fine("Printed expense modified confirmation.");
     }
 
@@ -308,7 +315,7 @@ public class Ui {
         Objects.requireNonNull(income.getDate(), "income date cannot be null");
         assert Double.isFinite(income.getAmount()) : "income amount must be finite";
 
-        printHorizontalLine(80);
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         System.out.println("Income at index " + index + " modified to:");
         System.out.println("  Amount: " + String.format("%.2f", income.getAmount()));
         System.out.println("  Category: " + income.getCategory());
@@ -316,7 +323,7 @@ public class Ui {
         if (income.getDescription() != null && !income.getDescription().isBlank()) {
             System.out.println("  Description: " + income.getDescription());
         }
-        printHorizontalLine(80);
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         LOGGER.fine("Printed income modified confirmation.");
     }
 
@@ -381,21 +388,21 @@ public class Ui {
         Objects.requireNonNull(budgets, "budgets cannot be null");
 
         if (budgets.isEmpty()) {
-            printHorizontalLine(80);
+            printHorizontalLine(HORIZONTAL_LINE_LEN);
             System.out.println("No budgets have been set.");
-            printHorizontalLine(80);
+            printHorizontalLine(HORIZONTAL_LINE_LEN);
             LOGGER.fine("No budgets to list.");
             return;
         }
 
-        printHorizontalLine(80);
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         System.out.println("Current Budgets:");
-        printHorizontalLine(80);
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         budgets.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .forEach(entry ->
                         System.out.printf("%-20s: $%.2f%n", entry.getKey(), entry.getValue()));
-        printHorizontalLine(80);
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         LOGGER.fine("Finished printing budgets list (count=" + budgets.size() + ").");
     }
 
@@ -434,6 +441,7 @@ public class Ui {
         Objects.requireNonNull(expense.getDate(), "expense date cannot be null");
         assert Double.isFinite(expense.getAmount()) : "expense amount must be finite";
 
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         System.out.println("Expense deleted (index " + index + "):");
         System.out.println("  Amount: " + String.format("%.2f", expense.getAmount()));
         System.out.println("  Category: " + expense.getCategory());
@@ -441,6 +449,7 @@ public class Ui {
         if (expense.getDescription() != null && !expense.getDescription().isBlank()) {
             System.out.println("  Description: " + expense.getDescription());
         }
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         LOGGER.fine("Printed expense deleted confirmation for index " + index + ".");
     }
 
@@ -464,6 +473,7 @@ public class Ui {
         Objects.requireNonNull(income.getDate(), "income date cannot be null");
         assert Double.isFinite(income.getAmount()) : "income amount must be finite";
 
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         System.out.println("Income deleted (index " + index + "):");
         System.out.println("  Amount: " + String.format("%.2f", income.getAmount()));
         System.out.println("  Category: " + income.getCategory());
@@ -471,6 +481,7 @@ public class Ui {
         if (income.getDescription() != null && !income.getDescription().isBlank()) {
             System.out.println("  Description: " + income.getDescription());
         }
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         LOGGER.fine("Printed income deleted confirmation for index " + index + ".");
     }
 
@@ -504,7 +515,7 @@ public class Ui {
                 Objects.requireNonNull(income.getDate(), "income date cannot be null");
                 assert Double.isFinite(income.getAmount()) : "income amount must be finite";
 
-                printHorizontalLine(80);
+                printHorizontalLine(HORIZONTAL_LINE_LEN);
                 System.out.println("#" + idx);
                 System.out.println("Date: " + income.getDate().format(fmt));
                 System.out.println("Amount: $" + String.format("%.2f", income.getAmount()));
@@ -517,7 +528,7 @@ public class Ui {
                         new Object[]{i, ex.toString()});
             }
         }
-        printHorizontalLine(80);
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         LOGGER.fine("Finished printing incomes list (count=" + incomesView.size() + ").");
     }
 
@@ -543,7 +554,7 @@ public class Ui {
                 Objects.requireNonNull(income.getDate(), "income date cannot be null");
                 assert Double.isFinite(income.getAmount()) : "income amount must be finite";
 
-                printHorizontalLine(80);
+                printHorizontalLine(HORIZONTAL_LINE_LEN);
                 System.out.println("#" + idx);
                 System.out.println("Date: " + income.getDate().format(fmt));
                 System.out.println("Amount: $" + String.format("%.2f", income.getAmount()));
@@ -556,7 +567,7 @@ public class Ui {
                         new Object[]{i, ex.toString()});
             }
         }
-        printHorizontalLine(80);
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         LOGGER.fine("Finished printing incomes list (count=" + incomesView.size() + ").");
     }
 
@@ -590,7 +601,7 @@ public class Ui {
                 Objects.requireNonNull(e.getDate(), "expense date cannot be null");
                 assert Double.isFinite(e.getAmount()) : "expense amount must be finite";
 
-                printHorizontalLine(80);
+                printHorizontalLine(HORIZONTAL_LINE_LEN);
                 System.out.println("#" + idx);
                 System.out.println("Date: " + e.getDate().format(fmt));
                 System.out.println("Amount: $" + String.format("%.2f", e.getAmount()));
@@ -604,7 +615,7 @@ public class Ui {
                         new Object[]{i, ex.toString()});
             }
         }
-        printHorizontalLine(80);
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         LOGGER.fine("Finished printing expenses list (count=" + expensesView.size() + ").");
     }
 
@@ -630,7 +641,7 @@ public class Ui {
                 Objects.requireNonNull(e.getDate(), "expense date cannot be null");
                 assert Double.isFinite(e.getAmount()) : "expense amount must be finite";
 
-                printHorizontalLine(80);
+                printHorizontalLine(HORIZONTAL_LINE_LEN);
                 System.out.println("#" + idx);
                 System.out.println("Date: " + e.getDate().format(fmt));
                 System.out.println("Amount: $" + String.format("%.2f", e.getAmount()));
@@ -644,7 +655,7 @@ public class Ui {
                         new Object[]{i, ex.toString()});
             }
         }
-        printHorizontalLine(80);
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         LOGGER.fine("Finished printing expenses list (count=" + expensesView.size() + ").");
     }
 
@@ -698,13 +709,13 @@ public class Ui {
             Map<ExpenseCategory, Double> expenseByCategory,
             Map<ExpenseCategory, Double> expensePercentageByCategory) {
         try {
-            printHorizontalLine(80);
+            printHorizontalLine(HORIZONTAL_LINE_LEN);
             System.out.println("Here is an overall summary of your expenses!");
             System.out.printf("Total Expense: %.2f%n", totalExpense);
             printNextLine();
             System.out.println("Here is a breakdown of your expense:");
             printExpenseByCategory(totalExpense, expenseByCategory, expensePercentageByCategory);
-            printHorizontalLine(80);
+            printHorizontalLine(HORIZONTAL_LINE_LEN);
             LOGGER.log(Level.INFO, "summary-expense called successfully.");
         } catch (NullPointerException e) {
             LOGGER.log(Level.WARNING, "totalExpense or expenseByCategory should not be null.");
@@ -761,13 +772,13 @@ public class Ui {
             Map<IncomeCategory, Double> incomeByCategory,
             Map<IncomeCategory, Double> incomePercentByCategory) {
         try {
-            printHorizontalLine(80);
+            printHorizontalLine(HORIZONTAL_LINE_LEN);
             System.out.println("Here is an overall summary of your income!");
             System.out.printf("Total Income: %.2f%n", totalIncome);
             printNextLine();
             System.out.println("Here is a breakdown of your income:");
             printIncomeByCategory(totalIncome, incomeByCategory, incomePercentByCategory);
-            printHorizontalLine(80);
+            printHorizontalLine(HORIZONTAL_LINE_LEN);
             LOGGER.log(Level.INFO, "summary-income called successfully.");
         } catch (NullPointerException e) {
             LOGGER.log(Level.WARNING, "totalIncome or incomeByCategory should not be null.");
@@ -778,11 +789,11 @@ public class Ui {
     static void printTip() {
         String tip = TIPS.returnTip();
         assert tip != null : "tip should not be null.";
-        printHorizontalLine(80);
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         System.out.println("Tip of the moment:");
-        printHorizontalLine(80);
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
         System.out.println(tip);
-        printHorizontalLine(80);
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
     }
 
     /**
@@ -795,117 +806,126 @@ public class Ui {
      */
     static void printHelp() {
         System.out.println("=== FinTrack Command Summary ===");
-        printHorizontalLine(80);
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
 
         System.out.println("1. Add an expense:");
-        System.out.println("   " + ADD_EXPENSE_COMMAND + " a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
+        System.out.println("   add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
+        System.out.println("   (shortcut: ae)");
         System.out.println("   Example: add-expense a/12.50 c/Food d/2025-10-08 des/Lunch");
         System.out.println("   Available categories: " +
                 "FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS");
 
         System.out.println();
         System.out.println("2. Add an income:");
-        System.out.println("   " + ADD_INCOME_COMMAND + " a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
-        System.out.println("   Example: add-income a/2000 c/Salary d/2025-10-01 des/Monthly pay");
+        System.out.println("   add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
+        System.out.println("   (shortcut: ai)");
+        System.out.println("   Example: ai a/2000 c/Salary d/2025-10-01 des/Monthly pay");
         System.out.println("   Available categories: SALARY, SCHOLARSHIP, INVESTMENT, GIFT, OTHERS");
 
         System.out.println();
         System.out.println("3. View all expenses (from latest to earliest date):");
-        System.out.println("   " + LIST_EXPENSE_COMMAND);
-        System.out.println("   To view by month: " + LIST_EXPENSE_COMMAND + " d/<YYYY-MM>");
+        System.out.println("   list-expense");
+        System.out.println("   (shortcut: le)");
+        System.out.println("   To view by month: list-expense d/<YYYY-MM>");
         System.out.println("   Example: list-expense d/2025-10");
 
         System.out.println();
         System.out.println("4. View all incomes (from latest to earliest date):");
-        System.out.println("   " + LIST_INCOME_COMMAND);
-        System.out.println("   To view by month: " + LIST_INCOME_COMMAND + " d/<YYYY-MM>");
-        System.out.println("   Example: list-income d/2025-10");
+        System.out.println("   list-income");
+        System.out.println("   (shortcut: li)");
+        System.out.println("   To view by month: list-income d/<YYYY-MM>");
+        System.out.println("   Example: li d/2025-10");
 
         System.out.println();
         System.out.println("5. Delete an expense:");
-        System.out.println("   " + DELETE_EXPENSE_COMMAND + " <index>");
+        System.out.println("   delete-expense <index>");
+        System.out.println("   (shortcut: de)");
         System.out.println("   Deletes the expense shown at that index in 'list-expense'.");
-        System.out.println("   Example: delete-expense 1");
+        System.out.println("   Example: de 1");
 
         System.out.println();
         System.out.println("6. Delete an income:");
-        System.out.println("   " + DELETE_INCOME_COMMAND + " <index>");
+        System.out.println("   delete-income <index>");
+        System.out.println("   (shortcut: di)");
         System.out.println("   Deletes the income shown at that index in 'list-income'.");
         System.out.println("   Example: delete-income 1");
 
         System.out.println();
         System.out.println("7. Modify an expense:");
-        System.out.println("   "
-                + MODIFY_EXPENSE_COMMAND
-                + " <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
+        System.out.println("   modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
+        System.out.println("   (shortcut: me)");
         System.out.println("   Modifies the expense shown at that index in 'list-expense'.");
-        System.out.println("   Example: modify-expense 1 a/1300 c/Rent d/2024-01-01 des/Monthly rent increased");
+        System.out.println("   Example: me 1 a/1300 c/Rent d/2024-01-01 des/Monthly rent increased");
 
         System.out.println();
         System.out.println("8. Modify an income:");
-        System.out.println("   "
-                + MODIFY_INCOME_COMMAND
-                + " <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
+        System.out.println("   modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]");
+        System.out.println("   (shortcut: mi)");
         System.out.println("   Modifies the income shown at that index in 'list-income'.");
         System.out.println("   Example: modify-income 3 a/250 c/Salary d/2024-01-15 des/Extra performance bonus");
 
         System.out.println();
         System.out.println("9. View balance summary:");
-        System.out.println("   " + BALANCE_COMMAND);
+        System.out.println("   balance");
+        System.out.println("   (shortcut: b)");
         System.out.println("   Shows total income, total expenses, and current balance.");
-        System.out.println("   To view by month: " + BALANCE_COMMAND + " d/<YYYY-MM>");
-        System.out.println("   Example: balance d/2025-10");
+        System.out.println("   To view by month: balance d/<YYYY-MM>");
+        System.out.println("   Example: b d/2025-10");
 
         System.out.println();
         System.out.println("10. Set budget for expense categories:");
-        System.out.println("    " + BUDGET_COMMAND);
+        System.out.println("    budget");
+        System.out.println("    (shortcut: bg)");
         System.out.println("    Example: budget c/FOOD a/1000");
         System.out.println("    Available categories: " +
                 "FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS");
 
         System.out.println();
         System.out.println("11. List budgets for expense categories:");
-        System.out.println("    " + LIST_BUDGET_COMMAND);
+        System.out.println("    list-budget");
+        System.out.println("    (shortcut: lb)");
         System.out.println("    Example: list-budget");
 
         System.out.println();
         System.out.println("12. Delete budget for an expense category:");
-        System.out.println("    " + DELETE_BUDGET_COMMAND + " c/<category>");
-        System.out.println("    Example: delete-budget c/FOOD");
+        System.out.println("    delete-budget c/<category>");
+        System.out.println("    (shortcut: db)");
+        System.out.println("    Example: db c/FOOD");
 
         System.out.println();
         System.out.println("13. Show a summary of your total expenses:");
-        System.out.println("    " + SUMMARY_EXPENSE_COMMAND);
+        System.out.println("    summary-expense");
         System.out.println("    Example: summary-expense");
 
         System.out.println();
         System.out.println("14. Show a summary of your total income:");
-        System.out.println("    " + SUMMARY_INCOME_COMMAND);
+        System.out.println("    summary-income");
         System.out.println("    Example: summary-income");
 
         System.out.println();
         System.out.println("15. Provides a useful tip:");
-        System.out.println("    " + TIPS_COMMAND);
+        System.out.println("    tips");
         System.out.println("    Example: tips");
 
 
         System.out.println();
         System.out.println("16. Show this help menu:");
-        System.out.println("    " + HELP_COMMAND);
+        System.out.println("    help");
         System.out.println("    Example: help");
 
         System.out.println();
         System.out.println("17. Export data to CSV file:");
-        System.out.println("    " + EXPORT_COMMAND + " <filepath>");
+        System.out.println("    export <filepath>");
+        System.out.println("    (shortcut: ex)");
         System.out.println("    Example: export financial_data.csv");
 
         System.out.println();
         System.out.println("18. Exit the program:");
-        System.out.println("    " + EXIT_COMMAND);
+        System.out.println("    bye");
         System.out.println("    Example: bye");
 
 
-        printHorizontalLine(80);
+        printHorizontalLine(HORIZONTAL_LINE_LEN);
     }
 
     /**
@@ -915,5 +935,13 @@ public class Ui {
      */
     static void printExportSuccess(Path path) {
         System.out.println("Successfully exported data to: " + path.toAbsolutePath().normalize());
+    }
+
+    static void printPersistenceWarning(String message) {
+        System.out.println();
+        System.out.println("================================================================================");
+        System.out.println("PERSISTENCE WARNING: " + message);
+        System.out.println("================================================================================");
+        System.out.println();
     }
 }

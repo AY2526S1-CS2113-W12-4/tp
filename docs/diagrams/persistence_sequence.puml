@@ -1,0 +1,30 @@
+@startuml
+title FinTrack Persistence Lifecycle
+
+actor User
+participant "<<class>>\nFinTrack" as FinTrack
+participant ":PlainTextStorage" as PlainTextStorage
+participant ":FinanceManager" as FinanceManager
+
+FinTrack -> PlainTextStorage : resolveDefaultFile()
+FinTrack -> PlainTextStorage : canWrite(file)
+PlainTextStorage --> FinTrack : writable?
+
+alt writable
+  FinTrack -> PlainTextStorage : load(file, manager)
+  PlainTextStorage -> FinanceManager : populate data
+else not writable
+  FinTrack -> User : printPersistenceWarning(...)
+end
+
+User -> FinTrack : run commands
+
+alt writable
+  FinTrack -> PlainTextStorage : save(file, manager)
+else not writable
+  FinTrack -> User : printPersistenceWarning(...)
+end
+
+FinTrack -> User : printExit()
+
+@enduml

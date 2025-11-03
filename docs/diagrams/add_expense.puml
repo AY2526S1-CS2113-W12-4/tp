@@ -1,8 +1,8 @@
 @startuml
 actor User
-participant ":FinTrack" as FT
-participant ":Ui" as UI
-participant ":Parser" as P
+participant "<<class>>\nFinTrack" as FT
+participant "<<class>>\nUi" as UI
+participant "<<class>>\nParser" as P
 participant ":FinanceManager" as FM
 
 activate FT

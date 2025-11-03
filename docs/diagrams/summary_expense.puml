@@ -2,21 +2,21 @@
 title Sequence for one successful call of "summary-expense"
 
 actor User
-participant ":FinTrack" as FinTrack
+participant "<<class>>\nFinTrack" as FinTrack
 participant ":FinanceManager" as FM
-participant ":Ui" as Ui
+participant "<<class>>\nUi" as Ui
 
 User -> FinTrack: Enter command "summary-expense"
 activate FinTrack
 
 FinTrack -> FM: getExpenseByCategory()
 activate FM
-FM --> FinTrack: Map<ExpenseCategory, Double> expenseByCategory
+FM --> FinTrack
 deactivate FM
 
 FinTrack -> FM: getTotalExpense()
 activate FM
-FM --> FinTrack: double totalExpense
+FM --> FinTrack
 deactivate FM
 
 FinTrack -> Ui: printSummaryExpense(totalExpense, expenseByCategory)

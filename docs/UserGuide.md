@@ -1,10 +1,38 @@
 # FinTrack User Guide
 
+## Table of Contents
+- [Introduction](#introduction)
+- [Quick Start](#quick-start)
+- [Getting to Know FinTrack](#getting-to-know-fintrack)
+- [Where FinTrack saves your data](#where-fintrack-saves-your-data)
+- [Features](#features)
+  - [Viewing the built-in help: `help`](#viewing-the-built-in-help-help)
+  - [Adding an expense: `add-expense` or `ae`](#adding-an-expense-add-expense-or-ae)
+  - [Adding an income: `add-income` or `ai`](#adding-an-income-add-income-or-ai)
+  - [Listing expenses: `list-expense` or `le`](#listing-expenses-list-expense-or-le)
+  - [Listing incomes: `list-income` or `li`](#listing-incomes-list-income-or-li)
+  - [Showing your balance: `balance` or `b`](#showing-your-balance-balance-or-b)
+  - [Deleting an expense: `delete-expense` or `de`](#deleting-an-expense-delete-expense-or-de)
+  - [Deleting an income: `delete-income` or `di`](#deleting-an-income-delete-income-or-di)
+  - [Modifying an expense: `modify-expense` or `me`](#modifying-an-expense-modify-expense-or-me)
+  - [Modifying an income: `modify-income` or `mi`](#modifying-an-income-modify-income-or-mi)
+  - [Exporting your data: `export` or `ex`](#exporting-your-data-export-or-ex)
+  - [Setting budgets: `budget` or `bg`](#setting-budgets-budget-or-bg)
+  - [Viewing list of budgets: `list-budget` or `lb`](#viewing-list-of-budgets-list-budget-or-lb)
+  - [Deleting budget for an expense category: `delete-budget` or `db`](#deleting-budget-for-an-expense-category-delete-budget-or-db)
+  - [Viewing Summary of Expenses `summary-expense`](#viewing-summary-of-expenses-summary-expense)
+  - [View Summary of Income `summary-income`](#view-summary-of-income-summary-income)
+  - [Get some money saving tips `tips`](#get-some-money-saving-tips-tips)
+  - [Leaving FinTrack: `bye`](#leaving-fintrack-bye)
+- [Error Handling](#error-handling)
+- [FAQ](#faq)
+- [Known Limitations of FinTrack](#known-limitations-of-fintrack)
+- [Command Summary](#command-summary)
+  - [Command Aliases](#command-aliases)
+
 ## Introduction
 
 FinTrack is a lightweight command-line assistant that helps you keep an eye on day-to-day spending and income. It is designed for users who prefer a fast, keyboard-first workflow without navigating complex spreadsheets. This guide explains how to install FinTrack, enter your transactions, and understand the feedback shown in the terminal.
-
-**Important:** FinTrack does not save data between sessions - closing the app immediately clears all records.
 
 ## Quick Start
 
@@ -21,15 +49,25 @@ FinTrack is a lightweight command-line assistant that helps you keep an eye on d
    - **From JAR (Option 2):** `java -jar fintrack.jar`
 5. _(Optional, for Option 1)_ Build a runnable JAR with `./gradlew shadowJar` (macOS/Linux) or `.\gradlew.bat shadowJar` (Windows). The application JAR is created under `build/libs/`.
 
-**Warning:** FinTrack keeps data in memory only. Leave the application running or export your records if you need to retain them after you exit.
+**Data persistence:** FinTrack automatically saves every change to a plaintext file
+named `fintrack-data.txt`. The file lives beside the application JAR when you run
+from a packaged build, or under the `build/classes/java/main` directory when you run
+from source. Delete or rename this file if you want to start afresh.
+**DO NOT manually edit the file, as this may cause loss of data between sessions.**
 
-Tip: Type `help` after launch to see every available command.
+**First launch tips:**
+- **Ensure you run FinTrack in folder/directory with read and write permissions**, to allow FinTrack to maintain persistent storage.
+- FinTrack creates `fintrack-data.txt` automatically after you add or modify data.
+  Keep a backup if you plan to experiment.
+- If the data file cannot be written (e.g., a read-only directory), FinTrack shows a
+  persistence warning banner at startup and shutdown.
+- Type `help` after launch to see every available command.
 
 ## Getting to Know FinTrack
 
 - FinTrack is fully keyboard-driven. Each command is entered on a single line and confirmed with Enter.
 - Commands are **case-sensitive**. Use lowercase as shown in this guide (e.g., `add-expense`, not `Add-Expense`).
-- FinTrack supports both commands typed in full as well as aliases. To know more about this, click [here](#command-aliases).
+- FinTrack supports both commands typed in full as well as aliases (abbreviations). To know more about this, click [here](#command-aliases).
 - Parameters use prefixes:
   - `a/` for amount (decimals allowed; for expenses and incomes the amount must be positive, for budgets the amount must be non-negative).
   - `c/` for category (must be from the valid list of categories).
@@ -39,7 +77,24 @@ Tip: Type `help` after launch to see every available command.
 - Compulsory parameters can be input in **any order**. For example, if `add-expense` requires the `a/<amount>`, `c/<category>` and `d/<YYYY-MM-DD>` parameters, it can be input in any order (e.g. `c/<category>`, `a/<amount>`, `d/<YYYY-MM-DD>`).
   - However, if you include the optional description (`des/`), place it after all other parameters—everything after `des/` is treated as part of the description.
 - Dates must be valid calendar dates (for example, `2025-02-29` is invalid). Dates set in the future (for example, `2026-10-12`) are also accepted.
-- FinTrack keeps data only while it is running. Closing the application clears all records.
+- **Character limits:** FinTrack only accepts standard ASCII characters. Non-ASCII
+  input triggers an error.
+    - **Reserved character:** The pipe `|` is reserved for the persistence file format.
+      Commands that include `|` are rejected.
+
+## Where FinTrack saves your data
+
+FinTrack writes every income, expense, and budget to a plaintext file, one record per
+line using `|` as the separator. You will find the file at:
+
+- **Running from source: (e.g. in IntelliJ)** `build/classes/java/main/fintrack-data.txt`
+- **Running from the packaged JAR:** `fintrack-data.txt` in the same folder/directory as the JAR file
+
+Each line in the data/persistence file looks like:
+
+- `INCOME|amount|CATEGORY|YYYY-MM-DD|description`
+- `EXPENSE|amount|CATEGORY|YYYY-MM-DD|description`
+- `BUDGET|CATEGORY|amount`
 
 ## Features
 
@@ -51,93 +106,106 @@ Shows a command overview in the terminal.
 - **Example usage:** `help`
 - **Sample output:**
 
-    ```
-    === FinTrack Command Summary ===
-    --------------------------------------------------------------------------------
-    1. Add an expense:
-       add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
-       Example: add-expense a/12.50 c/Food d/2025-10-08 des/Lunch
-       Available categories: FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS
-    
-    2. Add an income:
-       add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
-       Example: add-income a/2000 c/Salary d/2025-10-01 des/Monthly pay
-       Available categories: SALARY, SCHOLARSHIP, INVESTMENT, GIFT, OTHERS
-    
-    3. View all expenses (from latest to earliest date):
-       list-expense
-       To view by month: list-expense d/<YYYY-MM>
-       Example: list-expense d/2025-10
-    
-    4. View all incomes (from latest to earliest date):
-       list-income
-       To view by month: list-income d/<YYYY-MM>
-       Example: list-income d/2025-10
-    
-    5. Delete an expense:
-       delete-expense <index>
-       Deletes the expense shown at that index in 'list-expense'.
-       Example: delete-expense 1
-    
-    6. Delete an income:
-       delete-income <index>
-       Deletes the income shown at that index in 'list-income'.
-       Example: delete-income 1
-    
-    7. Modify an expense:
-       modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
-       Modifies the expense shown at that index in 'list-expense'.
-       Example: modify-expense 1 a/1300 c/Rent d/2024-01-01 des/Monthly rent increased
-    
-    8. Modify an income:
-       modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
-       Modifies the income shown at that index in 'list-income'.
-       Example: modify-income 3 a/250 c/Salary d/2024-01-15 des/Extra performance bonus
-    
-    9. View balance summary:
-       balance
-       Shows total income, total expenses, and current balance.
-       To view by month: balance d/<YYYY-MM>
-       Example: balance d/2025-10
-    
-    10. Set budget for expense categories:
-        budget
-        Example: budget c/FOOD a/1000
-        Available categories: FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS
-    
-    11. List budgets for expense categories:
-        list-budget
-        Example: list-budget
-    
-    12. Delete budget for an expense category:
-        delete-budget c/<category>
-        Example: delete-budget c/FOOD
-    
-    13. Show a summary of your total expenses:
-        summary-expense
-        Example: summary-expense
-    
-    14. Show a summary of your total income:
-        summary-income
-        Example: summary-income
-    
-    15. Provides a useful tip:
-        tips
-        Example: tips
-    
-    16. Show this help menu:
-        help
-        Example: help
-    
-    17. Export data to CSV file:
-        export <filepath>
-        Example: export financial_data.csv
-    
-    18. Exit the program:
-        bye
-        Example: bye
-    --------------------------------------------------------------------------------
-    ```
+  ```
+  === FinTrack Command Summary ===
+  --------------------------------------------------------------------------------
+  1. Add an expense:
+     add-expense a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
+     (shortcut: ae)
+     Example: add-expense a/12.50 c/Food d/2025-10-08 des/Lunch
+     Available categories: FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS
+
+  2. Add an income:
+     add-income a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
+     (shortcut: ai)
+     Example: ai a/2000 c/Salary d/2025-10-01 des/Monthly pay
+     Available categories: SALARY, SCHOLARSHIP, INVESTMENT, GIFT, OTHERS
+
+  3. View all expenses (from latest to earliest date):
+     list-expense
+     (shortcut: le)
+     To view by month: list-expense d/<YYYY-MM>
+     Example: list-expense d/2025-10
+
+  4. View all incomes (from latest to earliest date):
+     list-income
+     (shortcut: li)
+     To view by month: list-income d/<YYYY-MM>
+     Example: li d/2025-10
+
+  5. Delete an expense:
+     delete-expense <index>
+     (shortcut: de)
+     Deletes the expense shown at that index in 'list-expense'.
+     Example: de 1
+
+  6. Delete an income:
+     delete-income <index>
+     (shortcut: di)
+     Deletes the income shown at that index in 'list-income'.
+     Example: delete-income 1
+
+  7. Modify an expense:
+     modify-expense <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
+     (shortcut: me)
+     Modifies the expense shown at that index in 'list-expense'.
+     Example: me 1 a/1300 c/Rent d/2024-01-01 des/Monthly rent increased
+
+  8. Modify an income:
+     modify-income <index> a/<amount> c/<category> d/<YYYY-MM-DD> [des/<description>]
+     (shortcut: mi)
+     Modifies the income shown at that index in 'list-income'.
+     Example: modify-income 3 a/250 c/Salary d/2024-01-15 des/Extra performance bonus
+
+  9. View balance summary:
+     balance
+     (shortcut: b)
+     Shows total income, total expenses, and current balance.
+     To view by month: balance d/<YYYY-MM>
+     Example: b d/2025-10
+
+  10. Set budget for expense categories:
+      budget
+      (shortcut: bg)
+      Example: budget c/FOOD a/1000
+      Available categories: FOOD, STUDY, TRANSPORT, BILLS, ENTERTAINMENT, RENT, GROCERIES, OTHERS
+
+  11. List budgets for expense categories:
+      list-budget
+      (shortcut: lb)
+      Example: list-budget
+
+  12. Delete budget for an expense category:
+      delete-budget c/<category>
+      (shortcut: db)
+      Example: db c/FOOD
+
+  13. Show a summary of your total expenses:
+      summary-expense
+      Example: summary-expense
+
+  14. Show a summary of your total income:
+      summary-income
+      Example: summary-income
+
+  15. Provides a useful tip:
+      tips
+      Example: tips
+
+  16. Show this help menu:
+      help
+      Example: help
+
+  17. Export data to CSV file:
+      export <filepath>
+      (shortcut: ex)
+      Example: export financial_data.csv
+
+  18. Exit the program:
+      bye
+      Example: bye
+  --------------------------------------------------------------------------------
+  ```
 
 ### Adding an expense: `add-expense` or `ae`
 
@@ -147,11 +215,13 @@ Creates a new expense. Expenses are automatically sorted so the newest date appe
 - **Example usage:** `add-expense a/12.50 c/Food d/2025-10-08 des/Lunch with friends`
 - **Sample output:**
   ```
+  --------------------------------------------------
   Expense added:
     Amount: 12.50
     Category: FOOD
     Date: 2025-10-08
     Description: Lunch with friends
+  --------------------------------------------------
   ```
 
 Validation notes:
@@ -180,11 +250,13 @@ Records income that contributes to your balance.
 - **Sample output:**
 
   ```
+  --------------------------------------------------
   Income added:
     Amount: 3200.00
     Category: SALARY
     Date: 2025-10-01
     Description: October salary
+  --------------------------------------------------
   ```
 
 The same validation rules as `add-expense` apply to amount, date, and description.
@@ -298,9 +370,11 @@ Summarises total income, total expenses, and the resulting balance (`income - ex
 - **Sample output:**
 
   ```
+  --------------------------------------------------
   Overall Balance: 3158.00
     Total Income:  3200.00
     Total Expense: 42.00
+  --------------------------------------------------
   ```
 
 #### Filtering by month (for balance)
@@ -312,9 +386,11 @@ For example, `balance d/2025-01` displays the total income, expenses, and balanc
 - **Sample output:**
 
   ```
+  --------------------------------------------------
   Overall Balance for the month 2025-01: 3158.00
   Total Income: 3200.00
   Total Expense: 42.00
+  --------------------------------------------------
   ```
 
 ### Deleting an expense: `delete-expense` or `de`
@@ -326,11 +402,13 @@ Removes an expense by its 1-based index as seen in the most recent `list-expense
 - **Sample output:**
 
   ```
+  --------------------------------------------------
   Expense deleted (index 2):
     Amount: 12.50
     Category: FOOD
     Date: 2025-10-08
     Description: Lunch with friends
+  --------------------------------------------------
   ```
 
 FinTrack rejects zero or negative indexes and any index larger than the number of expenses.
@@ -344,11 +422,13 @@ Removes an income by its 1-based index as seen in the most recent `list-income` 
 - **Sample output:**
 
   ```
+  --------------------------------------------------
   Income deleted (index 1):
     Amount: 3200.00
     Category: SALARY
     Date: 2025-10-01
     Description: October salary
+  --------------------------------------------------
   ```
 
   FinTrack rejects zero or negative indexes and any index larger than the number of incomes.
@@ -361,11 +441,13 @@ Updates an existing expense entry at a specified index. The new entry replaces t
 - **Example usage:** `modify-expense 1 a/1300 c/Rent d/2024-01-01 des/Monthly rent increased`
 - **Sample output:**
   ```
+  --------------------------------------------------
   Expense at index 1 modified to:
     Amount: 1300.00
     Category: RENT
     Date: 2024-01-01
     Description: Monthly rent increased
+  --------------------------------------------------
   ```
 
 Validation notes:
@@ -382,11 +464,13 @@ Updates an existing income entry at a specified index. The new entry replaces th
 - **Example usage:** `modify-income 3 a/250 c/Salary d/2024-01-15 des/Extra performance bonus`
 - **Sample output:**
   ```
+  --------------------------------------------------
   Income at index 3 modified to:
     Amount: 250.00
     Category: SALARY
     Date: 2024-01-15
     Description: Extra performance bonus
+  --------------------------------------------------
   ```
 
 Validation notes:
@@ -424,7 +508,9 @@ When the user goes overbudget for any expense category, every new expense added 
 - **Sample output:**
 
   ```
+  --------------------------------------------------
   Budget set for FOOD: $500.00
+  --------------------------------------------------
   ```
 
 Validation notes:
@@ -475,7 +561,7 @@ Allows the user to delete the budgets set for each expense category (if applicab
 
 If the user has not set budgets for a certain category (e.g FOOD), FinTrack prints `Error: No budget was set for category: FOOD`
 
-### Viewing Summary of Expenses `summary-expense` 
+### Viewing Summary of Expenses `summary-expense`
 
 Gives a summary of your overall expenses.
 
@@ -530,7 +616,9 @@ Get a random tip.
 - **Sample Output:**
 
   ```
+  --------------------------------------------------
   Take the shuttle bus, it's worth it :(
+  --------------------------------------------------
   ```
 
 ### Leaving FinTrack: `bye`
@@ -557,7 +645,7 @@ You can also close the terminal window, but `bye` ensures the farewell message i
 ## FAQ
 
 **Q: Does FinTrack save my data between sessions?**  
-A: Not yet. All data resides in memory. Export important figures before exiting.
+A: Yes! Just ensure the `fintrack-data.txt` file and the directory it is/will be stored in has sufficient permissions for FinTrack to automatically create/write to it, and _do not manually edit this file._
 
 **Q: How do I update an entry?**  
 A: Modify the entry (`modify-expense` or `modify-income`) with the correct format.
@@ -585,6 +673,28 @@ A: Yes. However, descriptions must be the last argument declared, as `des/` will
 
 **Q: Why was my date rejected even though it looks correct?**  
 A: Ensure the date is valid on the calendar and in `YYYY-MM-DD` format. Future dates (for example, `2026-10-12`) are allowed, so you can plan upcoming transactions.
+
+## Known Limitations of FinTrack
+
+- **Non-ASCII input in some shells/environments**:
+  FinTrack rejects non-ASCII characters to keep the persistence file stable. In UTF-8
+  capable terminals (IntelliJ IDEA run console, macOS Terminal, most Linux shells) the
+  guard works as expected. Windows PowerShell, however, converts non-ASCII input to `?`
+  before FinTrack receives it, so non-ASCII characters appear as question marks instead
+  of triggering our warning. This is a limitation of the shell; FinTrack cannot detect
+  the original character. Use a UTF-8 terminal (e.g., Windows Terminal configured for
+  UTF-8) if you need explicit feedback.
+
+- **Whitespace normalisation in descriptions**:
+  As part of pre-processing, FinTrack collapses every consecutive segment of whitespace characters (e.g. spaces, tabs)
+  into a single space. This keeps command parsing predictable but also affects the
+  `des/` field: consecutive spaces or tabs are compressed before being saved. If you
+  need emphasised spacing, consider using punctuation or repeated characters instead.
+
+- **Extra warnings in read-only folders**:
+  When FinTrack starts in a location where it cannot create or update files, Java prints a long warning message about
+  log files before the app shows its normal messages. This does not affect your data, but it does make the console
+  look noisy. Run FinTrack from a folder you can write to (or adjust permissions) to avoid the warning.
 
 ## Command Summary
 
@@ -630,4 +740,4 @@ For faster typing, you can use these shortcuts:
 | `ex`  | `export`         | `ex financial_data.csv`           |
 | `b`   | `balance`        | `b`                               |
 
-Stay tuned to the project repository for upcoming enhancements such as persistent storage and advanced summaries.
+Stay tuned to the project repository for upcoming enhancements such as advanced summaries.

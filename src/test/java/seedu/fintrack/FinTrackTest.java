@@ -89,7 +89,8 @@ public class FinTrackTest {
         byte[] bytes = script.getBytes(StandardCharsets.UTF_8);
         System.setIn(new java.io.ByteArrayInputStream(bytes));
         // bind Ui's scanner to current System.in
-        Ui.test_setScanner(new java.util.Scanner(System.in, StandardCharsets.UTF_8.name()));
+        Ui.test_setScanner(new java.util.Scanner(System.in, StandardCharsets.UTF_8));
+        System.setProperty("fintrack.disablePersistence", "true");
         FinTrack.main(new String[0]);
         return out();
     }
