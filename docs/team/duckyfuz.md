@@ -8,23 +8,29 @@ The following is the link to my code contribution to this project: [RepoSense Li
 
 Given below are my contributions to the project:
 
-- **New Feature**: Implement the `edit-expense` command
+- **New Feature**: Implement the `modify-expense` command
 
-  - What it does: Allows users to modify an existing expense entry at a specified index, updating its amount, category, date, and description.
+  - What it does: Allows users to modify an existing expense entry at a specified index, updating only the specified fields (amount, category, date, and/or description), leaving others unchanged.
   - Justification: Enables users to correct mistakes or update records without deleting and re-adding expenses, improving usability and data integrity.
-  - Highlights: Ensures robust validation, preserves chronological order, and provides clear feedback on successful edits or errors.
+  - Highlights: Supports partial updates for flexibility, ensures robust validation, preserves chronological order, and provides clear feedback on successful edits or errors.
 
-- **New Feature**: Implement the `edit-income` command
+- **New Feature**: Implement the `modify-income` command
 
-  - What it does: Lets users update an existing income entry at a specified index, changing its amount, category, date, and description.
+  - What it does: Lets users update an existing income entry at a specified index, changing only the specified fields (amount, category, date, and/or description), leaving others unchanged.
   - Justification: Offers flexibility to maintain accurate income records and reduces friction when updating past entries.
-  - Highlights: Shares a consistent interface and validation logic with `edit-expense`, ensuring a seamless user experience.
+  - Highlights: Supports partial updates, shares a consistent interface and validation logic with `modify-expense`, ensuring a seamless user experience.
 
 - **New Feature**: Implement the `export` command
 
   - What it does: Exports all financial data (incomes, expenses, and summary) to a CSV file for backup or analysis in spreadsheet applications.
   - Justification: Provides users with data portability and the ability to analyze or archive their finances outside the app.
   - Highlights: Follows Single Responsibility Principle by delegating file I/O to a dedicated storage layer, and produces a well-formatted, standards-compliant CSV output.
+
+- **New Feature**: Implement command aliases for improved user experience.
+
+  - What it does: Allows users to use short aliases like "mi" for "modify-income", "me" for "modify-expense", "ae" for "add-expense", etc., to speed up command entry while maintaining full command support.
+  - Justification: Reduces typing effort and improves efficiency for frequent users without breaking existing workflows.
+  - Highlights: Maintains backward compatibility with full command names and provides intuitive shortcuts.
 
 - **Enhancements**:
 
