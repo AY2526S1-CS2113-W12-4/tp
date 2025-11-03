@@ -162,8 +162,20 @@ public class FinTrack {
             case Ui.BUDGET_COMMAND:
                 try {
                     var budgetInfo = Parser.parseSetBudget(expandedInput);
-                    fm.setBudget(budgetInfo.getKey(), budgetInfo.getValue());
-                    Ui.printBudgetSet(budgetInfo.getKey(), budgetInfo.getValue());
+                    ExpenseCategory category = budgetInfo.getKey();
+                    double budgetAmount = budgetInfo.getValue();
+
+                    fm.setBudget(category, budgetAmount);
+                    Ui.printBudgetSet(category, budgetAmount);
+
+                    // Check if current spending already exceeds or is near the new budget
+                    double currentTotal = fm.getTotalExpenseForCategory(category);
+
+                    if (currentTotal > budgetAmount) {
+                        Ui.printBudgetExceededWarning(category, budgetAmount, currentTotal);
+                    } else if (budgetAmount > 0 && currentTotal >= budgetAmount * 0.90) {
+                        Ui.printBudgetNearWarning(category, budgetAmount, currentTotal);
+                    }
                 } catch (IllegalArgumentException e) {
                     Ui.printError(e.getMessage());
                 }
@@ -189,6 +201,20 @@ public class FinTrack {
                     int expenseIndex = Parser.parseDeleteExpense(expandedInput);
                     var deletedExpense = fm.deleteExpense(expenseIndex);
                     Ui.printExpenseDeleted(deletedExpense, expenseIndex);
+
+                    // After deleting, check if the category still exceeds or is near budget
+                    ExpenseCategory category = deletedExpense.getCategory();
+                    Double budget = fm.getBudgetForCategory(category);
+
+                    if (budget != null) {
+                        double totalSpent = fm.getTotalExpenseForCategory(category);
+
+                        if (totalSpent > budget) {
+                            Ui.printBudgetExceededWarning(category, budget, totalSpent);
+                        } else if (budget > 0 && totalSpent >= budget * 0.90) {
+                            Ui.printBudgetNearWarning(category, budget, totalSpent);
+                        }
+                    }
                 } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
                     Ui.printError(e.getMessage());
                 }
