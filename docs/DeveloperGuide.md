@@ -12,6 +12,7 @@
   - [Feature: Monthly Filtering](#monthly-filtering-balance-list-expense-list-income)
   - [Feature: Budget](#budget-budget-list-budget-and-delete-budget)
   - [Feature: Summary](#summary-summary-expense-and-summary-income)
+  - [Feature: Persistence](#persistence-via-plaintextstorage)
   - [Feature: Export](#export-export)
   - [Feature: Modify](#modify-modify-expense-and-modify-income)
 - [Appendix A: Product Scope](#appendix-a-product-scope)
@@ -58,12 +59,13 @@ how they depend on one another.
       text interpret CLI syntax the same way.
     - `Ui` centralises every user-facing token and message so other modules don't need to print directly to the console.
     - `FinanceManager` encapsulates all business logic, exposing the operations the rest of the app calls to manipulate/query financial data.
+    - `PlainTextStorage` performs automatic load/save of the session data (`fintrack-data.txt`) before and after the command loop.
     - `CsvStorage` implements the `Storage` interface, handling exporting financial data to CSV format. `FinTrack` instantiates it by default when handling the `export`
       command.
 
 How the `FinTrack` component works:
 
-1. The application starts by welcoming the user (via `Ui.printWelcome()`) and initialising the `FinanceManager`, which holds the application's state (all incomes, expenses and budgets).
+1. The application starts by initialising the `FinanceManager` (which holds the application's state e.g. incomes, expenses) and asking `PlainTextStorage` to populate it from the default persistence file (if present). The application proceeds to print the welcome banner (via `Ui.printWelcome()`).
 2. It waits for user input using `Ui.waitForInput()`.
 3. The input is parsed as follows:
     - The command word (e.g. `add-expense`) is extracted using `Parser.returnFirstWord()`.
@@ -76,8 +78,9 @@ How the `FinTrack` component works:
     - Any `IllegalArgumentException` or `IndexOutOfBoundsException` (from `Parser` or `FinanceManager`) is caught within the loop. The error message is retrieved (`e.getMessage()`)
       and printed to the user via `Ui.printError()`.
 5. The loop continues until the user enters the `bye` command (`Ui.EXIT_COMMAND`).
+6. Before exiting, `FinTrack` calls `PlainTextStorage.save(...)` to save financial data to `fintrack-data.txt` when permissions allow writing.
 
-The above flow is illustrated by the sequence diagram below, showing how the `add-expense` command is processed.
+The above flow is illustrated by the sequence diagram below, showing how the `add-expense` command is processed. Persistence is omitted for simplicity.
 
 ![add_expense.png](images/add_expense.png)
 
@@ -324,6 +327,23 @@ Below is a sequence diagram to illustrate how summary-expense works:
 
 - One thing we considered was how to implement this as simply as possible. While we recognise that the current implementation has a data-hungry implementation in a HashMap, it was also the simplest solution.
 - This solution also helps to reduce coupling and improve testing of the implementation.
+
+### Persistence (via `PlainTextStorage`)
+The persistence feature keeps user data across runs by reading/writing a plaintext file (`fintrack-data.txt`). `FinTrack.main()` orchestrates when to load and save, while `PlainTextStorage` performs the actual file I/O.
+
+Here is how the persistence workflow operates:
+1. On startup, `FinTrack` instantiates `PlainTextStorage`, resolves the default data path, checks write access, and calls `load(...)` to populate `FinanceManager` if the file exists. If the location cannot be written to, it immediately surfaces `Ui.printPersistenceWarning(...)` so the user knows autosave is disabled for the session.
+2. While the REPL runs, FinTrack enforces ASCII-only input and blocks the `|` character so every command can be safely persisted using the pipe-delimited format.
+3. When the user exits `bye`, `save(...)` serialises all incomes, expenses, and budgets. The method writes to a temporary file first and replaces the target atomically. If saving fails (e.g., read-only directory), a banner is printed but, at that point, the session has already ended—users need to rely on a prior CSV export as the fallback.
+4. Tests disable the feature entirely by setting `fintrack.disablePersistence=true`, which keeps automated runs isolated from the developer’s filesystem.
+
+Below is a sequence diagram summarising the lifecycle:
+![persistence_sequence.png](images/persistence_sequence.png)
+
+#### Design Considerations
+- Segregating persistence logic into `PlainTextStorage` keeps `FinanceManager` focused on business rules.
+- Using a simple, human-readable format facilitates debugging while temporary files avoid partial writes.
+- The system degrades gracefully: when the directory is not writable the CLI still works, relying on CSV export as a fallback option for users.
 
 ### Export (`export`)
 The export feature allows users to export all their financial data (incomes and expenses) to a CSV file for backup, analysis in spreadsheet applications, or record-keeping purposes.

@@ -1,9 +1,9 @@
 @startuml
-participant ":FinTrack" as FT
-participant ":Parser" as P
+participant "<<class>>\nFinTrack" as FT
+participant "<<class>>\nParser" as P
 participant ":CsvStorage" as CS
 participant ":FinanceManager" as FM
-participant ":Ui" as UI
+participant "<<class>>\nUi" as UI
 
 FT -> UI: waitForInput()
 UI --> FT: "export data.csv"

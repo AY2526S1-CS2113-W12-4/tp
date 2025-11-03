@@ -1,7 +1,7 @@
 @startuml
   hide circle
   skinparam classAttributeIconSize 0
-  top to bottom direction
+  left to right direction
   title FinTrack Core Module Overview
 
   class FinTrack
@@ -9,12 +9,17 @@
   class Parser
   class FinanceManager
   interface Storage
+  class CsvStorage
+  class PlainTextStorage
+
   FinTrack ..> FinanceManager : invoke commands
   FinTrack ..> Parser : parse commands
   FinTrack ..> Ui : render messages
-  FinTrack ..> Storage : delegate export
+  FinTrack ..> PlainTextStorage : load/save session
+  FinTrack ..> Storage : delegate exports
   CsvStorage ..|> Storage
-  FinTrack ..> CsvStorage : default storage
+  FinTrack ..> CsvStorage : instantiate for export
+  PlainTextStorage ..> FinanceManager : populate state
   Parser ..> Ui : use command prefixes
 
   @enduml

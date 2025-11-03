@@ -5,20 +5,20 @@ skinparam roundcorner 10
 skinparam participantpadding 5
 skinparam boxpadding 30
 
-participant ":FinTrack"
-participant ":Parser"
+participant "<<class>>\nFinTrack" as FinTrack
+participant "<<class>>\nParser" as Parser
 participant "expense:Expense" as Expense
 
-":FinTrack" -> ":Parser" : parseAddExpense("add-expense a/10 c/food d/2025-10-22")
+FinTrack -> Parser : parseAddExpense("add-expense a/10 c/food d/2025-10-22")
 
-activate ":Parser"
-":Parser" -> ":Parser" : args = input.substring(...)
-":Parser" -> ":Parser" : amountStr = getValue(args, "a/")
-":Parser" -> ":Parser" : categoryStr = getValue(args, "c/")
-":Parser" -> ":Parser" : dateStr = getValue(args, "d/")
-":Parser" -> ":Parser" : desc = getOptionalValue(args, "des/")
+activate Parser
+Parser -> Parser : args = input.substring(...)
+Parser -> Parser : amountStr = getValue(args, "a/")
+Parser -> Parser : categoryStr = getValue(args, "c/")
+Parser -> Parser : dateStr = getValue(args, "d/")
+Parser -> Parser : desc = getOptionalValue(args, "des/")
 
-note right of ":Parser"
+note right of Parser
     Performs type conversions:
     - amount = Double.parseDouble("10")
     - category = ExpenseCategory.parse("food")
@@ -30,12 +30,12 @@ note right of ":Parser"
     - date is in YYYY-MM-DD format and exists
 end note
 
-":Parser" -> ":Parser" : amount = Double.parseDouble(amountStr)
-":Parser" -> ":Parser" : category = ExpenseCategory.parse(categoryStr)
-":Parser" -> ":Parser" : date = LocalDate.parse(dateStr)
+Parser -> Parser : amount = Double.parseDouble(amountStr)
+Parser -> Parser : category = ExpenseCategory.parse(categoryStr)
+Parser -> Parser : date = LocalDate.parse(dateStr)
 
 create Expense
-":Parser" -> Expense : new Expense(10.0, FOOD, 2025-10-22, "")
+Parser -> Expense : new Expense(10.0, FOOD, 2025-10-22, "")
 activate Expense
 
 note right of Expense
@@ -45,9 +45,9 @@ note right of Expense
     - date != null
 end note
 
-Expense --> ":Parser"
+Expense --> Parser
 deactivate Expense
 
-":Parser" --> ":FinTrack" : expense:Expense
-deactivate ":Parser"
+Parser --> FinTrack : expense:Expense
+deactivate Parser
 @enduml

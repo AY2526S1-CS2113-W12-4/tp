@@ -1,8 +1,8 @@
 @startuml
-participant ":FinTrack" as FT
-participant ":Parser" as P
+participant "<<class>>\nFinTrack" as FT
+participant "<<class>>\nParser" as P
 participant ":FinanceManager" as FM
-participant ":Ui" as UI
+participant "<<class>>\nUi" as UI
 
 FT -> UI: waitForInput()
 UI --> FT: "modify-expense 2 a/1500 c/RENT d/2025-01-01 des/Updated rent"
