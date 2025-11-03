@@ -30,6 +30,7 @@ import seedu.fintrack.model.IncomeCategory;
 final class Parser {
     private static final Logger LOGGER = Logger.getLogger(Parser.class.getName());
     private static final DateTimeFormatter YEAR_MONTH_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM");
+    private static final Pattern YEAR_MONTH_PATTERN = Pattern.compile("\\d{4}-\\d{2}");
     private static final Pattern ISO_DATE_PATTERN = Pattern.compile("\\d{4}-\\d{2}-\\d{2}");
 
     static {
@@ -870,6 +871,12 @@ final class Parser {
             throw new IllegalArgumentException("Usage: " + commandLiteral + " [" + Ui.DATE_PREFIX + "YYYY-MM]");
         }
 
+        if (!YEAR_MONTH_PATTERN.matcher(monthToken).matches()) {
+            LOGGER.log(Level.WARNING, "Month not in YYYY-MM format after {0}: {1}",
+                    new Object[]{commandLiteral, monthToken});
+            throw new IllegalArgumentException("Month must be in YYYY-MM format.");
+        }
+
         try {
             YearMonth parsed = YearMonth.parse(monthToken, YEAR_MONTH_FORMATTER);
             LOGGER.log(Level.FINE, "Parsed YearMonth {0} for command {1}",
@@ -878,7 +885,7 @@ final class Parser {
         } catch (DateTimeParseException ex) {
             LOGGER.log(Level.WARNING, "Invalid month format after {0}: {1}",
                     new Object[]{commandLiteral, monthToken});
-            throw new IllegalArgumentException("Month must be in YYYY-MM format.");
+            throw new IllegalArgumentException("Invalid date: " + monthToken + " does not exist.");
         }
     }
 
