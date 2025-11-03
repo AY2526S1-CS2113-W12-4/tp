@@ -199,6 +199,32 @@ public class IncomeListTest {
         assertEquals(jan, list.get(2));
     }
 
+    @Test
+    void add_amountTooSmall_throwsIllegalArgumentException() {
+        IncomeList list = new IncomeList();
+        Income tiny = new Income(1e-10,
+                IncomeCategory.SALARY,
+                LocalDate.parse("2025-02-01"),
+                "Tiny");
+
+        assertThrows(IllegalArgumentException.class, () -> list.add(tiny));
+    }
+
+    @Test
+    void addAll_collectionContainingNull_throwsNullPointerException() {
+        IncomeList list = new IncomeList();
+        Income income = new Income(50.0,
+                IncomeCategory.SALARY,
+                LocalDate.parse("2025-03-01"),
+                "Pay");
+
+        List<Income> withNull = new ArrayList<>();
+        withNull.add(income);
+        withNull.add(null);
+
+        assertThrows(NullPointerException.class, () -> list.addAll(withNull));
+    }
+
     /* ===================== Unmodifiable view ===================== */
 
     @Test

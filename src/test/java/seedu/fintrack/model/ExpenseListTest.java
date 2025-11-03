@@ -206,6 +206,32 @@ public class ExpenseListTest {
         assertEquals(jan, list.get(2));
     }
 
+    @Test
+    void add_amountTooSmall_throwsIllegalArgumentException() {
+        ExpenseList list = new ExpenseList();
+        Expense tiny = new Expense(1e-10,
+                ExpenseCategory.FOOD,
+                LocalDate.parse("2025-01-01"),
+                "Tiny");
+
+        assertThrows(IllegalArgumentException.class, () -> list.add(tiny));
+    }
+
+    @Test
+    void addAll_collectionContainingNull_throwsNullPointerException() {
+        ExpenseList list = new ExpenseList();
+        Expense expense = new Expense(15.0,
+                ExpenseCategory.TRANSPORT,
+                LocalDate.parse("2025-01-02"),
+                "Train");
+
+        List<Expense> withNull = new ArrayList<>();
+        withNull.add(expense);
+        withNull.add(null);
+
+        assertThrows(NullPointerException.class, () -> list.addAll(withNull));
+    }
+
     /* ===================== Unmodifiable view ===================== */
 
     @Test

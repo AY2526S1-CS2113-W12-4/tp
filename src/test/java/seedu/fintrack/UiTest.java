@@ -4,9 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.Locale;
 import java.util.Map;
 import java.util.HashMap;
@@ -44,6 +47,7 @@ public class UiTest {
     void tearDown() {
         System.setOut(originalOut);
         Locale.setDefault(originalLocale);
+        Ui.test_setScanner(new java.util.Scanner(System.in, StandardCharsets.UTF_8.name()));
     }
 
     private String out() {
@@ -523,5 +527,81 @@ public class UiTest {
 
         String out = out();
         assertFalse(out.contains(fakeTip));
+    }
+
+    @Test
+    void waitForInput_returnsExitOnNoSuchElement() {
+        Ui.test_setScanner(new java.util.Scanner(new ByteArrayInputStream(new byte[0]), StandardCharsets.UTF_8.name()));
+        assertEquals(Ui.EXIT_COMMAND, Ui.waitForInput());
+    }
+
+    @Test
+    void waitForInput_returnsExitOnIllegalState() {
+        java.util.Scanner scanner = new java.util.Scanner("ignored");
+        scanner.close();
+        Ui.test_setScanner(scanner);
+        assertEquals(Ui.EXIT_COMMAND, Ui.waitForInput());
+    }
+
+    @Test
+    void test_setScanner_nullKeepsExistingScanner() {
+        ByteArrayInputStream input = new ByteArrayInputStream("first\nsecond\n".getBytes(StandardCharsets.UTF_8));
+        java.util.Scanner scanner = new java.util.Scanner(input, StandardCharsets.UTF_8.name());
+        Ui.test_setScanner(scanner);
+
+        assertEquals("first", Ui.waitForInput());
+        Ui.test_setScanner(null); // should keep the same scanner
+        assertEquals("second", Ui.waitForInput());
+    }
+
+    @Test
+    void printBalance_forSpecificMonthIncludesHeader() {
+        Ui.printBalance(123.45, 200.0, 76.55, YearMonth.of(2025, 9));
+        String output = out();
+        assertTrue(output.contains("Overall Balance for the month 2025-09: 123.45"));
+        assertTrue(output.contains("Total Income: 200.00"));
+        assertTrue(output.contains("Total Expense: 76.55"));
+    }
+
+    @Test
+    void printListOfExpenses_withMonthOverloadPrintsHeader() {
+        Expense expense = new Expense(15.0, ExpenseCategory.FOOD, LocalDate.parse("2025-07-15"), "Supper");
+        Ui.printListOfExpenses(java.util.List.of(expense), YearMonth.of(2025, 7));
+        String output = out();
+        assertTrue(output.contains("Expenses for the month 2025-07 (Newest first):"));
+        assertTrue(output.contains("Supper"));
+    }
+
+    @Test
+    void printBudgetExceededWarning_zeroBudgetUsesZeroMessage() {
+        Ui.printBudgetExceededWarning(ExpenseCategory.FOOD, 0.0, 25.0);
+        String output = out();
+        assertTrue(output.contains("$0 budget"));
+        assertTrue(output.contains("You have now spent a total of $25.00"));
+    }
+
+    @Test
+    void printBudgetExceededWarning_positiveBudgetShowsOverspent() {
+        Ui.printBudgetExceededWarning(ExpenseCategory.RENT, 500.0, 550.0);
+        String output = out();
+        assertTrue(output.contains("BUDGET ALERT"));
+        assertTrue(output.contains("Overspent: $50.00"));
+    }
+
+    @Test
+    void printBudgetNearWarning_showsCautionWithPercent() {
+        Ui.printBudgetNearWarning(ExpenseCategory.ENTERTAINMENT, 200.0, 190.0);
+        String output = out();
+        assertTrue(output.contains("BUDGET CAUTION"));
+        assertTrue(output.contains("(95.0%)"));
+        assertTrue(output.contains("Remaining: $10.00"));
+    }
+
+    @Test
+    void printPersistenceWarning_wrapsMessageWithBanner() {
+        Ui.printPersistenceWarning("Test message");
+        String output = out();
+        assertTrue(output.contains("PERSISTENCE WARNING: Test message"));
+        assertTrue(output.contains("================================================================================"));
     }
 }

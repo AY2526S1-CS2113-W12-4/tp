@@ -20,3 +20,4 @@ text-ui-test/EXPECTED-UNIX.TXT
 *.lck
 *.csv
 fintrack-data.txt
+test coverage stuff/
