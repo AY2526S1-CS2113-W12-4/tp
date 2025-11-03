@@ -12,8 +12,9 @@ FT -> P: returnFirstWord(input)
 P --> FT: "export"
 
 FT -> P: parseExport(input)
-P -> P: validate path format
-P -> P: ensure .csv extension
+P -> P: validate filename format (letters, numbers, hyphens, underscores, dots)
+P -> P: prevent directory separators (/,\\)
+P -> P: automatically append .csv extension if missing
 P --> FT: exportPath
 
 create CS
@@ -27,14 +28,16 @@ FT -> FM: getBalance()
 
 FT -> CS: export(exportPath, incomes, expenses,\ntotalIncome, totalExpense, balance)
 
-CS -> CS: createDirectories(parentDir)
+CS -> CS: validate file doesn't already exist
+
+CS -> CS: write CSV header (Type,Date,Amount,Category,Description)
 
 loop for each income
-    CS -> CS: writeIncomeLine(income)
+    CS -> CS: write entry with INCOME type, escape commas in description
 end
 
 loop for each expense
-    CS -> CS: writeExpenseLine(expense)
+    CS -> CS: write entry with EXPENSE type, escape commas in description
 end
 
 CS -> CS: writeSummarySection(totalIncome,\ntotalExpense, balance)
@@ -44,6 +47,14 @@ CS --> FT: success
 FT -> UI: printExportSuccess(exportPath)
 
 group Exception Handling
-    FT -> UI: printError(message)
+    alt file already exists
+        FT -> UI: printError("File already exists")
+    else file open in another program
+        FT -> UI: printError("File open in another program")
+    else write permissions
+        FT -> UI: printError("No write permissions")
+    else invalid filename
+        FT -> UI: printError("Invalid filename")
+    end
 end
 @enduml
