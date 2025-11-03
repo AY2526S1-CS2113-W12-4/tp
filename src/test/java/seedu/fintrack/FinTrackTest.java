@@ -163,7 +163,7 @@ public class FinTrackTest {
                 "bye");
         String s = run(script);
         mustContain(s, "Overall Balance for the month 2025-09:");
-        mustContain(s, "Error: Month must be in YYYY-MM format.");
+        mustContain(s, "Error: Invalid date: 2025-13 does not exist.");
         mustContain(s, "Error: Usage: balance [d/YYYY-MM]");
     }
 
@@ -219,7 +219,7 @@ public class FinTrackTest {
         String s = run(String.join("\n",
                 "list-expense d/2025-13",
                 "bye"));
-        mustContain(s, "Error: Month must be in YYYY-MM format.");
+        mustContain(s, "Error: Invalid date: 2025-13 does not exist.");
     }
 
     @Test
@@ -264,7 +264,7 @@ public class FinTrackTest {
         String s = run(String.join("\n",
                 "list-income d/2025-00",
                 "bye"));
-        mustContain(s, "Error: Month must be in YYYY-MM format.");
+        mustContain(s, "Error: Invalid date: 2025-00 does not exist.");
     }
 
     @Test
