@@ -578,11 +578,11 @@ Gives a summary of your overall expenses.
   ```
   -----------------------------------------------
   Here is an overall summary of your expenses!
-  Total Expense: 40.0
+  Total Expense: $40.00
 
   Here is a breakdown of your expense:
-  TRANSPORT: 10.00 (25.00%)
-  FOOD: 30.00 (75.00%)
+  TRANSPORT: $10.00 (25.00%)
+  FOOD: $30.00 (75.00%)
 
   Your most spent on category is: FOOD
   -----------------------------------------------
@@ -601,11 +601,11 @@ Gives a summary of your overall income.
   ```
   ----------------------------------------------
   Here is an overall summary of your income!
-  Total Income: 30.0
+  Total Income: $30.00
 
   Here is a breakdown of your income:
-  SALARY: 20.00 (66.67%)
-  INVESTMENT: 10.00 (33.33%)
+  SALARY: $20.00 (66.67%)
+  INVESTMENT: $10.00 (33.33%)
 
   Your highest source of income is: SALARY
   ----------------------------------------------
