@@ -11,17 +11,16 @@ title FinTrack — Budget Feature (Object Diagram)
 object ui         as "<u>Ui : Ui</u>"
 object parser     as "<u>Parser : Parser</u>"
 object fm         as "<u>fm : FinanceManager</u>" {
-  expenses: ExpenseList
-  budgets : Map<ExpenseCategory, Double>
+
 }
 
 object expenses   as "<u>expenses : ExpenseList</u>"
-object budgets    as "<u>budgets : HashMap&lt;ExpenseCategory, Double&gt;</u>" {
-  FOOD -> 200.00
+object budgets    as "<u>budgets : HashMap<ExpenseCategory, Double></u>" {
+
 }
 
 /' Example category & value objects produced by Parser '/
-object budgetEntry as "<u>entry : Map.Entry&lt;ExpenseCategory, Double&gt;</u>" {
+object budgetEntry as "<u>entry : Map.Entry<ExpenseCategory, Double></u>" {
   key   = FOOD
   value = 200.00
 }
@@ -34,18 +33,19 @@ object e1         as "<u>e1 : Expense</u>" {
 }
 
 /' Object links: who holds what '/
-fm *-- expenses
-fm *-- budgets
-parser ..> budgetEntry
-ui ..> parser
-ui ..> fm
+fm --- expenses
+fm --- budgets
+parser --- budgetEntry
+ui -- parser
+ui --- fm
 
 /' Budget setting flow (at object level):
    Parser returns (FOOD, 200.00); FinanceManager stores it in budgets map. '/
-budgetEntry --> budgets : setBudget(key,value)
+/'budgetEntry --> budgets'/
+budgets --- budgetEntry
 
 /' Adding an expense (object placement into list) '/
-e1 --> expenses : addExpense(e1)
+e1 --- expenses
 
 /' Budget check semantics (captured as a note on fm):
    On fm.addExpense(e):
