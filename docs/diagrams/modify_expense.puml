@@ -5,7 +5,7 @@ participant ":FinanceManager" as FM
 participant "<<class>>\nUi" as UI
 
 FT -> UI: waitForInput()
-UI --> FT: "modify-expense 2 a/1500 c/RENT d/2025-01-01 des/Updated rent"
+UI --> FT: "modify-expense 2 a/1500 c/RENT"
 
 FT -> P: returnFirstWord(input)
 P --> FT: "modify-expense"
@@ -13,25 +13,26 @@ P --> FT: "modify-expense"
 FT -> P: parseModifyExpense(input)
 P -> P: extract index from args
 P -> P: validate index is positive number
-P -> P: parseAddExpense(remainingArgs)
-P --> FT: Map.Entry<index, newExpense>
+P -> P: parse optional fields (amount, category, date, description) into updates map
+P --> FT: Map.Entry<index, updates>
 
-FT -> FM: modifyExpense(index, newExpense)
+FT -> FM: modifyExpense(index, updates)
 
-FM -> FM: deleteExpense(index)
+FM -> FM: oldExpense = deleteExpense(index)
 
 alt index is invalid or list is empty
     FT -> UI: printError(message)
 else index is valid
-    FM -> FM: addExpense(newExpense)
+    FM -> FM: mergedExpense = mergeExpense(oldExpense, updates)
+    FM -> FM: addExpense(mergedExpense)
     FM -> FM: check if budget exceeded
 
-    opt adding new expense fails
+    opt adding merged expense fails
         FM -> FM: restore old expense
         FT -> UI: printError(message)
     end
 
-    FT -> UI: printExpenseModified(newExpense, index)
+    FT -> UI: printExpenseModified(mergedExpense, index)
 
     opt isOverBudget
         FT -> FM: getTotalExpenseForCategory(category)
