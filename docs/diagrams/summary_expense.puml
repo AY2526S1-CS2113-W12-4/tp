@@ -39,6 +39,7 @@ else else
     Ui -> Ui: print "%s: $%.2f (%.2f%%), category, amount, percent"
     opt amount > topAmount
       Ui -> Ui: topCategory = category
+      Ui -> Ui : topAmount = amount
     end
   end
   Ui -> Ui: print "Your most spent on category is: " + topCategory
