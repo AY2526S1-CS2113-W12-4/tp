@@ -3,7 +3,7 @@ title Sequence for one successful call of "summary-expense"
 
 actor User
 participant "<<class>>\nFinTrack" as FinTrack
-participant ":FinanceManager" as FM
+participant "fm:FinanceManager" as FM
 participant "<<class>>\nUi" as Ui
 
 User -> FinTrack: Enter command "summary-expense"
@@ -11,26 +11,35 @@ activate FinTrack
 
 FinTrack -> FM: getExpenseByCategory()
 activate FM
-FM --> FinTrack
+FM --> FinTrack: expenseByCategory
 deactivate FM
 
 FinTrack -> FM: getTotalExpense()
 activate FM
-FM --> FinTrack
+FM --> FinTrack: totalExpense
 deactivate FM
 
-FinTrack -> Ui: printSummaryExpense(totalExpense, expenseByCategory)
+FinTrack -> FM: getExpensePercentageByCategory(expenseByCategory, totalExpense)
+activate FM
+FM --> FinTrack: expensePercentageByCategory
+deactivate FM
+
+FinTrack -> Ui: printSummaryExpense(totalExpense, expenseByCategory, expensePercentageByCategory)
 activate Ui
-Ui -> Ui: print header + "Total Expense: %.2f"
+Ui -> Ui: print header + "Total Expense: $%.2f, totalExpense"
+Ui -> Ui: print "Here is a breakdown of your expense:"
+Ui -> Ui: topAmount = 0
+Ui -> Ui: topCategory = null
 
 alt totalExpense <= 0 OR expenseByCategory is empty
   Ui -> Ui: print "You have not spent anything yet!"
-else
-  Ui -> Ui: print "Here is a breakdown of your expense:"
+else else
   loop for each (category, amount) in expenseByCategory
-    Ui -> Ui: percent = (amount / totalExpense) * 100.0
-    Ui -> Ui: print "%s: %.2f (%.2f%%)"
-    Ui -> Ui: update topCategory if amount is max
+    Ui -> Ui: percent = expensePercentageByCategory.get(category)
+    Ui -> Ui: print "%s: $%.2f (%.2f%%), category, amount, percent"
+    opt amount > topAmount
+      Ui -> Ui: topCategory = category
+    end
   end
   Ui -> Ui: print "Your most spent on category is: " + topCategory
 end

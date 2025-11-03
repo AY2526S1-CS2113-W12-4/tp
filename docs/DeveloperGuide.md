@@ -312,11 +312,12 @@ A summary consists of the following details:
 Here is how `summary-expense` works:
 
 1. We first consider what was needed in our summary. The main things we needed
-   were total expenditure, a breakdown of expenditure and the top category in expenditure
+   were total expenditure, a breakdown of expenditure, the percentage a category takes up and the top category in expenditure
 2. To get total expense, we can get total expense from calling `getTotalExpense()` from `FinanceManager`.
 3. To see how much the user has spent on each category, a function in `FinanceManager` called `getExpenseByCategory()` is implemented to return a HashMap which has `ExpenseCategory` as the key and the accumulated amount of that category as the value.
 4. To create this hashmap, `getExpenseByCategory()` loops through all expenses in the `expenses` list and adds up the total amount for each `ExpenseCategory`.
-5. `totalExpense` and `expenseByCategory` is then fed into a function in `Ui` called `printSummaryExpense` to print the summary.
+5. To see the percentage of the totalExpense a category takes up, a function in `FinanceManager` called `getExpensePercentageByCategory()` is implemented to return a Map which has `ExpenseCategory` as the key and the percentage as the value.
+6. `totalExpense`, `expenseByCategory` and `expensePercentageByCategory` is then fed into a function in `Ui` called `printSummaryExpense` to print the summary.
 
 Below is a sequence diagram to illustrate how summary-expense works:
 ![summary_expense.png](images/summary_expense.png)

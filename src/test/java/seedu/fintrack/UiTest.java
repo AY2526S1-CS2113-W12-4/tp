@@ -357,8 +357,8 @@ public class UiTest {
         Ui.printExpenseByCategory(totalExpense, testMap, testPercentMap);
         String out = out();
 
-        assertTrue(out.contains("FOOD: 12.50 (71.43%)"));
-        assertTrue(out.contains("TRANSPORT: 5.00 (28.57%)"));
+        assertTrue(out.contains("FOOD: $12.50 (71.43%)"));
+        assertTrue(out.contains("TRANSPORT: $5.00 (28.57%)"));
         assertTrue(out.contains("Your most spent on category is: FOOD"));
     }
 
@@ -387,11 +387,11 @@ public class UiTest {
         String out = out();
 
         assertTrue(out.contains("Here is an overall summary of your expenses!"));
-        assertTrue(out.contains("Total Expense: 17.5"));
+        assertTrue(out.contains("Total Expense: $17.50"));
 
         assertTrue(out.contains("Here is a breakdown of your expense:"));
-        assertTrue(out.contains("FOOD: 12.50 (71.43%)"));
-        assertTrue(out.contains("TRANSPORT: 5.00 (28.57%)"));
+        assertTrue(out.contains("FOOD: $12.50 (71.43%)"));
+        assertTrue(out.contains("TRANSPORT: $5.00 (28.57%)"));
         assertTrue(out.contains("Your most spent on category is: FOOD"));
     }
 
@@ -402,7 +402,7 @@ public class UiTest {
         String out = out();
 
         assertTrue(out.contains("Here is an overall summary of your expenses!"));
-        assertTrue(out.contains("Total Expense: 0.0"));
+        assertTrue(out.contains("Total Expense: $0.00"));
 
         assertTrue(out.contains("Here is a breakdown of your expense:"));
         assertTrue(out.contains("You have not spent anything yet!"));
@@ -431,8 +431,8 @@ public class UiTest {
         Ui.printIncomeByCategory(totalIncome, testMap, testPercentMap);
         String out = out();
 
-        assertTrue(out.contains("SALARY: 1500.00 (96.74%)"));
-        assertTrue(out.contains("INVESTMENT: 50.50 (3.26%)"));
+        assertTrue(out.contains("SALARY: $1500.00 (96.74%)"));
+        assertTrue(out.contains("INVESTMENT: $50.50 (3.26%)"));
         assertTrue(out.contains("Your highest source of income is: SALARY"));
     }
 
@@ -461,11 +461,11 @@ public class UiTest {
         String out = out();
 
         assertTrue(out.contains("Here is an overall summary of your income!"));
-        assertTrue(out.contains("Total Income: 1550.5"));
+        assertTrue(out.contains("Total Income: $1550.50"));
         assertTrue(out.contains("Here is a breakdown of your income:"));
 
-        assertTrue(out.contains("SALARY: 1500.00 (96.74%)"));
-        assertTrue(out.contains("INVESTMENT: 50.50 (3.26%)"));
+        assertTrue(out.contains("SALARY: $1500.00 (96.74%)"));
+        assertTrue(out.contains("INVESTMENT: $50.50 (3.26%)"));
         assertTrue(out.contains("Your highest source of income is: SALARY"));
     }
 
@@ -476,7 +476,7 @@ public class UiTest {
         String out = out();
 
         assertTrue(out.contains("Here is an overall summary of your income!"));
-        assertTrue(out.contains("Total Income: 0.0"));
+        assertTrue(out.contains("Total Income: $0.00"));
 
         assertTrue(out.contains("Here is a breakdown of your income:"));
         assertTrue(out.contains("You have not recorded any income yet!"));
