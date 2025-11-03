@@ -21,6 +21,7 @@
 - [Appendix D: Glossary](#appendix-d-glossary)
 - [Appendix E: Instructions for Manual Testing](#appendix-e-instructions-for-manual-testing)
 - [Appendix F: Known Issues](#appendix-f-known-issues)
+
 ## Acknowledgements
 
 We would like to thank our TA, Chen Siyu, and the rest of the CS2113 teaching team for their hard work and guidance!
@@ -289,7 +290,7 @@ Here is how `budget`, `list-budget` and `delete-budget` works:
 5. When `list-budget` is called, `Ui` prints a list of the budgets by calling `printBudgets` which receives a printable version of all the budgets which we get from `getBudgetsView()`.
 6. When `delete-budget` is called, the `deleteBudget` method from `FinanceManager` is called, removing the corresponding budget from the HashMap.
 
-Below is the class diagram of to show how `budget` works:
+Below is the class diagram to show how `budget` works:
 ![budget.png](images/budget.png)
 
 #### Design Considerations:
@@ -344,6 +345,7 @@ Here is how the persistence workflow operates:
 4. Tests disable the feature entirely by setting `fintrack.disablePersistence=true`, which keeps automated runs isolated from the developer’s filesystem.
 
 Below is a sequence diagram summarising the lifecycle:
+
 ![persistence_sequence.png](images/persistence_sequence.png)
 
 #### Design Considerations
@@ -645,7 +647,7 @@ Type `bye` to exit the application.
 
 ## Appendix F: Known Issues
 
-- **Non-ASCII detection on Windows PowerShell**
+- **Non-ASCII detection on Windows PowerShell:**
   `Parser.returnFirstWord` normalises the command and `FinTrack.main()` rejects
   non-ASCII characters before dispatch. In Windows PowerShell, the console layer
   transliterates characters outside the active code page to `?` before the JVM sees
@@ -653,14 +655,14 @@ Type `bye` to exit the application.
   character to the user. The guard still protects UTF-8 capable environments, so we
   retain it to prevent corrupting `fintrack-data.txt`.
 
-- **Whitespace collapse affects descriptions**
+- **Whitespace collapse affects descriptions:**
   The preprocessing step `input.stripLeading().replaceAll("\\s+", " ")` runs before
   prefix extraction. It improves parsing resilience (mixed tabs/spaces, multiple gaps)
   but also means descriptions lose intentional extra spacing or tabs. We accept this
   trade-off for now because it keeps tokenisation simple; if richer formatting becomes
   important we will need to revisit the normalisation stage.
 
-- **No-write directories trigger logging stack traces**
+- **No-write directories trigger logging stack traces:**
   FinTrack disables file logging when it detects that the persistence target cannot be
   written. If you launch the application from a directory where the JVM cannot create
   log files, the built-in `java.util.logging` framework still emits an initial stack
