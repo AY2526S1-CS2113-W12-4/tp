@@ -1,10 +1,9 @@
 # About us
 
-Display |    Name    |             Github Profile             | Portfolio 
---------|:----------:|:--------------------------------------:|:---------:
-![](https://via.placeholder.com/100.png?text=Photo) | Jordan Tan | [Github](https://github.com/jordantwz) | [Portfolio](team/jordantwz.md)
-![](https://via.placeholder.com/100.png?text=Photo) | Ryan Ng | [Github](https://github.com/goodguyryan) | [Portfolio](team/goodguyryan.md)
-![](https://avatars.githubusercontent.com/u/163726353?v=4&size=64) | Noelle Then | [Github](https://github.com/noellethen) | [Portfolio](team/noellethen.md)
-![](https://via.placeholder.com/100.png?text=Photo) | Sanjay Shiva Kumar | [Github](https://github.com/sanjay-shiva-kumar) | [Portfolio](team/sanjay-shiva-kumar.md)
-![](https://avatars.githubusercontent.com/u/108561447?v=4) | Kenneth Gao | [Github](https://github.com/duckyfuz) | [Portfolio](team/duckyfuz.md)
-
+| Display                                                                                                                                            |        Name        |                 Github Profile                  |                Portfolio                |
+| -------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------: | :---------------------------------------------: | :-------------------------------------: |
+| <img src="https://upload.wikimedia.org/wikipedia/en/thumb/b/b1/Portrait_placeholder.png/960px-Portrait_placeholder.png?20210811085635" width="64"> |     Jordan Tan     |     [Github](https://github.com/jordantwz)      |     [Portfolio](team/jordantwz.md)      |
+| <img src="https://upload.wikimedia.org/wikipedia/en/thumb/b/b1/Portrait_placeholder.png/960px-Portrait_placeholder.png?20210811085635" width="64"> |      Ryan Ng       |    [Github](https://github.com/goodguyryan)     |    [Portfolio](team/goodguyryan.md)     |
+| <img src="https://upload.wikimedia.org/wikipedia/en/thumb/b/b1/Portrait_placeholder.png/960px-Portrait_placeholder.png?20210811085635" width="64">                                                               |    Noelle Then     |     [Github](https://github.com/noellethen)     |     [Portfolio](team/noellethen.md)     |
+| <img src="https://upload.wikimedia.org/wikipedia/en/thumb/b/b1/Portrait_placeholder.png/960px-Portrait_placeholder.png?20210811085635" width="64"> | Sanjay Shiva Kumar | [Github](https://github.com/sanjay-shiva-kumar) | [Portfolio](team/sanjay-shiva-kumar.md) |
+| <img src="https://upload.wikimedia.org/wikipedia/en/thumb/b/b1/Portrait_placeholder.png/960px-Portrait_placeholder.png?20210811085635" width="64"> |    Kenneth Gao     |      [Github](https://github.com/duckyfuz)      |      [Portfolio](team/duckyfuz.md)      |
