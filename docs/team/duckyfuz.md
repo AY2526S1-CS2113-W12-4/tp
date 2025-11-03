@@ -44,6 +44,7 @@ Given below are my contributions to the project:
     - Wrote instructions on how to use the `modify-expense` command.
     - Wrote instructions on how to use the `modify-income` command.
     - Wrote instructions on how to use the `export` command.
+    - Wrote instructions on how to use command aliases for quick typists.
   - Developer Guide
     - Wrote design & implementation details on the `modify-expense` feature (with sequence diagrams).
     - Wrote design & implementation details on the `modify-income` feature (with sequence diagrams).
