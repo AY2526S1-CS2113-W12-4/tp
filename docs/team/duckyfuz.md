@@ -34,9 +34,10 @@ Given below are my contributions to the project:
 
 - **Enhancements**:
 
+  - Wrote tests to enhance coverage of `FinanceManager` class and `Modify Income / Expense` methods. [#38](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/38) , [#87](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/87)
   - Implement atomic `Modify Income / Expense` instructions for enhanced reliability.
-  - Wrote tests for coverage of `FinanceManager` class and `Modify Income / Expense` methods. [#38](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/38) , [#87](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/87)
-  - Write tests to ensure atomicity of `Modify Income / Expense` methods. [#87](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/87)
+    - Wrote tests to ensure atomicity of `Modify Income / Expense` methods. [#87](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/87)
+  - Implemented handling of out of range values for modify commands based on user feedback and pentesting. [#250](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/250)
 
 - **Documentation**:
 
@@ -44,7 +45,7 @@ Given below are my contributions to the project:
     - Wrote instructions on how to use the `modify-expense` command.
     - Wrote instructions on how to use the `modify-income` command.
     - Wrote instructions on how to use the `export` command.
-    - Wrote instructions on how to use command aliases for quick typists.
+    - Wrote instructions on how to use command aliases (eg. `mi`, `b`) for powerusers who want to quickly input new data into the app.
   - Developer Guide
     - Wrote design & implementation details on the `modify-expense` feature (with sequence diagrams).
     - Wrote design & implementation details on the `modify-income` feature (with sequence diagrams).
@@ -55,8 +56,8 @@ Given below are my contributions to the project:
 
   - Oversaw release management, and ensured documentation deadlines were met.
   - Managed project workflow: triaged issues, reviewed PRs with detailed feedback, and facilitated weekly syncs to drive progress and resolve blockers.
-  - Implemented improvements to the modify-expense and modify-income commands to support partial modifications after gathering user feedback, enhancing usability by allowing updates to only specified fields without requiring all parameters.
+  - Implemented improvements to the modify-expense and modify-income commands to support partial modifications after gathering user feedback, enhancing usability by allowing updates to only specified fields without requiring all parameters. [#167](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/167)
 
 - **Community**:
-  - PRs reviewed (with non-trivial comments): [#147](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/147) , [#142](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/142) , [#70](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/70) , [#60](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/60) , [#53](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/53) , [#47](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/47)
+  - PRs reviewed (with non-trivial comments): [#273](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/273) , [#147](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/147) , [#142](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/142) , [#70](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/70) , [#60](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/60) , [#53](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/53) , [#47](https://github.com/AY2526S1-CS2113-W12-4/tp/pull/47)
   - Smoke-tested peers’ releases and filed detailed reports on github issues [#22](https://github.com/nus-cs2113-AY2526S1/forum/issues/22#issuecomment-3356133185) and [#21](https://github.com/nus-cs2113-AY2526S1/forum/issues/21#issuecomment-3356114983), helping them gain confidence in their deployments.
